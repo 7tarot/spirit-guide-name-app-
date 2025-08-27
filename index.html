@@ -1,97 +1,582 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<meta charset="utf-8">
-<title>Spirit Guide App — Clean Start</title>
-<style>
-  body{background:#050a08;color:#d6ffe9;font-family:system-ui,Segoe UI,Roboto,Arial;margin:0;padding:24px}
-  .card{border:1px solid #00ff88;border-radius:12px;padding:16px;margin:16px auto;max-width:800px;box-shadow:0 0 16px #00ff8840}
-  input,button,select{background:#03150f;color:#d6ffe9;border:1px solid #00ff88;border-radius:8px;padding:8px 12px}
-  button{cursor:pointer;font-weight:bold}
-  .hidden{display:none}
-  .pill{border:1px solid #00ff88;border-radius:999px;padding:4px 10px;margin-left:6px}
-</style>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Spirit Guide App — v2.6</title>
+  <meta name="theme-color" content="#00ff88"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* minimal structural styles so it looks good even without style.css */
+    :root{--neo:#00ff88;--bg:#050a08;--ink:#d6ffe9;--panel:#071510}
+    html,body{background:var(--bg);color:var(--ink);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;line-height:1.5;margin:0}
+    .container{max-width:1100px;margin:0 auto;padding:24px}
+    .header h1{color:var(--neo);margin:.2rem 0}
+    .tag{opacity:.8}
+    .card{border:1px solid var(--neo);border-radius:14px;padding:16px;margin:18px 0;box-shadow:0 0 18px #00ff8840;background:linear-gradient(180deg,rgba(0,255,136,.06),transparent)}
+    .grid{display:grid;grid-template-columns:1.4fr .8fr;gap:18px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .num-grid .num-row{display:grid;grid-template-columns:160px 90px 1fr;gap:10px;padding:8px 0;border-bottom:1px dashed #0c2}
+    .pill{border:1px solid var(--neo);border-radius:999px;padding:4px 10px;display:inline-block;color:var(--neo);margin-left:8px}
+    .btn{background:var(--neo);color:#022;border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+    .btn.ghost{background:transparent;color:var(--neo);border:1px solid var(--neo)}
+    .picker, input[type="date"], input[type="text"], textarea{background:#03150f;color:var(--ink);border:1px solid var(--neo);border-radius:8px;padding:8px 10px;width:100%}
+    .field{margin:8px 0}
+    .hidden{display:none}
+    .timeline{display:flex;gap:8px;overflow:auto;padding:8px;border:1px dashed #0c2;border-radius:10px}
+    .dot{position:relative;width:18px;height:18px;border-radius:50%;background:#093}
+    .dot.karmic{background:#8b0000}
+    .dot.soulmate{background:#0a6}
+    .dot.twin{box-shadow:0 0 10px gold inset, 0 0 6px gold}
+    .dot.now{outline:2px solid #fff}
+    .dot-label{position:absolute;top:22px;white-space:pre;font-size:11px}
+    blockquote{border-left:3px solid var(--neo);margin:4px 0;padding-left:10px}
+    .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+    .cal-cell{border:1px solid #0c2;border-radius:6px;padding:8px;text-align:center}
+    .cal-cell.good{background:rgba(0,255,136,.15)}
+    .cal-cell.bad{background:rgba(255,0,0,.10)}
+    .cal-cell.today{outline:2px solid var(--neo)}
+    .sigil-svg{width:100%;height:120px}
+    .sigil-stroke{font: 48px "Courier New", monospace; fill: var(--neo)}
+    .meta{opacity:.85}
+    .footer{opacity:.7;margin-top:10px}
+    .actions{margin-top:8px}
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header class="header">
+      <h1>Spirit Guide App</h1>
+      <p class="tag">Deterministic • Full Numerology • Tarot & Compatibility • Connections • Audio</p>
+    </header>
 
-<h1>Spirit Guide App — Clean Start</h1>
+    <!-- INPUT -->
+    <section id="formSection" class="card">
+      <h2>Your details</h2>
+      <form id="guideForm" novalidate>
+        <div class="field">
+          <label for="name">Full name</label>
+          <input id="name" type="text" placeholder="e.g., Steven John Abbott" required>
+        </div>
+        <div class="field">
+          <label for="dob">Birth date</label>
+          <input id="dob" type="date" required>
+        </div>
+        <div class="field">
+          <label for="intent">Question / Intent (optional)</label>
+          <textarea id="intent" rows="2" placeholder="What guidance are you seeking?"></textarea>
+        </div>
+        <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" type="submit">Calculate</button>
+          <button class="btn ghost" type="button" id="demoBtn">Demo</button>
+        </div>
+        <p class="hint">Deterministic (case/spacing-proof). Everything stays in your browser.</p>
+      </form>
+    </section>
 
-<form id="f" class="card" novalidate>
-  <p><label>Full name<br><input id="name" placeholder="e.g. Steven John Abbott"></label></p>
-  <p><label>Birth date<br><input id="dob" type="date" value="1990-08-17"></label></p>
-  <p>
-    <button type="submit">Calculate</button>
-    <button type="button" id="demo">Demo</button>
-  </p>
-</form>
+    <!-- RESULTS -->
+    <section id="resultSection" class="card hidden">
+      <div class="result-head" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div>
+          <h2 id="guideName"></h2>
+          <p id="guideMeta" class="meta"></p>
+        </div>
+        <div>
+          <span id="lifePath" class="pill"></span>
+          <span id="seedOut" class="pill"></span>
+        </div>
+      </div>
 
-<section id="res" class="card hidden">
-  <h2 id="gname"></h2>
-  <p id="gmeta"></p>
-  <p><span id="lp" class="pill"></span><span id="seed" class="pill"></span></p>
-  <h3>Backstory</h3>
-  <p id="back"></p>
-  <h3>Mantra</h3><blockquote id="mantra"></blockquote>
-  <h3>Name Resonance</h3><div id="nameRes"></div>
+      <div class="grid">
+        <div>
+          <h3>Backstory</h3>
+          <p id="backstory"></p>
 
-  <h3>Ambient Sound</h3>
-  <select id="amb">
-    <option value="none">Ambient: Off</option>
-    <option value="rain">Ambient: Mystic Rain</option>
-  </select>
-  <button type="button" id="ambStop">Stop</button>
-  <audio id="ambAudio" loop></audio>
-</section>
+          <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <button class="btn" id="speakBtn">🔈 Narrate</button>
+            <button class="btn ghost" id="stopSpeakBtn">Stop</button>
+            <select id="voiceSel" class="picker"></select>
+            <select id="moodSel" class="picker">
+              <option value="soothing" selected>Soothing</option>
+              <option value="mysterious">Mysterious</option>
+              <option value="empowering">Empowering</option>
+            </select>
+            <input id="rateSel" type="range" min="0.6" max="1.1" step="0.05" value="0.85" title="Voice speed"/>
+          </div>
 
-<script>
-  // Embedded fallback guide
-  const GUIDE = {
-    name:"Mireth",
-    element:"Forest",
-    domains:["Growth","Patience","Tending"],
-    backstory:"Mireth walks with dirt under their nails and a calendar of seed catalogues in their head...",
-    mantra:"I tend the small so the great can grow."
-  };
+          <!-- Ambient audio controls -->
+          <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <select id="ambSel" class="picker">
+              <option value="none">Ambient: Off</option>
+              <option value="rain">Ambient: Mystic Rain</option>
+              <option value="choir">Ambient: Celestial Choir</option>
+              <option value="drone">Ambient: Deep Space Drone</option>
+            </select>
+            <button class="btn" id="ambPlay">Play</button>
+            <button class="btn ghost" id="ambStop">Stop</button>
+            <label>Vol <input id="ambVol" type="range" min="0" max="1" step="0.01" value="0.35"></label>
+            <audio id="ambAudio" loop></audio>
+          </div>
+        </div>
 
-  function digitSum(n){return n.toString().split('').reduce((a,b)=>a+(+b),0)}
-  function reduceNum(n){while(n>9)n=digitSum(n);return n}
-  function lifePath(d){return reduceNum(digitSum(d.getFullYear())+digitSum(d.getMonth()+1)+digitSum(d.getDate()))}
+        <aside>
+          <h3>Keywords</h3><ul id="keywords"></ul>
+          <h3>Mantra</h3><blockquote id="mantra"></blockquote>
+          <h3>Sigil</h3><div id="sigilBox"></div>
+        </aside>
+      </div>
 
-  // Name resonance simple demo
-  const LETTER_GROUPS={1:'AJS',2:'BKT',3:'CLU',4:'DMV',5:'ENW',6:'FOX',7:'GPY',8:'HQZ',9:'IR'};
-  const NUM_COMPAT={1:{good:[3,5,9]},2:{good:[4,6,9]},3:{good:[1,5,7]},4:{good:[2,6,8]},5:{good:[1,3,7]},6:{good:[2,4,9]},7:{good:[2,4,9]},8:{good:[4,6,9]},9:{good:[1,2,6]}};
+      <!-- NUMEROLOGY -->
+      <section class="card">
+        <h3>Your Numerology Chart</h3>
+        <div id="chartGrid" class="num-grid"></div>
+        <details style="margin-top:10px;">
+          <summary>What do these mean? (compatibility, Tarot & zodiac)</summary>
+          <div id="chartExplain"></div>
+        </details>
+        <div class="grid2">
+          <div>
+            <h3>Pinnacles & Challenges</h3>
+            <div id="pinnacles"></div>
+          </div>
+          <div>
+            <h3>Hidden Passion & Balance</h3>
+            <div id="extras"></div>
+          </div>
+        </div>
+      </section>
 
-  function nameResHints(lp){
-    const root=lp>9?(lp===11?2:lp===22?4:6):lp;
-    const targets=(NUM_COMPAT[root]||{good:[]}).good;
-    const clusters=targets.map(n=>LETTER_GROUPS[n]).filter(Boolean);
-    return `<p>Compatible targets: ${targets.join(', ')}</p>
-            <p>Initial clusters: ${clusters.join(' • ')}</p>`;
-  }
+      <!-- CONNECTIONS -->
+      <section class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+          <h3>Connections (Karmic • Twin Flame • Soulmate)</h3>
+          <select id="presetSel" class="picker">
+            <option value="classic">Classic (v2.3)</option>
+            <option value="steve">Steve's House</option>
+          </select>
+        </div>
+        <p class="hint">Based on Personal Year cycles, core-number compatibility, and name-number resonance. Guidance, not fate.</p>
+        <div id="timelineWrap"><div id="timeline" class="timeline"></div></div>
+        <div id="connections" style="margin-top:10px;"></div>
+      </section>
 
-  // Ambient
-  const AMBIENT={rain:"ambient/binaural.mp3"};
-  function setAmbient(k){
-    const a=document.getElementById('ambAudio');
-    if(k==="none"){a.pause();a.removeAttribute('src');return;}
-    a.src=AMBIENT[k]; a.volume=0.35; a.play().catch(()=>{});
-  }
+      <!-- LUCKY DAYS -->
+      <section class="card">
+        <h3>Lucky Days (this month)</h3>
+        <div id="luckyCalendar" class="calendar"></div>
+      </section>
 
-  function show(){
-    const nm=document.getElementById('name').value||"Demo User";
-    const dob=document.getElementById('dob').value||"1990-08-17";
-    const d=new Date(dob); const lp=lifePath(d);
-    const seed=(nm.replace(/\s+/g,'')+'|'+dob).length;
-    document.getElementById('gname').textContent=GUIDE.name;
-    document.getElementById('gmeta').textContent=`${GUIDE.element} • ${GUIDE.domains.join(' • ')}`;
-    document.getElementById('lp').textContent=`Life Path ${lp}`;
-    document.getElementById('seed').textContent=`Seed ${seed}`;
-    document.getElementById('back').textContent=GUIDE.backstory;
-    document.getElementById('mantra').textContent=GUIDE.mantra;
-    document.getElementById('nameRes').innerHTML=nameResHints(lp);
-    document.getElementById('f').classList.add('hidden');
-    document.getElementById('res').classList.remove('hidden');
-  }
+      <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="cardBtn">Create Mystic Card</button>
+        <button class="btn" id="pdfBtn">Save as PDF</button>
+        <button class="btn" id="copyBtn">Copy summary</button>
+        <button class="btn ghost" id="resetBtn">Reset</button>
+      </div>
 
-  document.getElementById('f').onsubmit=e=>{e.preventDefault();show();}
-  document.getElementById('demo').onclick=()=>{document.getElementById('name').value="Demo User";document.getElementById('dob').value="1990-08-17";show();}
-  document.getElementById('amb').onchange=e=>setAmbient(e.target.value);
-  document.getElementById('ambStop').onclick=()=>setAmbient("none");
-</script>
+      <canvas id="cardCanvas" width="1080" height="1350" class="hidden"></canvas>
+    </section>
+
+    <footer class="footer">
+      <small>© <span id="year"></span> 7 Tarot • Works offline once loaded • No data leaves your browser.</small>
+    </footer>
+  </main>
+
+  <script>
+    /* ---------- Ambient audio (mp3/wav fallback) ---------- */
+    const AMBIENT_SOURCES = {
+      rain:  ["ambient/binaural.mp3","ambient/binaural.wav","ambient/binaural.mp3.wav"],
+      choir: ["ambient/choir.mp3","ambient/choir.wav"],
+      drone: ["ambient/drone.mp3","ambient/drone.wav"]
+    };
+    function chooseAmbient(key){
+      const a=document.getElementById('ambAudio');
+      if (!key || key==='none'){ a.pause(); a.removeAttribute('src'); return; }
+      const list = AMBIENT_SOURCES[key]||[];
+      a.src = list[0]||""; // we try first; hosting is static so we can’t probe without requests
+    }
+    function wireAmbient(){
+      const a=document.getElementById('ambAudio');
+      document.getElementById('ambSel').addEventListener('change',e=>chooseAmbient(e.target.value));
+      document.getElementById('ambPlay').addEventListener('click',()=>{
+        a.volume=parseFloat(document.getElementById('ambVol').value||"0.35");
+        a.play().catch(()=>alert('Click the page once, then press Play (browser gesture rule).'));
+      });
+      document.getElementById('ambStop').addEventListener('click',()=>a.pause());
+      document.getElementById('ambVol').addEventListener('input',e=>a.volume=parseFloat(e.target.value));
+    }
+
+    /* ---------- Numerology helpers ---------- */
+    const VOWELS = new Set(['A','E','I','O','U']);
+    const LETTER_VAL = {A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,S:1,T:2,U:3,V:4,W:5,X:6,Y:7,Z:8};
+    const GROUPS = {1:'AJS',2:'BKT',3:'CLU',4:'DMV',5:'ENW',6:'FOX',7:'GPY',8:'HQZ',9:'IR'};
+    function digitSum(n){return n.toString().split('').reduce((a,b)=>a+(+b),0)}
+    function reduceNum(n){while(![11,22,33].includes(n) && n>9){n=digitSum(n)}return n}
+    function toYMD(dob){const d=new Date(dob);return {d,y:d.getFullYear(),m:d.getMonth()+1,day:d.getDate()}}
+    function numForDate(d){return reduceNum(digitSum(d.getFullYear())+digitSum(d.getMonth()+1)+digitSum(d.getDate()))}
+    function birthdayNumber(d){return reduceNum(d.getDate())}
+    function normalizeName(raw){const c=(raw||'').trim().replace(/\s+/g,' ');return {display:c,normUpper:c.toUpperCase()}}
+    function isVowelLike(ch,prev,next){if(VOWELS.has(ch))return true; if(ch==='Y'){const p=prev&&VOWELS.has(prev), n=next&&VOWELS.has(next); return (!p&&!n)} return false}
+    function lettersOnlyUpper(s){return (s||'').replace(/[^A-Z]/g,'')}
+    function nameNumbers(fullUpper){
+      const words=fullUpper.split(/\s+/).filter(Boolean);
+      let vowelsTotal=0, consonantsTotal=0, total=0; const present=new Set();
+      const counts={1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
+      for(const w of words){
+        for(let i=0;i<w.length;i++){
+          const ch=w[i]; if(!/[A-Z]/.test(ch)) continue;
+          const val=LETTER_VAL[ch]; total+=val; present.add(val); counts[val]++;
+          const prev=i>0?w[i-1]:null, next=i<w.length-1?w[i+1]:null;
+          if(isVowelLike(ch,prev,next)) vowelsTotal+=val; else consonantsTotal+=val;
+        }
+      }
+      const expression=reduceNum(total), soulUrge=reduceNum(vowelsTotal), personality=reduceNum(consonantsTotal);
+      const karmicLessons=[]; for(let n=1;n<=9;n++){ if(!present.has(n)) karmicLessons.push(n) }
+      let passion=1, mx=-1; for(let k=1;k<=9;k++){ if(counts[k]>mx){mx=counts[k]; passion=k} }
+      return {expression,soulUrge,personality, totals:{total,vowelsTotal,consonantsTotal}, karmicLessons, hiddenPassion:passion};
+    }
+    function maturityNumber(lifePath,expression){return reduceNum(lifePath+expression)}
+    function karmicDebtFlags(fullUpper,dob){
+      const rawTotal=lettersOnlyUpper(fullUpper).split('').reduce((a,ch)=>a+LETTER_VAL[ch],0);
+      const words=fullUpper.split(/\s+/).filter(Boolean); let vowelTotal=0;
+      for(const w of words){ for(let i=0;i<w.length;i++){const ch=w[i],p=i>0?w[i-1]:null,n=i<w.length-1?w[i+1]:null; if(/[A-Z]/.test(ch)&&isVowelLike(ch,p,n)) vowelTotal+=LETTER_VAL[ch]; } }
+      const consTotal=rawTotal - vowelTotal;
+      const d=new Date(dob); const yS=digitSum(d.getFullYear()), mS=digitSum(d.getMonth()+1), dS=digitSum(d.getDate());
+      const lifeRaw=digitSum(reduceNum(yS)+reduceNum(mS)+reduceNum(dS));
+      const debts=new Set(); const check=n=>{ if([13,14,16,19].includes(n)) debts.add(n) };
+      [rawTotal,vowelTotal,consTotal,yS,mS,dS,lifeRaw].forEach(check);
+      return Array.from(debts).sort((a,b)=>a-b);
+    }
+    function balanceNumber(fullUpper){
+      const parts=fullUpper.split(/\s+/).filter(Boolean);
+      const sum=parts.reduce((a,w)=>a+(LETTER_VAL[w[0]]||0),0);
+      return reduceNum(sum||0);
+    }
+    const NUM_TEXT = {
+      numbers:{
+        1:"Leadership, initiative, independence.",2:"Cooperation, diplomacy, sensitivity.",3:"Creativity, expression, joy.",
+        4:"Stability, systems, diligence.",5:"Change, freedom, adventure.",6:"Care, responsibility, harmony.",
+        7:"Analysis, mysticism, depth.",8:"Power, material mastery, authority.",9:"Compassion, service, completion.",
+        11:"Spiritual insight, inspiration (Master).",22:"Master builder, large-scale practicality (Master).",33:"Compassionate teacher, service (Master)."
+      },
+      lessons:{
+        1:"Develop independence and self-trust.",2:"Practise cooperation and sensitivity.",3:"Cultivate creativity and clear communication.",
+        4:"Build discipline and organisation.",5:"Balance freedom with responsibility.",6:"Nurture responsibility and harmony.",
+        7:"Grow inner wisdom and faith.",8:"Heal power/money patterns.",9:"Deepen compassion and perspective."
+      },
+      compat:{
+        1:{good:[3,5,9],bad:[4,6]},2:{good:[4,6,9],bad:[1,8]},3:{good:[1,5,7],bad:[4,8]},4:{good:[2,6,8],bad:[3,5]},
+        5:{good:[1,3,7],bad:[2,6]},6:{good:[2,4,9],bad:[5,7]},7:{good:[2,4,9],bad:[5,8]},8:{good:[4,6,9],bad:[2,3]},9:{good:[1,2,6],bad:[4,8]}
+      },
+      tarot:{
+        1:{majors:["The Magician (I)","Wheel of Fortune (X→1)","The Sun (XIX→1)"],zodiac:["—"]},
+        2:{majors:["The High Priestess (II)","Justice (XI→2)","Judgement (XX→2)"],zodiac:["Libra"]},
+        3:{majors:["The Empress (III)","The Hanged Man (XII→3)","The World (XXI→3)"],zodiac:["Pisces"]},
+        4:{majors:["The Emperor (IV)","Death (XIII→4)"],zodiac:["Aries","Scorpio"]},
+        5:{majors:["The Hierophant (V)","Temperance (XIV→5)"],zodiac:["Taurus","Sagittarius"]},
+        6:{majors:["The Lovers (VI)","The Devil (XV→6)"],zodiac:["Gemini","Capricorn"]},
+        7:{majors:["The Chariot (VII)","The Tower (XVI→7)"],zodiac:["Cancer"]},
+        8:{majors:["Strength (VIII)","The Star (XVII→8)"],zodiac:["Leo","Aquarius"]},
+        9:{majors:["The Hermit (IX)","The Moon (XVIII→9)"],zodiac:["Virgo"]}
+      }
+    };
+    function rootOf(n){return [11,22,33].includes(n)?(n===11?2:n===22?4:6):n}
+    function compatFor(n){return NUM_TEXT.compat[rootOf(n)]||{good:[],bad:[]}}
+
+    /* ---------- Connections / Personal Years ---------- */
+    const CONNECTION_RULES={
+      classic:{soulmateYears:[2,6],karmicYears:[7,9],twinYears:[1,2,6],includeDebtRootsInKarmic:true,includeCoreRootsInTwin:true},
+      steve:{soulmateYears:[2,3,6],karmicYears:[7,9],twinYears:[1,2,6],includeDebtRootsInKarmic:true,includeCoreRootsInTwin:true}
+    };
+    function reduceDateNum(n){return reduceNum(digitSum(n))}
+    function calcPinnaclesChallenges(d){
+      const dR=reduceDateNum(d.getDate()), mR=reduceDateNum(d.getMonth()+1), yR=reduceDateNum(d.getFullYear());
+      const life=reduceNum(dR+mR+yR);
+      const P1=reduceNum(mR+dR), P2=reduceNum(dR+yR), P3=reduceNum(P1+P2), P4=reduceNum(mR+yR);
+      const C1=reduceNum(Math.abs(mR-dR)), C2=reduceNum(Math.abs(dR-yR)), C3=reduceNum(Math.abs(C1-C2)), C4=reduceNum(Math.abs(mR-yR));
+      const firstEndAge=36-life;
+      return {lifePath:life,pinnacles:[P1,P2,P3,P4],challenges:[C1,C2,C3,C4],ages:[firstEndAge,firstEndAge+9,firstEndAge+18,null]};
+    }
+    function personalYearFor(date,bm,bd){
+      const y=date.getFullYear();
+      return reduceNum(reduceNum(digitSum(y))+reduceNum(digitSum(bm))+reduceNum(digitSum(bd)));
+    }
+    function timelinePersonalYears(dobStr,span=20){
+      const now=new Date(), start=now.getFullYear()-span, end=now.getFullYear()+span;
+      const d=new Date(dobStr), bm=d.getMonth()+1, bd=d.getDate(), rows=[];
+      for(let y=start;y<=end;y++){ const dt=new Date(y,6,1); rows.push({year:y,age:y-d.getFullYear(),personalYear:personalYearFor(dt,bm,bd)}) }
+      return rows;
+    }
+    function buildTimeline(rows,chart,presetKey){
+      const rules=CONNECTION_RULES[presetKey]||CONNECTION_RULES.classic;
+      const lfRoot=rootOf(chart.lifePath), exRoot=rootOf(chart.expression);
+      const tfTargets=new Set(rules.twinYears.concat(rules.includeCoreRootsInTwin?[lfRoot,exRoot]:[]));
+      const wrap=document.getElementById('timeline'); wrap.innerHTML='';
+      rows.forEach(r=>{
+        const dot=document.createElement('div'); dot.className='dot'; dot.title=`Year ${r.year} • Age ${r.age} • PY ${r.personalYear}`;
+        if(rules.soulmateYears.includes(r.personalYear)) dot.classList.add('soulmate');
+        if(rules.karmicYears.includes(r.personalYear)) dot.classList.add('karmic');
+        if(tfTargets.has(r.personalYear)) dot.classList.add('twin');
+        if(r.year===(new Date()).getFullYear()) dot.classList.add('now');
+        const label=document.createElement('div'); label.className='dot-label'; label.textContent=`${r.year}\nPY ${r.personalYear}`; dot.appendChild(label);
+        wrap.appendChild(dot);
+      });
+    }
+    function luckyCalendar(dobStr){
+      const today=new Date(), y=today.getFullYear(), m=today.getMonth(), last=new Date(y,m+1,0);
+      const d=new Date(dobStr), bm=d.getMonth()+1, bd=d.getDate();
+      const pm=reduceNum(reduceNum(digitSum(m+1))+reduceNum(digitSum(bm))+reduceNum(digitSum(bd)));
+      const grid=document.getElementById('luckyCalendar'); grid.innerHTML='';
+      const comp=compatFor(numForDate(d));
+      for(let day=1;day<=last.getDate();day++){
+        const el=document.createElement('div'); el.className='cal-cell'; const pd=reduceNum(pm+reduceNum(digitSum(day)));
+        el.textContent=day; el.title=`Personal Day ${pd}`;
+        if(comp.good.includes(pd)) el.classList.add('good'); if(comp.bad.includes(pd)) el.classList.add('bad'); if(day===today.getDate()) el.classList.add('today');
+        grid.appendChild(el);
+      }
+    }
+    function pickWindows(chart,dobStr,presetKey){
+      const rules=CONNECTION_RULES[presetKey]||CONNECTION_RULES.classic;
+      const rows=timelinePersonalYears(dobStr,12);
+      const soulmateYears=rows.filter(r=>rules.soulmateYears.includes(r.personalYear));
+      const karmicRootSet=new Set(chart.karmicDebts.map(d=>reduceNum(d)));
+      let karmicYears=rows.filter(r=>rules.karmicYears.includes(r.personalYear));
+      if(rules.includeDebtRootsInKarmic){ karmicYears=rows.filter(r=>rules.karmicYears.includes(r.personalYear)||karmicRootSet.has(r.personalYear)) }
+      const tfTargets=new Set((rules.twinYears||[]).concat(rules.includeCoreRootsInTwin?[rootOf(chart.lifePath),rootOf(chart.expression)]:[]));
+      const tfYears=rows.filter(r=>tfTargets.has(r.personalYear));
+      return {rows,soulmateYears,karmicYears,tfYears,rules};
+    }
+    function connectionsBlock(chart,dobStr,presetKey){
+      const w=pickWindows(chart,dobStr,presetKey);
+      const nice=list=>list.map(r=>`${r.year} (age ${r.age})`).join(', ')||'—';
+      return `
+        <p class="hint">Preset: <strong>${presetKey==='steve'?"Steve's House":"Classic (v2.3)"}</strong></p>
+        <p><strong>Soulmate-favoured years:</strong> ${nice(w.soulmateYears)}</p>
+        <p><strong>Karmic-teaching years:</strong> ${nice(w.karmicYears)}</p>
+        <p><strong>Twin flame resonance:</strong> ${nice(w.tfYears)}</p>
+      `;
+    }
+
+    /* ---------- Name Resonance ---------- */
+    const NAMES_BY_LETTER={
+      A:["Alex","Aiden","Ava","Aria","Ada","Amir"],B:["Ben","Bianca","Blake","Bella","Brody","Brielle"],
+      C:["Caleb","Chloe","Cora","Cody","Cara","Cyrus"],D:["Dylan","Daisy","Derek","Dana","Dante","Delia"],
+      E:["Eli","Eva","Evan","Esme","Ethan","Eden"],F:["Felix","Faith","Freya","Fiona","Flynn","Farah"],
+      G:["Grace","Gavin","Gia","Gabe","Gwen","Gio"],H:["Hugo","Hazel","Henry","Heidi","Hannah","Harley"],
+      I:["Iris","Isaac","Irene","Indie","Imogen","Ian"],J:["Jules","Jade","James","Juno","Jonah","Josie"],
+      K:["Kai","Kara","Kieran","Knox","Keira","Kobe"],L:["Leo","Lila","Liam","Lola","Logan","Leia"],
+      M:["Maya","Milo","Mia","Miles","Maris","Morgan"],N:["Noah","Nina","Nora","Nate","Nova","Neve"],
+      O:["Omar","Olive","Owen","Opal","Oona","Oscar"],P:["Poppy","Paige","Piper","Parker","Pedro","Pearl"],
+      Q:["Quinn","Quincy","Queenie","Quentin","Quinlan","Quest"],R:["Riley","Rosa","Rowan","Ruby","Ronan","Rhea"],
+      S:["Skyler","Sage","Sofia","Simon","Sienna","Silas"],T:["Theo","Tara","Tess","Trent","Tyler","Talia"],
+      U:["Una","Uri","Ulysses","Unity","Ulric","Umber"],V:["Violet","Vera","Victor","Veda","Valen","Vince"],
+      W:["Willow","Wren","Wade","Willa","Wyatt","Wynn"],X:["Xena","Ximena","Xavier","Xia","Xander","Xavi"],
+      Y:["Yara","Yuri","Yasmin","Yosef","Yael","Yvette"],Z:["Zoe","Zara","Zain","Zeke","Zelda","Zuri"]
+    };
+    function nameResonanceBlock(lifePath){
+      const LETTER_GROUPS={1:'AJS',2:'BKT',3:'CLU',4:'DMV',5:'ENW',6:'FOX',7:'GPY',8:'HQZ',9:'IR'};
+      const NUM_COMPAT=NUM_TEXT.compat;
+      const root=rootOf(lifePath), targets=(NUM_COMPAT[root]||{good:[]}).good;
+      const clusters=targets.map(n=>LETTER_GROUPS[n]).filter(Boolean);
+      const letters=clusters.join('').split(''); const bag=[];
+      for(const L of letters){const list=NAMES_BY_LETTER[L]||[]; for(const n of list){if(!bag.includes(n)) bag.push(n)} if(bag.length>=12) break;}
+      const clusterPretty=clusters.map(s=>s.split('').join('/')).join(' • ');
+      return `<p><strong>Compatible number targets (Life Path ${lifePath}):</strong> ${targets.join(', ')||'—'}</p>
+              <p><strong>Initial clusters to notice:</strong> ${clusterPretty||'—'}</p>
+              <p><strong>Example first names with matching number:</strong> ${bag.join(', ')||'—'}</p>
+              <p class="hint">Cycles repeat every 9 years. Treat as timings to notice, not fixed destiny.</p>`;
+    }
+
+    /* ---------- Narration ---------- */
+    let VOICES=[];
+    function loadVoices(){
+      if(!('speechSynthesis' in window)) return;
+      VOICES=window.speechSynthesis.getVoices();
+      const sel=document.getElementById('voiceSel'); sel.innerHTML='';
+      VOICES.forEach((v,i)=>{const o=document.createElement('option');o.value=i;o.textContent=`${v.name} (${v.lang})`; sel.appendChild(o)});
+      const preferred=['Microsoft Sonia Online (Natural) - English (United Kingdom)','Microsoft Libby Online (Natural) - English (United Kingdom)','Google UK English Female','Microsoft Hazel Desktop - English (Great Britain)'];
+      let idx=VOICES.findIndex(v=>preferred.includes(v.name));
+      if(idx===-1) idx=VOICES.findIndex(v=>/en-GB/i.test(v.lang)&&/female/i.test(v.name));
+      if(idx===-1) idx=VOICES.findIndex(v=>/en-GB/i.test(v.lang));
+      if(idx<0) idx=0; sel.selectedIndex=idx;
+    }
+    if('speechSynthesis' in window){ window.speechSynthesis.onvoiceschanged=loadVoices; setTimeout(loadVoices,200) }
+    function moodSettings(m){ if(m==='mysterious') return {rate:0.8,pitch:0.9}; if(m==='empowering') return {rate:0.95,pitch:1.05}; return {rate:0.85,pitch:1.0} }
+    function speakText(text){
+      if(!('speechSynthesis' in window)) { alert('Speech synthesis not supported here.'); return; }
+      window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text);
+      const v=document.getElementById('voiceSel').value; if(VOICES[v]) u.voice=VOICES[v];
+      const mood=moodSettings(document.getElementById('moodSel').value);
+      const rate=parseFloat(document.getElementById('rateSel').value)||mood.rate;
+      u.rate=rate; u.pitch=mood.pitch; u.volume=1.0; window.speechSynthesis.speak(u);
+    }
+
+    /* ---------- UI helpers ---------- */
+    function setText(id,t){ document.getElementById(id).textContent=t }
+    function renderSigil(text){
+      const box=document.getElementById('sigilBox'); box.innerHTML='';
+      const svgNS='http://www.w3.org/2000/svg', svg=document.createElementNS(svgNS,'svg');
+      svg.setAttribute('viewBox','0 0 400 120'); svg.classList.add('sigil-svg');
+      const t=document.createElementNS(svgNS,'text'); t.setAttribute('x','20'); t.setAttribute('y','80'); t.setAttribute('class','sigil-stroke'); t.textContent=text||'—';
+      svg.appendChild(t); box.appendChild(svg);
+    }
+    function renderChart(chart){
+      const grid=document.getElementById('chartGrid'); grid.innerHTML='';
+      const rows=[['Life Path',chart.lifePath],['Expression',chart.expression],['Soul Urge',chart.soulUrge],['Personality',chart.personality],['Birthday',chart.birthday],['Maturity',chart.maturity]];
+      for(const [label,val] of rows){
+        const r=document.createElement('div'); r.className='num-row';
+        r.innerHTML=`<div class="num-label">${label}</div><div class="num-val">${val}</div><div class="num-mean">${NUM_TEXT.numbers[val]||''}</div>`;
+        grid.appendChild(r);
+      }
+      if(chart.karmicDebts?.length){
+        const r=document.createElement('div'); r.className='num-row'; r.innerHTML=`<div class="num-label">Karmic Debts</div><div class="num-val">${chart.karmicDebts.join(', ')}</div><div class="num-mean">Patterns to balance</div>`; grid.appendChild(r);
+      }
+      if(chart.karmicLessons?.length){
+        const list=chart.karmicLessons.map(n=>`<li><strong>${n}:</strong> ${NUM_TEXT.lessons[n]}</li>`).join('');
+        const r=document.createElement('div'); r.className='num-row'; r.innerHTML=`<div class="num-label">Karmic Lessons</div><div class="num-val">${chart.karmicLessons.join(', ')}</div><div class="num-mean"><ul>${list}</ul></div>`; grid.appendChild(r);
+      }
+      document.getElementById('chartExplain').innerHTML=(()=>{
+        function block(title,value){
+          const root=[11,22,33].includes(value)?(value===11?2:value===22?4:6):value;
+          const comp=NUM_TEXT.compat[root]||{good:[],bad:[]};
+          const tarot=NUM_TEXT.tarot[root]; const majors=tarot?tarot.majors.join(', '):'—'; const zodiac=tarot?(tarot.zodiac.join(' & ')||'—'):'—';
+          const meaning=NUM_TEXT.numbers[value]||'';
+          return `<h4>${title}: ${value}</h4><p><em>${meaning}</em></p><p><strong>Compatible:</strong> ${comp.good.join(', ')||'—'} &nbsp; • &nbsp; <strong>Challenging:</strong> ${comp.bad.join(', ')||'—'}</p><p><strong>Tarot:</strong> ${majors}<br/><strong>Zodiac link:</strong> ${zodiac}</p>`;
+        }
+        return [block('Life Path',chart.lifePath),block('Expression / Destiny',chart.expression),block('Soul Urge / Heart\'s Desire',chart.soulUrge),block('Personality',chart.personality),block('Birthday Number',chart.birthday),block('Maturity / Realization',chart.maturity)].join('\n');
+      })();
+    }
+
+    /* ---------- PDF + Card + Copy ---------- */
+    function saveAsPDF(){ window.print() }
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight){
+      const words=text.split(' '); let line='';
+      for(let n=0;n<words.length;n++){ const test=line+words[n]+' '; if(ctx.measureText(test).width>maxWidth && n>0){ ctx.fillText(line,x,y); line=words[n]+' '; y+=lineHeight; } else { line=test; } }
+      ctx.fillText(line,x,y);
+    }
+    function makeMysticCard(){
+      const c=document.getElementById('cardCanvas'), ctx=c.getContext('2d');
+      ctx.fillStyle='#040806'; ctx.fillRect(0,0,c.width,c.height);
+      ctx.strokeStyle='#00ff88'; ctx.lineWidth=6; ctx.strokeRect(24,24,c.width-48,c.height-48);
+      const guide=document.getElementById('guideName').textContent, life=document.getElementById('lifePath').textContent;
+      ctx.fillStyle='#d6ffe9'; ctx.font='bold 64px Arial'; ctx.fillText('Spirit Guide',60,120);
+      ctx.font='bold 56px Arial'; ctx.fillText(guide,60,200);
+      ctx.font='bold 48px Arial'; ctx.fillText(life,60,280);
+      const mantra=document.getElementById('mantra').textContent; ctx.font='28px Arial'; wrapText(ctx,`“${mantra}”`,60,360,960,36);
+      ctx.font='48px Courier New'; ctx.fillText('Sigil:',60,1000);
+      const sig=document.getElementById('sigilBox').innerText.trim()||'—'; ctx.fillText(sig,60,1060);
+      const url=c.toDataURL('image/png'); const a=document.createElement('a'); a.href=url; a.download='MysticCard.png'; a.click();
+    }
+
+    /* ---------- Data (guides) with safe fallback ---------- */
+    async function loadGuides(){
+      try{
+        const res=await fetch('backstories_full_fixed.json',{cache:'no-store'});
+        if(res.ok){ const data=await res.json(); const arr=data.guides||data; if(Array.isArray(arr)&&arr.length) return arr; }
+      }catch(e){}
+      return [{
+        id:"mireth", name:"Mireth", element:"Forest", domains:["Growth","Patience","Tending"],
+        backstory:"Mireth walks with dirt under their nails and a calendar of seed catalogues in their head. In cloisters built of cedar, they trained gardeners who could read a year by the smell of the soil. If Mireth visits you, life is asking for stewardship, not spectacle. Start where you are soft: water the plant, sort the drawer, reply to the kindest email first. Growth, they insist, is mostly chores performed with respect. Mireth’s patience is not passive. It is attentive. They will teach you to prune what steals light—old obligations, tired self-images, commitments that once were kind but now are cages. Under their care, you’ll notice how many miracles happen at countertop height: bread rising, glue drying, ideas sprouting while you wash a bowl. You will learn to track your seasons and trust them. Winter is for roots. Spring is for experiments. Summer is for stamina. Autumn is for thanks and editing. With Mireth, you will become a student of maintenance as devotion. Your future wants to be fed. Put habits where your hands already go. Keep your tools visible and your expectations humane. Praising small progress will feel like rain. In a year, people will ask how you got so lucky. You’ll smile and point to the watering can.",
+        mantra:"I tend the small so the great can grow.", keywords:["seed","tend","prune","root","harvest"], sigil:"✿"
+      }];
+    }
+
+    /* ---------- App boot ---------- */
+    (async function(){
+      document.getElementById('year').textContent=new Date().getFullYear();
+      wireAmbient();
+
+      const GUIDES=await loadGuides();
+      const LS_KEY="spiritGuideResult_v2_6";
+      let lastChart=null, lastDob=null;
+
+      // preset switch
+      document.getElementById('presetSel').addEventListener('change',()=>{
+        if(lastChart&&lastDob){
+          document.getElementById('connections').innerHTML=connectionsBlock(lastChart,lastDob,document.getElementById('presetSel').value);
+          buildTimeline(timelinePersonalYears(lastDob,20),lastChart,document.getElementById('presetSel').value);
+        }
+      });
+
+      // submit
+      document.getElementById('guideForm').addEventListener('submit',(e)=>{
+        e.preventDefault();
+        const rawName=document.getElementById('name').value;
+        const dobStr=document.getElementById('dob').value;
+        const intent=document.getElementById('intent').value.trim();
+        if(!rawName||!dobStr){ alert('Please enter your name and date of birth.'); return; }
+
+        const {display,normUpper}=normalizeName(rawName);
+        const {d}=toYMD(dobStr);
+        const lifePath=numForDate(d), bday=birthdayNumber(d);
+        const nameNums=nameNumbers(normUpper);
+        const maturity=maturityNumber(lifePath,nameNums.expression);
+        const debts=karmicDebtFlags(normUpper,dobStr);
+        const chart={
+          lifePath, expression:nameNums.expression, soulUrge:nameNums.soulUrge, personality:nameNums.personality,
+          birthday:bday, maturity, karmicDebts:debts, karmicLessons:nameNums.karmicLessons,
+          hiddenPassion:nameNums.hiddenPassion, balance:balanceNumber(normUpper)
+        };
+
+        const composite=`${normUpper}|${dobStr}|${chart.lifePath}|${chart.expression}|${chart.soulUrge}|${chart.personality}|${chart.birthday}|${chart.maturity}|${chart.karmicDebts.join('-')}|${chart.karmicLessons.join('-')}`;
+        const seedVal=(composite.length + composite.split('').reduce((a,c)=>a+c.charCodeAt(0),0))>>>0;
+        const idx=GUIDES.length? (seedVal % GUIDES.length) : 0;
+        const guide=GUIDES[idx] || GUIDES[0];
+
+        setText('guideName',guide.name);
+        setText('guideMeta',`${guide.element} • ${guide.domains.join(' • ')}`);
+        setText('lifePath',`Life Path ${lifePath}`);
+        setText('seedOut',`Seed ${seedVal}`);
+        setText('backstory',guide.backstory);
+        setText('mantra',guide.mantra || "I align with my guide's wisdom and act with clarity.");
+        renderSigil(guide.sigil||'—');
+        const kwEl=document.getElementById('keywords'); kwEl.innerHTML=''; (guide.keywords||[]).forEach(k=>{const li=document.createElement('li'); li.textContent=k; kwEl.appendChild(li)});
+
+        renderChart(chart);
+        document.getElementById('connections').innerHTML=connectionsBlock(chart,dobStr,document.getElementById('presetSel').value);
+        buildTimeline(timelinePersonalYears(dobStr,20),chart,document.getElementById('presetSel').value);
+        luckyCalendar(dobStr);
+        document.getElementById('nameResonance').innerHTML=nameResonanceBlock(chart.lifePath);
+
+        lastChart=chart; lastDob=dobStr;
+
+        const payload={user:{fullName:display,dob:dobStr,intent}, selectedId:guide.id, seed:seedVal, chart, when:new Date().toISOString()};
+        localStorage.setItem(LS_KEY,JSON.stringify(payload));
+
+        document.getElementById('formSection').classList.add('hidden');
+        document.getElementById('resultSection').classList.remove('hidden');
+      });
+
+      // demo
+      document.getElementById('demoBtn').addEventListener('click',()=>{
+        document.getElementById('name').value='Demo User';
+        document.getElementById('dob').value='1990-08-17';
+        document.getElementById('guideForm').requestSubmit();
+      });
+
+      // copy / reset / exports
+      document.getElementById('copyBtn').addEventListener('click',()=>{
+        const guide=document.getElementById('guideName').textContent;
+        const mantra=document.getElementById('mantra').textContent;
+        const back=document.getElementById('backstory').textContent;
+        const chart=document.getElementById('chartExplain').innerText+"\n\n"+document.getElementById('connections').innerText;
+        const txt=`${guide}\nMantra: ${mantra}\n\nBackstory:\n${back}\n\nInsights:\n${chart}`;
+        navigator.clipboard.writeText(txt).then(()=>alert('Copied!')).catch(()=>alert('Copy failed.'));
+      });
+      document.getElementById('resetBtn').addEventListener('click',()=>location.reload());
+      document.getElementById('pdfBtn').addEventListener('click',saveAsPDF);
+      document.getElementById('cardBtn').addEventListener('click',makeMysticCard);
+
+      // narration buttons
+      document.getElementById('speakBtn').addEventListener('click',()=>{
+        const guide=document.getElementById('guideName').textContent;
+        const mantra=document.getElementById('mantra').textContent;
+        const back=document.getElementById('backstory').textContent;
+        const chart=document.getElementById('chartExplain').innerText+" "+document.getElementById('connections').innerText;
+        const txt=`${guide}. Mantra: ${mantra}. Backstory: ${back}. Insights: ${chart}`;
+        speakText(txt);
+      });
+      document.getElementById('stopSpeakBtn').addEventListener('click',()=>window.speechSynthesis?.cancel());
+    })();
+  </script>
+</body>
+</html>

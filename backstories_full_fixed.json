@@ -4,21 +4,181 @@
       "id": "mireth",
       "name": "Mireth",
       "element": "Forest",
-      "domains": [
-        "Growth",
-        "Patience",
-        "Tending"
-      ],
-      "backstory": "Mireth walks with dirt under their nails and a calendar of seed catalogues in their head...",
+      "domains": ["Growth","Patience","Tending"],
+      "sigil": "✿",
+      "keywords": ["seed","tend","prune","root","harvest"],
       "mantra": "I tend the small so the great can grow.",
-      "keywords": [
-        "seed",
-        "tend",
-        "prune",
-        "root",
-        "harvest"
-      ],
-      "sigil": "\u273f"
+      "backstory": "Mireth walks with dirt under their nails and a calendar of seed catalogues in their head. In cloisters built of cedar, they trained gardeners who could read a year by the smell of the soil. If Mireth visits you, life is asking for stewardship, not spectacle. Start where you are soft: water the plant, sort the drawer, reply to the kindest email first. Growth, they insist, is mostly chores performed with respect. Mireth’s patience is not passive. It is attentive. They will teach you to prune what steals light—old obligations, tired self-images, commitments that once were kind but now are cages. Under their care, you’ll notice how many miracles happen at countertop height: bread rising, glue drying, ideas sprouting while you wash a bowl. You will learn to track your seasons and trust them. Winter is for roots. Spring is for experiments. Summer is for stamina. Autumn is for thanks and editing. With Mireth, you will become a student of maintenance as devotion. Your future wants to be fed. Put habits where your hands already go. Keep your tools visible and your expectations humane. Praise small progress like rain; it will change the climate inside you. When you forget, Mireth will point to a sapling that survived a storm because it could bend. What bends is not weak; it is designed to live. A year from now, people will say you are lucky. You will smile, and point to the watering can, the tidy drawer, the ten quiet minutes you kept like an oath. This is Mireth’s miracle: ordinary kindness applied on schedule until it becomes fate."
+    },
+    {
+      "id": "ashriel",
+      "name": "Ashriel",
+      "element": "Ember",
+      "domains": ["Courage","Initiation","Truth"],
+      "sigil": "ᛉ",
+      "keywords": ["spark","oath","threshold","forge","start"],
+      "mantra": "I light the honest fire and step through.",
+      "backstory": "Ashriel arrives like the click of a flint: brief, bright, undeniable. They stand at thresholds—studio doors at dawn, inboxes that hide brave emails, mornings when the old story no longer fits. Their apprenticeship was taken in a smithy that hammered fear into tools. There they learned that courage is not noise; it is precise heat. Ashriel’s cloak smells faintly of smoke and pine; their hands are nicked from undoing the wire around other people’s throats. When Ashriel walks with you, choices stop pretending they are complicated. You know what to do; the ache is not confusion but reluctance. Ashriel will ask for a vow spoken plainly. They will ask you to keep it for seven days, then seven more. They will show you how to burn only what must be burned: excuses, stale permissions, rituals of delay. Fire is a teacher of timing. Too soon, and you scorch the seed. Too late, and the frost wins. Ashriel will tune your sense of ‘now’ until it rings. They adore first steps, not because they are dramatic but because they are specific. One email sent. One invoice priced fairly. One video recorded in your unglamorous real voice. They will not flatter you. They will hand you a small brass key and say, ‘Use it.’ The door it opens is the one you have circled for months. Past that door, practice will replace panic. You will be startled by how kind your life can become when you stop arguing with your task. Ashriel loves beginnings the way sailors love dawn: not as decoration, but as a condition for crossing."
+    },
+    {
+      "id": "kaelith",
+      "name": "Kaelith",
+      "element": "Tide",
+      "domains": ["Intuition","Cycles","Release"],
+      "sigil": "≈",
+      "keywords": ["ebb","flow","dream","moon","return"],
+      "mantra": "I move with the tide and trust my return.",
+      "backstory": "Kaelith speaks in the grammar of waves. They do not scold you for ebbing; they teach you to ebb well. In their company, you stop calling rest a failure and begin to call it a tide chart. They once kept a light in a cliffside chapel where sailors left their tangled nets and their tangled hearts. Kaelith’s lantern still smells of salt and old prayers. They will help you track the repeating weather inside your life: the seventh-day sadness that is just a need for water, the twelfth-week doubt that means you are about to grow. Kaelith collects discarded ropes and braids them into new lines; they will do the same with your stories. What left returns, but as a different current. They will teach you the ritual of laying burdens down deliberately: a list for the sea, a stone for the pocket, a breath counted to nine. They love tools that reset you to human: hot showers, soft music, phone-free walks. Under their guidance, your intuition stops arriving as static and instead arrives as a tide timetable: not constant, but reliable. Kaelith will not push you into the water; they will walk the shore beside you until the sea stands up and speaks. When grief swells, they will hand you a bucket and ask you to carry only the next small pail to the garden. Salt, in right measure, preserves. Release, in right measure, creates room. With Kaelith, forgiveness becomes a shoreline you can actually find again. You will notice that your life breathes, and that your art does, too. The world is tidal; you are allowed to be as well."
+    },
+    {
+      "id": "seliora",
+      "name": "Seliora",
+      "element": "Sky",
+      "domains": ["Vision","Inspiration","Clarity"],
+      "sigil": "☽",
+      "keywords": ["horizon","eagle","breath","song","light"],
+      "mantra": "I rise above to see what is true.",
+      "backstory": "Seliora appears as a whisper of wind lifting your chin when you have been staring too long at your feet. Her domain is the sky and all the visions it contains. In her presence, you learn that clarity is not a sudden bolt but a gradual widening of view. Seliora once kept a library at the top of a tower where each book was bound with a feather. She taught her students to climb not for conquest but for perspective. She knows when your gaze has collapsed into the narrow tunnel of worry, and she will send you to a hilltop or rooftop until you remember the horizon exists. Her gift is to transform stale plans into fresh visions by insisting you breathe and look again. Under her tutelage, you will collect signs from birds, clouds, and sudden songs on the radio. These are not accidents but signals reminding you that vision requires altitude. Seliora will often ask: ‘If you were an eagle, what would this look like?’ She will remind you that inspiration comes when the lungs are full, not when they are clenched. With her, you will practice the art of stepping back before you step forward. Her wisdom insists that distance does not mean detachment; it means depth. By learning to rise above, you will see what is true, and the choices that felt impossible will become obvious pathways, etched like rivers seen from the air."
+    },
+    {
+      "id": "thren",
+      "name": "Thren",
+      "element": "Stone",
+      "domains": ["Endurance","Memory","Foundation"],
+      "sigil": "▲",
+      "keywords": ["mountain","cairn","weight","echo","legacy"],
+      "mantra": "I endure, I remember, I hold firm.",
+      "backstory": "Thren embodies the patience of mountains and the endurance of stone. When they arrive, it is usually at a moment when you want to give up, when the weight feels too much. Thren teaches that weight is not always punishment; sometimes it is proof of strength. They once guarded a valley where travelers left stones in cairns to mark their passage, each rock a testimony that someone had endured before. Thren’s cloak is grey as granite, and in its folds you can hear the echoes of ancestors. Their lesson is to anchor yourself in memory and to let the past steady you, not shackle you. They will ask you to choose one small practice and keep it, no matter how stormy life becomes. For Thren, endurance is sacred: each repetition lays another stone in your foundation. They will show you how to build cairns of memory in your daily life—journals, rituals, or even small physical objects that remind you of progress. Under their gaze, you will understand that survival itself is an achievement, and that standing firm is sometimes more heroic than running ahead. Thren will not let you romanticise struggle, but they will sanctify perseverance. When the time comes, they will help you use your weight not as a burden but as leverage to move mountains within."
+    },
+    {
+      "id": "elyndra",
+      "name": "Elyndra",
+      "element": "River",
+      "domains": ["Healing","Compassion","Flow"],
+      "sigil": "♒",
+      "keywords": ["water","stream","soothe","embrace","release"],
+      "mantra": "I let compassion flow through me.",
+      "backstory": "Elyndra moves like water through stones, soft yet relentless. She arrives when your heart has grown tight from hurt and you need the medicine of flow. In ancient times, Elyndra was a healer who bathed wounds not only with herbs but with songs. Her riverside hut became a sanctuary for the weary, and travelers carried vials of her water for comfort. Elyndra’s energy wraps you in compassion, teaching that healing is not fixing but flowing again. She will remind you that forgiveness is not condoning but choosing not to stagnate. Under her guidance, you will learn rituals of release: writing sorrows on paper and letting them drift downstream, or singing until tears come and the dam breaks. Elyndra loves when you let yourself be porous, allowing emotions to move through without judgment. She will place in your hand a smooth river stone and tell you to hold it until it warms, proof that even cold heaviness can change with enough contact. With Elyndra, compassion becomes not a lofty ideal but a daily practice: kind words, gentle self-talk, allowing yourself to rest. She insists that tenderness is powerful because it endures where force fails. Under her influence, you will find that your pain becomes not a prison but a passage, leading you back into the living current of life."
+    },
+    {
+      "id": "voriel",
+      "name": "Voriel",
+      "element": "Flame",
+      "domains": ["Transformation","Passion","Purification"],
+      "sigil": "🔥",
+      "keywords": ["ignite","purge","ardor","phoenix","fuel"],
+      "mantra": "I burn away the false and live with passion.",
+      "backstory": "Voriel is the spirit of fire in its most transformative form. They stride into your life when something false must be burned away. Their eyes are coals, their voice a forge. In legend, Voriel tended a fire that never went out, into which the people cast lies, fears, and disguises, watching them dissolve to ash. Voriel teaches that passion is a fuel and a purifier; it reveals truth by burning away illusion. They will press you to ask: ‘What is worth my fire?’ Under their tutelage, hesitation cannot survive. You will be encouraged to throw old masks into the flames: jobs that suffocate, relationships that extinguish, stories you tell yourself out of fear. Voriel’s lesson is not destruction for its own sake but sacred combustion. They know that ashes fertilise new soil. With them, you will find your desire again, not as reckless hunger but as steady heat that warms and lights. They will give you permission to want fiercely and to pursue what enlivens you. With Voriel, transformation is not optional—it is inevitable. But they promise: what you become will be truer and brighter than what you leave behind. Fire, wielded with reverence, is your birthright."
+    },
+    {
+      "id": "lysara",
+      "name": "Lysara",
+      "element": "Moon",
+      "domains": ["Dreams","Mystery","Subconscious"],
+      "sigil": "☾",
+      "keywords": ["night","dream","veil","intuition","reflection"],
+      "mantra": "I embrace the mystery within and without.",
+      "backstory": "Lysara walks softly, carrying a lantern dim enough that shadows remain. She is the guide of dreams and mysteries, calling you to trust what cannot yet be explained. Once she was keeper of a temple where dreams were written on silver tablets and read at dawn. Lysara knows that much of your life is steered by what lies beneath awareness, and she invites you to court the subconscious as an ally. She will ask you to keep a dream journal, to note symbols that repeat, to pay attention to the language of your own night-time mind. Lysara does not demand clarity; she rewards curiosity. Under her care, you will learn that not-knowing can be fertile ground. She will ask you to sit with questions rather than rush for answers, to treat uncertainty as a holy companion. Her cloak is woven from moth wings, her eyes mirror the phases of the moon. With Lysara, intuition sharpens not by force but by attentiveness. She will show you how to move in twilight without fear, to sense the path when it is not fully lit. Her gift is comfort in ambiguity, and her challenge is patience with the unseen. When you learn her rhythm, you will find that mystery is not chaos but choreography yet to be revealed."
+    },
+    {
+      "id": "orvane",
+      "name": "Orvane",
+      "element": "Storm",
+      "domains": ["Power","Change","Awakening"],
+      "sigil": "⚡",
+      "keywords": ["thunder","wind","surge","breakthrough","shock"],
+      "mantra": "I awaken through upheaval and embrace new power.",
+      "backstory": "Orvane thunders into your life when calm has become complacency. They are the breaker of stasis, the storm that uproots what should no longer stand. Orvane once lived in a mountain pass, ringing bells to warn travelers when lightning split the sky. Their lesson is that chaos can be a catalyst; that storms do not come only to destroy but also to clear. When Orvane arrives, expect sudden shifts: truths revealed, structures collapsing, illusions shattered. It may feel like violence, but Orvane insists that it is medicine in a raw form. They ask you to stop hiding from disruption and to learn instead how to surf its power. You will be taught to ground yourself while winds roar, to see lightning as illumination not punishment. Orvane will remind you that every revolution in your life began with discomfort. Their cloak smells of ozone, their voice carries the weight of sky. Under their presence, you will find that upheaval reveals resources you did not know you had. Orvane’s challenge is trust: to accept that power comes not from clinging to what is safe but from awakening to what is real."
+    },
+    {
+      "id": "nymera",
+      "name": "Nymera",
+      "element": "Star",
+      "domains": ["Hope","Destiny","Guidance"],
+      "sigil": "✦",
+      "keywords": ["starlight","wish","direction","fate","promise"],
+      "mantra": "I follow the light of destiny with hope.",
+      "backstory": "Nymera is the glimmer you notice when everything feels dark. She appears as a star at the edge of despair, reminding you that destiny is not absent even when unseen. Legends say Nymera wove constellations as maps for those lost at sea. Her robe sparkles with points of light, each one a promise kept. She teaches that guidance often arrives as subtle nudges rather than shouts. Under her influence, you will learn to trust synchronicities, to regard chance encounters and repeated symbols as coordinates. Nymera will invite you to hold onto hope not as fantasy but as an orientation, a way to keep moving even when the path is dim. She will ask you to make wishes but also to act on them, to treat your dreams as compasses rather than decorations. With Nymera, you will discover that destiny is co-authored; the stars point, but your steps decide. Her challenge is patience: to remember that stars are far, and their promises unfold over time. Yet she promises: if you keep walking, the sky will always offer direction."
+    },
+    {
+      "id": "calvorn",
+      "name": "Calvorn",
+      "element": "Iron",
+      "domains": ["Discipline","Craft","Structure"],
+      "sigil": "⚒",
+      "keywords": ["forge","order","tool","precision","frame"],
+      "mantra": "I build with care, and discipline becomes freedom.",
+      "backstory": "Calvorn carries the scent of iron and oil, the rhythm of hammer on anvil. They are the patron of structure and discipline, arriving when your dreams are floating without form. In ancient lore, Calvorn built bridges across impossible chasms by insisting on exact measurements and unglamorous persistence. They know that inspiration without craft collapses. Their teaching is stern but liberating: discipline is not a prison but a frame that allows beauty to stand. Under their mentorship, you will be asked to choose tools—schedules, habits, craft practices—and use them consistently. Calvorn will not allow excuses but will celebrate every small act of construction. They believe that freedom emerges from form: the dancer from the practice, the poet from the metre, the artist from the line. With Calvorn, you will learn to forge chaos into order, to build a life that holds rather than leaks. Their gift is resilience through structure, their challenge is endurance. Those who persist with them will find themselves capable of bridges they never imagined crossing."
+    },
+    {
+      "id": "seraphe",
+      "name": "Seraphe",
+      "element": "Flame",
+      "domains": ["Love","Radiance","Devotion"],
+      "sigil": "❤",
+      "keywords": ["heart","glow","union","song","warmth"],
+      "mantra": "I shine love outward, and devotion is my flame.",
+      "backstory": "Seraphe glows like a hearth in the cold, a presence of love and warmth that melts defenses. She once tended sacred fires in a temple where couples and kin gathered to reconcile. Her power is radiant, not forceful; she teaches that love is less about drama and more about steady presence. With Seraphe, you will learn that devotion is daily and that love shines brightest in consistency. She will ask you to open your heart without performance, to give warmth not as transaction but as truth. Under her influence, you will find yourself speaking kinder words, making gentler gestures, and recognising that love is a practice as much as a passion. Seraphe’s lesson is that radiance is contagious: the light you offer multiplies around you. Yet she warns against martyrdom; devotion must include yourself. She will press you to tend your own flame so it does not go out while warming others. In her glow, reconciliation becomes possible, union becomes nourishing, and your life becomes lit by a fire that does not consume but sustains."
+    },
+    {
+      "id": "druath",
+      "name": "Druath",
+      "element": "Shadow",
+      "domains": ["Mystery","Depth","Transformation"],
+      "sigil": "☬",
+      "keywords": ["cave","veil","hidden","trial","darkness"],
+      "mantra": "I walk into shadow to be remade.",
+      "backstory": "Druath emerges from caves and moonless nights, a figure cloaked in silence and depth. They are not here to frighten but to transform. In myth, Druath guided initiates into labyrinths where they faced their fears and left as different beings. Their lesson is that shadow is not the enemy but the crucible. When Druath comes, you may feel stripped of certainty, pushed into encounters with your own hidden aspects. They will ask you to sit in discomfort, to resist the urge to flee from the unknown. Their voice is low as underground rivers, their eyes reflective as obsidian. Under their tutelage, you will learn to see in the dark, to interpret dreams, to navigate uncertainty with faith. Druath insists that darkness is not emptiness but potential unlit. They will not hand you answers; they will hold space until your own emerge. Their challenge is trust in process, their gift is rebirth. By walking into shadow willingly, you will discover transformation that daylight could never offer."
+    },
+    {
+      "id": "thalorin",
+      "name": "Thalorin",
+      "element": "Ocean",
+      "domains": ["Depth","Dreams","Collective"],
+      "sigil": "🌊",
+      "keywords": ["tide","song","depth","mystic","collective"],
+      "mantra": "I dive into the deep to hear the hidden song.",
+      "backstory": "Thalorin is the great ocean mind, carrying both the calm of glassy waters and the roar of storm waves. In myths, sailors dreamed of a figure who could hear the voices of all creatures in the deep; this was Thalorin. Their arrival signals that you are being invited to listen beneath the surface noise, into the collective unconscious and your own submerged truths. They are vast, and they will not let you stay only in the shallows. Thalorin may stir your dreams with whales, currents, or shipwrecks, reminding you that everything sunken still has value. Their teaching is that depth is not to be feared but to be explored. Under their presence, meditation will feel like immersion, and your sensitivity will sharpen. They will ask you to listen not just to words but to silences, not just to stories but to what the body remembers. Thalorin’s gift is connection—to history, to ancestry, to humanity’s shared heartbeat. Their challenge is vastness; they will ask you to swim with patience, to find pearls within the dark waters rather than fear them. In their company, you will know the ocean does not drown; it holds, teaches, and reveals."
+    },
+    {
+      "id": "avareen",
+      "name": "Avareen",
+      "element": "Flora",
+      "domains": ["Nurture","Abundance","Cycles"],
+      "sigil": "🌱",
+      "keywords": ["garden","bloom","harvest","nurture","season"],
+      "mantra": "I nurture what I plant and receive in season.",
+      "backstory": "Avareen appears with the fragrance of blooming gardens and the hum of bees. They are the guide of nurture and abundance, reminding you that tending faithfully leads to harvest. Ancient stories say Avareen walked with farmers, teaching them to trust seasons rather than panic at droughts. Their robes are embroidered with leaves and seeds, and their touch feels like sunlight. They teach patience, reminding you that everything has its time. Under Avareen’s guidance, you will be drawn to plant literal or symbolic seeds: projects, relationships, habits. They will ask you to water them consistently, neither over-forcing nor neglecting. Avareen delights in rituals of care—meal preparation, journaling, checking in with loved ones. They know that abundance is not only money but the feeling of enoughness that comes from rhythm and responsibility. Their gift is fertility in every sense: creativity, kindness, sustenance. Their challenge is trust: trusting that what you nurture will indeed grow, even when you cannot yet see shoots. Avareen insists that seasons are reliable; your part is simply to keep tending with love."
+    },
+    {
+      "id": "zorath",
+      "name": "Zorath",
+      "element": "Forge",
+      "domains": ["Will","Creation","Resilience"],
+      "sigil": "⚙",
+      "keywords": ["anvil","hammer","craft","resolve","spark"],
+      "mantra": "I forge my path with steady will.",
+      "backstory": "Zorath arrives with the clang of metal, the heat of foundries, and the smell of iron shaping. They are the spirit of will and resilience, reminding you that determination is as holy as inspiration. In myth, Zorath built gates that even armies could not break, not through brute strength but through unyielding craft. Their teaching is that the life you want will not appear; it must be forged, hammered, and refined. With Zorath, you will learn the dignity of persistence: the small daily blows that create permanence. They will ask you to set intentions and then follow through when excitement wanes. They will show you how to use resistance as fuel, how to hammer disappointment into a tool. Their cloak is singed, their hands calloused, their eyes bright with sparks. Zorath’s gift is resilience born of action. Their challenge is stubbornness; they will ask you to distinguish between holy persistence and destructive refusal. With Zorath, your willpower becomes a forge, and the shape of your life becomes your chosen creation."
+    },
+    {
+      "id": "isylith",
+      "name": "Isylith",
+      "element": "Frost",
+      "domains": ["Stillness","Purity","Reflection"],
+      "sigil": "❄",
+      "keywords": ["ice","mirror","pause","clarity","breath"],
+      "mantra": "I pause, I clear, I see truth reflected.",
+      "backstory": "Isylith comes cloaked in frost and silence, teaching the medicine of stillness. They are the spirit of winter pauses, when life slows and clarity can emerge. Ancient tales say Isylith lived in crystal caverns, listening to the world’s breath frozen in icicles. Their presence feels cooling, even austere, but also cleansing. When they walk with you, you will feel the urge to simplify, to strip away excess and noise. Isylith will teach you that silence is not emptiness but clarity forming. They will encourage you to pause before acting, to breathe before reacting. Their gift is purity: the ability to see what is essential. Their challenge is detachment; they will ask you to engage again after the pause, not to remain frozen. With Isylith, reflection becomes revelation. The mirror of their ice shows you truth without distortion. When their season ends, you will emerge refreshed, prepared to step forward with clarity sharper than ice itself."
+    },
+    {
+      "id": "velora",
+      "name": "Velora",
+      "element": "Song",
+      "domains": ["Expression","Harmony","Joy"],
+      "sigil": "🎵",
+      "keywords": ["voice","melody","lyric","vibration","joy"],
+      "mantra": "I express with joy; my song brings harmony.",
+      "backstory": "Velora is the muse of song, arriving whenever your voice has been silenced or forgotten. Legends tell of her harp that could tune the hearts of listeners to peace. She knows that sound is vibration, and vibration creates reality. With Velora, you will be invited to express yourself, not only in literal song but in honest speech, laughter, and creative sound. Her lesson is that joy is a frequency you can choose to broadcast. Under her guidance, you may find yourself humming unconsciously, seeking music, or speaking truths aloud. Velora loves celebrations where voices mingle, reminding you that harmony is communal. She will ask you to risk expression even when imperfect, to sing even when off-key. Velora’s gift is freedom through sound; her challenge is vulnerability. She knows that silence often masks fear, and she will push you to break it gently. With Velora’s presence, joy returns not as a luxury but as a practice—song woven into the daily fabric of life."
     }
   ]
 }

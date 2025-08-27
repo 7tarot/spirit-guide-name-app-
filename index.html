@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Spirit Guide App — Clean Start</title>
+<style>
+  body{background:#050a08;color:#d6ffe9;font-family:system-ui,Segoe UI,Roboto,Arial;margin:0;padding:24px}
+  .card{border:1px solid #00ff88;border-radius:12px;padding:16px;margin:16px auto;max-width:800px;box-shadow:0 0 16px #00ff8840}
+  input,button,select{background:#03150f;color:#d6ffe9;border:1px solid #00ff88;border-radius:8px;padding:8px 12px}
+  button{cursor:pointer;font-weight:bold}
+  .hidden{display:none}
+  .pill{border:1px solid #00ff88;border-radius:999px;padding:4px 10px;margin-left:6px}
+</style>
+
+<h1>Spirit Guide App — Clean Start</h1>
+
+<form id="f" class="card" novalidate>
+  <p><label>Full name<br><input id="name" placeholder="e.g. Steven John Abbott"></label></p>
+  <p><label>Birth date<br><input id="dob" type="date" value="1990-08-17"></label></p>
+  <p>
+    <button type="submit">Calculate</button>
+    <button type="button" id="demo">Demo</button>
+  </p>
+</form>
+
+<section id="res" class="card hidden">
+  <h2 id="gname"></h2>
+  <p id="gmeta"></p>
+  <p><span id="lp" class="pill"></span><span id="seed" class="pill"></span></p>
+  <h3>Backstory</h3>
+  <p id="back"></p>
+  <h3>Mantra</h3><blockquote id="mantra"></blockquote>
+  <h3>Name Resonance</h3><div id="nameRes"></div>
+
+  <h3>Ambient Sound</h3>
+  <select id="amb">
+    <option value="none">Ambient: Off</option>
+    <option value="rain">Ambient: Mystic Rain</option>
+  </select>
+  <button type="button" id="ambStop">Stop</button>
+  <audio id="ambAudio" loop></audio>
+</section>
+
+<script>
+  // Embedded fallback guide
+  const GUIDE = {
+    name:"Mireth",
+    element:"Forest",
+    domains:["Growth","Patience","Tending"],
+    backstory:"Mireth walks with dirt under their nails and a calendar of seed catalogues in their head...",
+    mantra:"I tend the small so the great can grow."
+  };
+
+  function digitSum(n){return n.toString().split('').reduce((a,b)=>a+(+b),0)}
+  function reduceNum(n){while(n>9)n=digitSum(n);return n}
+  function lifePath(d){return reduceNum(digitSum(d.getFullYear())+digitSum(d.getMonth()+1)+digitSum(d.getDate()))}
+
+  // Name resonance simple demo
+  const LETTER_GROUPS={1:'AJS',2:'BKT',3:'CLU',4:'DMV',5:'ENW',6:'FOX',7:'GPY',8:'HQZ',9:'IR'};
+  const NUM_COMPAT={1:{good:[3,5,9]},2:{good:[4,6,9]},3:{good:[1,5,7]},4:{good:[2,6,8]},5:{good:[1,3,7]},6:{good:[2,4,9]},7:{good:[2,4,9]},8:{good:[4,6,9]},9:{good:[1,2,6]}};
+
+  function nameResHints(lp){
+    const root=lp>9?(lp===11?2:lp===22?4:6):lp;
+    const targets=(NUM_COMPAT[root]||{good:[]}).good;
+    const clusters=targets.map(n=>LETTER_GROUPS[n]).filter(Boolean);
+    return `<p>Compatible targets: ${targets.join(', ')}</p>
+            <p>Initial clusters: ${clusters.join(' • ')}</p>`;
+  }
+
+  // Ambient
+  const AMBIENT={rain:"ambient/binaural.mp3"};
+  function setAmbient(k){
+    const a=document.getElementById('ambAudio');
+    if(k==="none"){a.pause();a.removeAttribute('src');return;}
+    a.src=AMBIENT[k]; a.volume=0.35; a.play().catch(()=>{});
+  }
+
+  function show(){
+    const nm=document.getElementById('name').value||"Demo User";
+    const dob=document.getElementById('dob').value||"1990-08-17";
+    const d=new Date(dob); const lp=lifePath(d);
+    const seed=(nm.replace(/\s+/g,'')+'|'+dob).length;
+    document.getElementById('gname').textContent=GUIDE.name;
+    document.getElementById('gmeta').textContent=`${GUIDE.element} • ${GUIDE.domains.join(' • ')}`;
+    document.getElementById('lp').textContent=`Life Path ${lp}`;
+    document.getElementById('seed').textContent=`Seed ${seed}`;
+    document.getElementById('back').textContent=GUIDE.backstory;
+    document.getElementById('mantra').textContent=GUIDE.mantra;
+    document.getElementById('nameRes').innerHTML=nameResHints(lp);
+    document.getElementById('f').classList.add('hidden');
+    document.getElementById('res').classList.remove('hidden');
+  }
+
+  document.getElementById('f').onsubmit=e=>{e.preventDefault();show();}
+  document.getElementById('demo').onclick=()=>{document.getElementById('name').value="Demo User";document.getElementById('dob').value="1990-08-17";show();}
+  document.getElementById('amb').onchange=e=>setAmbient(e.target.value);
+  document.getElementById('ambStop').onclick=()=>setAmbient("none");
+</script>

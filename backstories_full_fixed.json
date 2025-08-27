@@ -1,0 +1,24 @@
+{
+  "guides": [
+    {
+      "id": "mireth",
+      "name": "Mireth",
+      "element": "Forest",
+      "domains": [
+        "Growth",
+        "Patience",
+        "Tending"
+      ],
+      "backstory": "Mireth walks with dirt under their nails and a calendar of seed catalogues in their head...",
+      "mantra": "I tend the small so the great can grow.",
+      "keywords": [
+        "seed",
+        "tend",
+        "prune",
+        "root",
+        "harvest"
+      ],
+      "sigil": "\u273f"
+    }
+  ]
+}

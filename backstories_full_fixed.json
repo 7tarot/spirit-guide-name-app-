@@ -5,450 +5,500 @@
       "name": "Mireth",
       "element": "Forest",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "✿",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Mireth",
-      "backstory": "Backstory for Mireth. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Mireth.",
+      "backstory": "Mireth — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "ashriel",
       "name": "Ashriel",
       "element": "Ember",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "ᛉ",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Ashriel",
-      "backstory": "Backstory for Ashriel. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Ashriel.",
+      "backstory": "Ashriel — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "kaelith",
       "name": "Kaelith",
       "element": "Tide",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "≈",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Kaelith",
-      "backstory": "Backstory for Kaelith. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Kaelith.",
+      "backstory": "Kaelith — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "seliora",
       "name": "Seliora",
       "element": "Sky",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "☽",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Seliora",
-      "backstory": "Backstory for Seliora. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Seliora.",
+      "backstory": "Seliora — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "thren",
       "name": "Thren",
       "element": "Stone",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "▲",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Thren",
-      "backstory": "Backstory for Thren. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Thren.",
+      "backstory": "Thren — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "elyndra",
       "name": "Elyndra",
       "element": "River",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "♒",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Elyndra",
-      "backstory": "Backstory for Elyndra. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Elyndra.",
+      "backstory": "Elyndra — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "voriel",
       "name": "Voriel",
       "element": "Flame",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "🔥",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Voriel",
-      "backstory": "Backstory for Voriel. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Voriel.",
+      "backstory": "Voriel — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "lysara",
       "name": "Lysara",
       "element": "Moon",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "☾",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Lysara",
-      "backstory": "Backstory for Lysara. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Lysara.",
+      "backstory": "Lysara — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "orvane",
       "name": "Orvane",
       "element": "Storm",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "⚡",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Orvane",
-      "backstory": "Backstory for Orvane. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Orvane.",
+      "backstory": "Orvane — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "nymera",
       "name": "Nymera",
       "element": "Star",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "✦",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Nymera",
-      "backstory": "Backstory for Nymera. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Nymera.",
+      "backstory": "Nymera — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "calvorn",
       "name": "Calvorn",
       "element": "Iron",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "⚒",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Calvorn",
-      "backstory": "Backstory for Calvorn. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Calvorn.",
+      "backstory": "Calvorn — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "seraphe",
       "name": "Seraphe",
       "element": "Flame",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "❤",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Seraphe",
-      "backstory": "Backstory for Seraphe. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Seraphe.",
+      "backstory": "Seraphe — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "druath",
       "name": "Druath",
       "element": "Shadow",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "☬",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Druath",
-      "backstory": "Backstory for Druath. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Druath.",
+      "backstory": "Druath — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "thalorin",
       "name": "Thalorin",
       "element": "Ocean",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "🌊",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Thalorin",
-      "backstory": "Backstory for Thalorin. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Thalorin.",
+      "backstory": "Thalorin — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "avareen",
       "name": "Avareen",
       "element": "Flora",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "🌱",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Avareen",
-      "backstory": "Backstory for Avareen. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Avareen.",
+      "backstory": "Avareen — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "zorath",
       "name": "Zorath",
       "element": "Forge",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "⚙",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Zorath",
-      "backstory": "Backstory for Zorath. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Zorath.",
+      "backstory": "Zorath — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "isylith",
       "name": "Isylith",
       "element": "Frost",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "❄",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Isylith",
-      "backstory": "Backstory for Isylith. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Isylith.",
+      "backstory": "Isylith — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "velora",
       "name": "Velora",
       "element": "Song",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "🎵",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Velora",
-      "backstory": "Backstory for Velora. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Velora.",
+      "backstory": "Velora — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "aelwyn",
       "name": "Aelwyn",
       "element": "Dawn",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "☀",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Aelwyn",
-      "backstory": "Backstory for Aelwyn. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Aelwyn.",
+      "backstory": "Aelwyn — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "morven",
       "name": "Morven",
       "element": "Ash",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "⚰",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Morven",
-      "backstory": "Backstory for Morven. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Morven.",
+      "backstory": "Morven — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "caelth",
       "name": "Caelth",
       "element": "Crystal",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "◇",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Caelth",
-      "backstory": "Backstory for Caelth. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Caelth.",
+      "backstory": "Caelth — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "eirian",
       "name": "Eirian",
       "element": "Silver",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "☾",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Eirian",
-      "backstory": "Backstory for Eirian. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Eirian.",
+      "backstory": "Eirian — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "varros",
       "name": "Varros",
       "element": "Ironwood",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "🛡",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Varros",
-      "backstory": "Backstory for Varros. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Varros.",
+      "backstory": "Varros — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "liora",
       "name": "Liora",
       "element": "Flame",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "✨",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Liora",
-      "backstory": "Backstory for Liora. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Liora.",
+      "backstory": "Liora — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     },
     {
       "id": "corvane",
       "name": "Corvane",
       "element": "Raven",
       "domains": [
-        "Domain1",
-        "Domain2",
-        "Domain3"
+        "Archetype",
+        "Theme",
+        "Gift"
       ],
-      "sigil": "*",
+      "sigil": "🐦",
       "keywords": [
-        "keyword1",
-        "keyword2",
-        "keyword3"
+        "keyword",
+        "sign",
+        "symbol",
+        "lesson",
+        "gift"
       ],
-      "mantra": "Mantra for Corvane",
-      "backstory": "Backstory for Corvane. This would be the full 400-word text in the real version."
+      "mantra": "Mantra for Corvane.",
+      "backstory": "Corvane — condensed backstory for testing. This placeholder proves the JSON loads and displays text in the app. Replace with the full 400-word version after deployment to GitHub Pages."
     }
   ]
 }

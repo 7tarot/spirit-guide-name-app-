@@ -126,9 +126,8 @@
   </main>
 
   <script>
-    // ====== CONFIG: paste your Sheets endpoint URL here ======
+    // ====== CONFIG: your Sheets endpoint URL ======
     const SHEETS_URL = "https://script.google.com/macros/s/AKfycbxlNWaWtYEnn4rizDRYRhkxey6CfGczi2oYkmDgRKs7rUHvnyWs0FTaQr1XB8FzJmhi/exec";
- = "YOUR_APPS_SCRIPT_WEB_APP_URL"; // e.g. https://script.google.com/macros/s/XXXX/exec
 
     // ====== Ambient ======
     const AMBIENT = { rain:"ambient/binaural.mp3", choir:"ambient/choir.mp3", drone:"ambient/drone.mp3" };
@@ -185,7 +184,7 @@
       return reduceNum(sum);
     }
 
-    // ====== Copy of your quick meanings (for snapshot/explain) ======
+    // ====== Meanings ======
     const NUM_TEXT = {
       numbers:{1:"Leadership, initiative, independence.",2:"Cooperation, diplomacy, sensitivity.",3:"Creativity, expression, joy.",4:"Stability, systems, diligence.",5:"Change, freedom, adventure.",6:"Care, responsibility, harmony.",7:"Analysis, mysticism, depth.",8:"Power, material mastery, authority.",9:"Compassion, service, completion.",11:"Spiritual insight (Master).",22:"Master builder (Master).",33:"Compassionate teacher (Master)."},
       compat:{1:{good:[3,5,9],bad:[4,6]},2:{good:[4,6,9],bad:[1,8]},3:{good:[1,5,7],bad:[4,8]},4:{good:[2,6,8],bad:[3,5]},5:{good:[1,3,7],bad:[2,6]},6:{good:[2,4,9],bad:[5,7]},7:{good:[2,4,9],bad:[5,8]},8:{good:[4,6,9],bad:[2,3]},9:{good:[1,2,6],bad:[4,8]}}
@@ -201,7 +200,7 @@
     function firstVowel(fullNameUpper){ const m=fullNameUpper.match(/[AEIOUY]/); return m?m[0]:'A'; }
     function letterGroupBias(fullNameUpper){
       const groups={AJS:1,BKT:2,CLU:3,DMV:4,ENW:5,FOX:6,GPY:7,HQZ:8,IR:9}; let score=0;
-      for(const ch of fullNameUpper.replace(/[^A-Z]/g,'')){ for(const [set,val] of Object.entries(groups)){ if(set.includes(ch)){ score+=val; break; } } }
+      for(const ch of fullNameUpper.replace(/[^A-Z]/g,'')){ for (const [set,val] of Object.entries(groups)){ if(set.includes(ch)){ score+=val; break; } } }
       return root(score);
     }
 
@@ -210,7 +209,7 @@
     function numNeed(n){ return ({1:"agency",2:"belonging",3:"expression",4:"structure",5:"freedom with aim",6:"reciprocal care",7:"truth & solitude",8:"clear authority",9:"meaningful service"})[root(n)]; }
     function numTone(n){ return ({1:"direct and brave",2:"soothing and diplomatic",3:"bright and playful",4:"steady and precise",5:"curious and adaptive",6:"reliable and nurturing",7:"quiet and penetrating",8:"assured and results-driven",9:"empathetic and wise"})[root(n)]; }
 
-    // ====== Archetype paragraph pools (guide-agnostic; guide flavours come from meta) ======
+    // ====== Archetype paragraph pools ======
     const PARA_INTRO = [
       (g,u,c)=>`${g.name} draws near, ${g.element.toLowerCase()} at their back. They tilt your chin to present tense: now. You feel how your story wants fresh breath before fresh plans.`,
       (g,u,c)=>`${g.name} arrives the way ${g.element.toLowerCase()} speaks—subtle but undeniable—asking you to notice what you already know and have postponed acting on.`,
@@ -280,7 +279,7 @@
 
     function renderChart(chart){
       const grid=document.getElementById('chartGrid');
-      const rows=[['Life Path',chart.lifePath],['Expression',chart.expression],['Soul Urge',chart.soulUrge],['Personality',chart.personality],['Birthday',chart.birthday],['Maturity',chart.maturity]];
+      const rows=[["Life Path",chart.lifePath],["Expression",chart.expression],["Soul Urge",chart.soulUrge],["Personality",chart.personality],["Birthday",chart.birthday],["Maturity",chart.maturity]];
       grid.innerHTML = rows.map(([k,v])=>`<p><strong>${k}:</strong> ${v} <span class="hint">— ${NUM_TEXT.numbers[v]||''}</span></p>`).join('');
       const block=(title,value)=>{ const r=root(value), comp=compatFor(r);
         return `<h4>${title}: ${value}</h4><p><em>${NUM_TEXT.numbers[value]||''}</em></p><p><strong>Compatible:</strong> ${comp.good.join(', ')||'—'} • <strong>Challenging:</strong> ${comp.bad.join(', ')||'—'}</p>`;
@@ -344,7 +343,8 @@
           document.getElementById('badge').textContent="Backstory: Ready";
           document.getElementById('backstoryMsg').innerHTML = saved.autoBackstory.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
         }
-        hide('formSection'); show('resultSection');
+        document.getElementById('formSection').classList.add('hidden');
+        document.getElementById('resultSection').classList.remove('hidden');
       }
 
       // Demo
@@ -409,7 +409,8 @@
         saveLocal(payload);
         postToSheets(payload);
 
-        hide('formSection'); show('resultSection');
+        document.getElementById('formSection').classList.add('hidden');
+        document.getElementById('resultSection').classList.remove('hidden');
       });
 
       // Copy & Reset

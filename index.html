@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Spirit Guide App — Stable Build</title>
+  <title>Spirit Guide App — Expanded Meanings</title>
   <link rel="stylesheet" href="style.css"/>
   <style>
-    /* Minimal safe styles in case style.css is missing */
     body{font-family: system-ui, Arial, sans-serif;background:#0b0b0f;color:#eef;line-height:1.5;margin:0}
-    .wrap{max-width:960px;margin:0 auto;padding:20px}
+    .wrap{max-width:1000px;margin:0 auto;padding:20px}
     h1{margin:0 0 8px;font-size:28px}
     .card{background:#12121a;border:1px solid #222;border-radius:12px;padding:16px;margin:12px 0}
     label{display:block;margin:.6rem 0 .25rem}
@@ -23,15 +22,13 @@
     .kpi h3{margin:0 0 4px;font-size:14px;color:#9dd}
     .kpi div{font-weight:700;font-size:18px}
     .long {white-space: pre-line; background:#0d0f16; border:1px solid #222; padding:12px; border-radius:10px}
-    .success{color:#7dffa3}
-    .error{color:#ff8f8f}
-    .hidden{display:none}
+    .section-title{margin-top:18px}
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>🔮 Spirit Guide App</h1>
-    <p class="muted">Stable build with expanded numerology meanings + cache‑busting JSON fetch.</p>
+    <p class="muted">Expanded numerology: Life Path, Expression, Soul Urge, Personality, Birthday, Maturity, Balance.</p>
 
     <!-- INPUTS -->
     <div class="card">
@@ -68,7 +65,7 @@
       </div>
     </div>
 
-    <!-- RESULTS -->
+    <!-- RESULTS SNAPSHOT -->
     <div class="card" id="resultsCard" style="display:none">
       <h2 id="guideName">Your Spirit Guide</h2>
       <div class="grid">
@@ -82,8 +79,30 @@
         <div class="kpi"><h3>Karmic Lessons</h3><div id="karmicLessons" class="mono">—</div></div>
         <div class="kpi"><h3>Balance</h3><div id="balance" class="mono">—</div></div>
       </div>
-      <h3 style="margin-top:16px">📖 Life Path – Deep Meaning</h3>
+    </div>
+
+    <!-- LONG EXPLANATIONS -->
+    <div class="card" id="longCard" style="display:none">
+      <h3 class="section-title">📖 Life Path — Deep Meaning</h3>
       <div id="lifePathLong" class="long">—</div>
+
+      <h3 class="section-title">🗣️ Expression — How You Operate</h3>
+      <div id="expressionLong" class="long">—</div>
+
+      <h3 class="section-title">💗 Soul Urge — What Your Heart Wants</h3>
+      <div id="soulUrgeLong" class="long">—</div>
+
+      <h3 class="section-title">🪞 Personality — How Others See You</h3>
+      <div id="personalityLong" class="long">—</div>
+
+      <h3 class="section-title">🎂 Birthday — Your Natural Gift</h3>
+      <div id="birthdayLong" class="long">—</div>
+
+      <h3 class="section-title">🌱 Maturity — Your Long Arc</h3>
+      <div id="maturityLong" class="long">—</div>
+
+      <h3 class="section-title">⚖️ Balance — How You Re‑centre</h3>
+      <div id="balanceLong" class="long">—</div>
     </div>
 
     <!-- EMAIL + CONSENT -->
@@ -104,7 +123,7 @@
     </div>
 
     <div class="card muted">
-      <small>Build includes: cache‑busting JSON fetch, localStorage caching, demo workflow, ambient controls, Apps Script submission.</small>
+      <small>Build includes: expanded numerology meanings (all placements), cache‑busting fetch, localStorage, ambient controls, Apps Script submission.</small>
     </div>
   </div>
 
@@ -120,9 +139,8 @@
   function sumDigits(n){ n = String(n).replace(/[^0-9]/g,''); return n.split('').reduce((a,b)=>a+Number(b),0); }
   function reduceNum(n){ n = Number(n); while (![11,22,33].includes(n) && n>9){ n = sumDigits(n); } return n; }
   function nameNumber(name, type){
-    // Pythagorean mapping A=1..I=9,J=1.. etc.
     const map = {A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,S:1,T:2,U:3,V:4,W:5,X:6,Y:7,Z:8};
-    const vowels = new Set(['A','E','I','O','U','Y']); // treat Y as vowel for Soul Urge here
+    const vowels = new Set(['A','E','I','O','U','Y']); // Y counts for Soul Urge here
     let cleaned = onlyLetters(name);
     let val = 0;
     for(const ch of cleaned){
@@ -142,7 +160,6 @@
     return {lifePath,birthday};
   }
   function formatKarmicDebts(totalStr){
-    // very simple flag: 13/14/16/19 if appear in raw DOB components
     const debts = [];
     if(totalStr.includes('13')) debts.push(13);
     if(totalStr.includes('14')) debts.push(14);
@@ -159,20 +176,18 @@
     return h + "h " + m + "m " + sc + "s";
   }
   function deterministicGuide(name,dob){
-    // Simple hash → pick from sample names (you can expand later)
     const guides = ["Zoriel","Nymera","Elarion","Serapha","Kael","Aven","Lyra","Thalen","Mireth","Orin"];
     const seed = (onlyLetters(name)+dob).split('').reduce((a,c)=>a + c.charCodeAt(0),0);
     return guides[ seed % guides.length ];
   }
 
   /************** STATE **************/
-  const STORAGE_KEY = "spirit-guide-state-v2";
+  const STORAGE_KEY = "spirit-guide-state-v3";
   let longDB = null;
   let countdownTimer = null;
 
   /************** INIT **************/
   (function init(){
-    // attach events
     $("calcBtn").addEventListener("click", onCalculate);
     $("demoBtn").addEventListener("click", onDemo);
     $("resetBtn").addEventListener("click", onReset);
@@ -181,13 +196,12 @@
     $("ambient").addEventListener("change", onAmbientChange);
     $("stopAudio").addEventListener("click", ()=>{ const a=$("player"); a.pause(); a.currentTime=0; });
 
-    // preload JSON (with cache-bust) for long descriptions
+    // preload JSON (with cache-bust)
     fetch('numerology_descriptions.json?v=' + Date.now())
       .then(r=>r.json())
       .then(db=>{ longDB = db; console.log("Loaded numerology JSON", db); })
       .catch(err=>console.error("Failed to load numerology JSON", err));
 
-    // restore state if present
     const saved = localStorage.getItem(STORAGE_KEY);
     if(saved){
       try{
@@ -197,6 +211,7 @@
         if(s.results){
           renderResults(s.results);
           $("resultsCard").style.display = "block";
+          $("longCard").style.display = "block";
           $("emailCard").style.display = "block";
           setupCountdown(s.firstCalcAt);
         }
@@ -221,21 +236,18 @@
     const personality = nameNumber(name,'consonants');
     const maturity = reduceNum(lifePath + expression);
     const balance = reduceNum(nameNumber(name[0]||'','all') + (new Date(dob)).getUTCDate());
-    const karmicLessons = "—"; // placeholder; computing exact missing letters is optional here
+    const karmicLessons = "—";
     const karmicDebts = formatKarmicDebts(dob.replace(/-/g,''));
-
     const guide = deterministicGuide(name, dob);
 
-    const results = {
-      name, dob, guide,
-      lifePath, expression, soulUrge, personality, birthday, maturity, karmicDebts, karmicLessons, balance
-    };
+    const results = {name,dob,guide,lifePath,expression,soulUrge,personality,birthday,maturity,karmicDebts,karmicLessons,balance};
     renderResults(results);
 
     const firstCalcAt = Date.now();
     localStorage.setItem(STORAGE_KEY, JSON.stringify({name, dob, results, firstCalcAt}));
 
     $("resultsCard").style.display = "block";
+    $("longCard").style.display = "block";
     $("emailCard").style.display = "block";
     setupCountdown(firstCalcAt);
   }
@@ -252,26 +264,29 @@
     $("karmicLessons").textContent = r.karmicLessons;
     $("balance").textContent = r.balance;
 
-    // Long description for Life Path
     if(longDB && longDB.numbers){
-      const info = longDB.numbers[String(r.lifePath)] || null;
-      if(info){
-        $("lifePathLong").textContent = [
-          info.overview, info.strengths, info.challenges, info.relationships, info.watchouts, info.coaching
-        ].join("\n\n");
-      }else{
-        $("lifePathLong").textContent = "Detailed meaning unavailable for Life Path " + r.lifePath + ".";
-      }
+      const fmt = (n)=>{
+        const info = longDB.numbers[String(n)];
+        if(!info) return "Detailed meaning coming soon.";
+        return [info.overview, info.strengths, info.challenges, info.relationships, info.watchouts, info.coaching].join("\n\n");
+      };
+      $("lifePathLong").textContent   = fmt(r.lifePath);
+      $("expressionLong").textContent = fmt(r.expression);
+      $("soulUrgeLong").textContent   = fmt(r.soulUrge);
+      $("personalityLong").textContent= fmt(r.personality);
+      $("birthdayLong").textContent   = fmt(r.birthday);
+      $("maturityLong").textContent   = fmt(r.maturity);
+      $("balanceLong").textContent    = fmt(r.balance);
     }else{
-      $("lifePathLong").textContent = "Loading meanings… (If this message remains, numerology_descriptions.json did not load.)";
+      const msg = "Loading meanings… (If this remains, numerology_descriptions.json did not load.)";
+      ["lifePathLong","expressionLong","soulUrgeLong","personalityLong","birthdayLong","maturityLong","balanceLong"].forEach(id=>$(id).textContent=msg);
     }
   }
 
   function setupCountdown(firstCalcAt){
-    // 24 hours unlock
     const unlockAt = firstCalcAt + 24*60*60*1000;
     $("countdownCard").style.display = "block";
-    if(countdownTimer) clearInterval(countdownTimer);
+    clearInterval(countdownTimer);
     countdownTimer = setInterval(()=>{
       const left = unlockAt - Date.now();
       $("countdown").textContent = timeLeftString(left);
@@ -279,51 +294,32 @@
     }, 1000);
   }
 
-  function onReset(){
-    localStorage.removeItem(STORAGE_KEY);
-    location.reload();
-  }
-
+  function onReset(){ localStorage.removeItem(STORAGE_KEY); location.reload(); }
   function onCopy(){
     const saved = localStorage.getItem(STORAGE_KEY);
     if(!saved){ alert("Nothing to copy yet. Calculate your guide first."); return; }
-    navigator.clipboard.writeText(saved).then(()=>{
-      alert("Copied your summary to clipboard.");
-    });
+    navigator.clipboard.writeText(saved).then(()=> alert("Copied your summary to clipboard.") );
   }
-
   function onAmbientChange(e){
     const src = e.target.value;
     const p = $("player");
     if(!src){ p.pause(); return; }
     p.src = src; p.loop = true; p.play().catch(console.warn);
   }
-
   async function onSend(){
     const email = $("email").value.trim();
     const consent = $("consent").checked;
-    if(!email){ $("sendStatus").innerHTML = '<span class="error">Enter an email.</span>'; return; }
-    if(!consent){ $("sendStatus").innerHTML = '<span class="error">Please tick consent.</span>'; return; }
-
+    if(!email){ $("sendStatus").innerHTML = '<span style="color:#ff8f8f">Enter an email.</span>'; return; }
+    if(!consent){ $("sendStatus").innerHTML = '<span style="color:#ff8f8f">Please tick consent.</span>'; return; }
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-    const payload = {
-      email, consent: true,
-      timestamp: new Date().toISOString(),
-      result: saved.results || null
-    };
-
+    const payload = { email, consent:true, timestamp:new Date().toISOString(), result: saved.results || null };
     $("sendStatus").textContent = "Sending…";
     try{
-      const res = await fetch(SHEETS_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify(payload)
-      });
-      $("sendStatus").innerHTML = '<span class="success">Saved. We will follow up by email.</span>';
+      await fetch(SHEETS_URL, { method:"POST", mode:"no-cors", headers:{"Content-Type":"application/json"}, body: JSON.stringify(payload) });
+      $("sendStatus").innerHTML = '<span style="color:#7dffa3">Saved. We will follow up by email.</span>';
     }catch(err){
       console.error(err);
-      $("sendStatus").innerHTML = '<span class="error">Could not send. Try again later.</span>';
+      $("sendStatus").innerHTML = '<span style="color:#ff8f8f">Could not send. Try again later.</span>';
     }
   }
   </script>

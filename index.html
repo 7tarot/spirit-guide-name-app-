@@ -1,146 +1,162 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang=\"en\">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Spirit Guide App — Expanded Meanings</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta charset=\"UTF-8\" />
+  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>
+  <title>Spirit Guide App — Expanded + Narrator</title>
+  <link rel=\"stylesheet\" href=\"style.css\"/>
   <style>
     body{font-family: system-ui, Arial, sans-serif;background:#0b0b0f;color:#eef;line-height:1.5;margin:0}
-    .wrap{max-width:1000px;margin:0 auto;padding:20px}
+    .wrap{max-width:1060px;margin:0 auto;padding:20px}
     h1{margin:0 0 8px;font-size:28px}
-    .card{background:#12121a;border:1px solid #222;border-radius:12px;padding:16px;margin:12px 0}
+    .card{background:#12121a;border:1px solid #222;border-radius:14px;padding:16px;margin:12px 0}
     label{display:block;margin:.6rem 0 .25rem}
-    input,select,button,textarea{font:inherit;border-radius:8px;border:1px solid #333;background:#0f0f15;color:#eef;padding:.6rem}
+    input,select,button,textarea{font:inherit;border-radius:10px;border:1px solid #333;background:#0f0f15;color:#eef;padding:.6rem}
     button{cursor:pointer}
     .row{display:flex;gap:12px;flex-wrap:wrap}
     .row > *{flex:1 1 260px}
     .muted{opacity:.8}
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace}
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
     .kpi{background:#0f111a;border:1px solid #242636;border-radius:10px;padding:10px}
     .kpi h3{margin:0 0 4px;font-size:14px;color:#9dd}
     .kpi div{font-weight:700;font-size:18px}
     .long {white-space: pre-line; background:#0d0f16; border:1px solid #222; padding:12px; border-radius:10px}
     .section-title{margin-top:18px}
+    .banner{background:linear-gradient(90deg,#2e1959,#1a3c66); border:1px solid #3a3a6a; padding:12px; border-radius:12px; margin:12px 0}
+    .banner strong{color:#b7f1ff}
+    .cta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .primary{background:#2b74ff;border-color:#2b74ff}
+    .primary:hover{filter:brightness(1.1)}
+    .accent{color:#fdd}
+    .narrator{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .sticky{position:sticky; top:0; z-index:5}
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class=\"wrap\">
     <h1>🔮 Spirit Guide App</h1>
-    <p class="muted">Expanded numerology: Life Path, Expression, Soul Urge, Personality, Birthday, Maturity, Balance.</p>
+    <p class=\"muted\">Expanded meanings for every placement + Narrator + visible 24‑hour follow‑up capture.</p>
 
     <!-- INPUTS -->
-    <div class="card">
-      <div class="row">
+    <div class=\"card\">
+      <div class=\"row\">
         <div>
-          <label for="name">Your Name</label>
-          <input id="name" placeholder="e.g., Steven Abbott"/>
+          <label for=\"name\">Your Name</label>
+          <input id=\"name\" placeholder=\"e.g., Steven Abbott\"/>
         </div>
         <div>
-          <label for="dob">Date of Birth</label>
-          <input id="dob" type="date"/>
+          <label for=\"dob\">Date of Birth</label>
+          <input id=\"dob\" type=\"date\"/>
         </div>
       </div>
-      <div class="row">
+      <div class=\"row\">
         <div>
-          <label for="ambient">Ambient sound</label>
-          <select id="ambient">
-            <option value="">None</option>
-            <option value="ambient/rain.mp3">Rain</option>
-            <option value="ambient/choir.mp3">Choir</option>
-            <option value="ambient/drone.mp3">Drone</option>
+          <label for=\"ambient\">Ambient sound</label>
+          <select id=\"ambient\">
+            <option value=\"\">None</option>
+            <option value=\"ambient/rain.mp3\">Rain</option>
+            <option value=\"ambient/choir.mp3\">Choir</option>
+            <option value=\"ambient/drone.mp3\">Drone</option>
           </select>
-          <button id="stopAudio">Stop</button>
+          <button id=\"stopAudio\">Stop</button>
         </div>
         <div>
           <label>&nbsp;</label>
-          <div class="row">
-            <button id="demoBtn">Demo</button>
-            <button id="calcBtn">Calculate</button>
-            <button id="resetBtn">Reset</button>
-            <button id="copyBtn">Copy summary</button>
+          <div class=\"row\">
+            <button id=\"demoBtn\">Demo</button>
+            <button id=\"calcBtn\">Calculate</button>
+            <button id=\"resetBtn\">Reset</button>
+            <button id=\"copyBtn\">Copy summary</button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- RESULTS SNAPSHOT -->
-    <div class="card" id="resultsCard" style="display:none">
-      <h2 id="guideName">Your Spirit Guide</h2>
-      <div class="grid">
-        <div class="kpi"><h3>Life Path</h3><div id="lifePath" class="mono">—</div></div>
-        <div class="kpi"><h3>Expression</h3><div id="expression" class="mono">—</div></div>
-        <div class="kpi"><h3>Soul Urge</h3><div id="soulUrge" class="mono">—</div></div>
-        <div class="kpi"><h3>Personality</h3><div id="personality" class="mono">—</div></div>
-        <div class="kpi"><h3>Birthday</h3><div id="birthday" class="mono">—</div></div>
-        <div class="kpi"><h3>Maturity</h3><div id="maturity" class="mono">—</div></div>
-        <div class="kpi"><h3>Karmic Debts</h3><div id="karmicDebts" class="mono">—</div></div>
-        <div class="kpi"><h3>Karmic Lessons</h3><div id="karmicLessons" class="mono">—</div></div>
-        <div class="kpi"><h3>Balance</h3><div id="balance" class="mono">—</div></div>
+    <div class=\"card\" id=\"resultsCard\" style=\"display:none\">
+      <h2 id=\"guideName\">Your Spirit Guide</h2>
+      <div class=\"grid\">
+        <div class=\"kpi\"><h3>Life Path</h3><div id=\"lifePath\" class=\"mono\">—</div></div>
+        <div class=\"kpi\"><h3>Expression</h3><div id=\"expression\" class=\"mono\">—</div></div>
+        <div class=\"kpi\"><h3>Soul Urge</h3><div id=\"soulUrge\" class=\"mono\">—</div></div>
+        <div class=\"kpi\"><h3>Personality</h3><div id=\"personality\" class=\"mono\">—</div></div>
+        <div class=\"kpi\"><h3>Birthday</h3><div id=\"birthday\" class=\"mono\">—</div></div>
+        <div class=\"kpi\"><h3>Maturity</h3><div id=\"maturity\" class=\"mono\">—</div></div>
+        <div class=\"kpi\"><h3>Karmic Debts</h3><div id=\"karmicDebts\" class=\"mono\">—</div></div>
+        <div class=\"kpi\"><h3>Karmic Lessons</h3><div id=\"karmicLessons\" class=\"mono\">—</div></div>
+        <div class=\"kpi\"><h3>Balance</h3><div id=\"balance\" class=\"mono\">—</div></div>
+      </div>
+      <div class=\"narrator\" style=\"margin-top:10px\">
+        <strong>🎙️ Narrator</strong>
+        <button id=\"speakBtn\">Play</button>
+        <button id=\"stopSpeakBtn\">Stop</button>
+      </div>
+    </div>
+
+    <!-- EMAIL + CONSENT (prominent banner + sticky) -->
+    <div class=\"card sticky\" id=\"emailCard\" style=\"display:none\">
+      <div class=\"banner\">
+        <div class=\"cta\">
+          <strong>📩 We’ll email your full 400‑word backstory in <span class=\"accent\">24 hours</span>.</strong>
+          <span class=\"muted\">Enter your email & consent to receive it.</span>
+        </div>
+        <div class=\"row\" style=\"margin-top:8px\">
+          <input id=\"email\" type=\"email\" placeholder=\"you@example.com\"/>
+          <label><input type=\"checkbox\" id=\"consent\"/> I agree to be contacted about my result.</label>
+          <button id=\"sendBtn\" class=\"primary\">Send my result</button>
+        </div>
+        <div id=\"sendStatus\" class=\"muted\"></div>
       </div>
     </div>
 
     <!-- LONG EXPLANATIONS -->
-    <div class="card" id="longCard" style="display:none">
-      <h3 class="section-title">📖 Life Path — Deep Meaning</h3>
-      <div id="lifePathLong" class="long">—</div>
+    <div class=\"card\" id=\"longCard\" style=\"display:none\">
+      <h3 class=\"section-title\">📖 Life Path — Deep Meaning</h3>
+      <div id=\"lifePathLong\" class=\"long\">—</div>
 
-      <h3 class="section-title">🗣️ Expression — How You Operate</h3>
-      <div id="expressionLong" class="long">—</div>
+      <h3 class=\"section-title\">🗣️ Expression — How You Operate</h3>
+      <div id=\"expressionLong\" class=\"long\">—</div>
 
-      <h3 class="section-title">💗 Soul Urge — What Your Heart Wants</h3>
-      <div id="soulUrgeLong" class="long">—</div>
+      <h3 class=\"section-title\">💗 Soul Urge — What Your Heart Wants</h3>
+      <div id=\"soulUrgeLong\" class=\"long\">—</div>
 
-      <h3 class="section-title">🪞 Personality — How Others See You</h3>
-      <div id="personalityLong" class="long">—</div>
+      <h3 class=\"section-title\">🪞 Personality — How Others See You</h3>
+      <div id=\"personalityLong\" class=\"long\">—</div>
 
-      <h3 class="section-title">🎂 Birthday — Your Natural Gift</h3>
-      <div id="birthdayLong" class="long">—</div>
+      <h3 class=\"section-title\">🎂 Birthday — Your Natural Gift</h3>
+      <div id=\"birthdayLong\" class=\"long\">—</div>
 
-      <h3 class="section-title">🌱 Maturity — Your Long Arc</h3>
-      <div id="maturityLong" class="long">—</div>
+      <h3 class=\"section-title\">🌱 Maturity — Your Long Arc</h3>
+      <div id=\"maturityLong\" class=\"long\">—</div>
 
-      <h3 class="section-title">⚖️ Balance — How You Re‑centre</h3>
-      <div id="balanceLong" class="long">—</div>
-    </div>
-
-    <!-- EMAIL + CONSENT -->
-    <div class="card" id="emailCard" style="display:none">
-      <h3>Send my result</h3>
-      <div class="row">
-        <input id="email" type="email" placeholder="you@example.com"/>
-        <label><input type="checkbox" id="consent"/> I agree to be contacted about my result.</label>
-        <button id="sendBtn">Send</button>
-      </div>
-      <div id="sendStatus" class="muted"></div>
+      <h3 class=\"section-title\">⚖️ Balance — How You Re‑centre</h3>
+      <div id=\"balanceLong\" class=\"long\">—</div>
     </div>
 
     <!-- COUNTDOWN -->
-    <div class="card" id="countdownCard" style="display:none">
-      <strong>🕒 Backstory unlocks in: <span id="countdown">—</span></strong>
-      <div class="muted">(24 hours after first calculation on this device)</div>
+    <div class=\"card\" id=\"countdownCard\" style=\"display:none\">
+      <strong>🕒 Backstory unlocks in: <span id=\"countdown\">—</span></strong>
+      <div class=\"muted\">(24 hours after first calculation on this device)</div>
     </div>
 
-    <div class="card muted">
-      <small>Build includes: expanded numerology meanings (all placements), cache‑busting fetch, localStorage, ambient controls, Apps Script submission.</small>
+    <div class=\"card muted\">
+      <small>Includes: placement‑specific headings, narrator, visible email capture, cache‑busting JSON, ambient controls, localStorage, Apps Script submission.</small>
     </div>
   </div>
 
-  <audio id="player" preload="none"></audio>
+  <audio id=\"player\" preload=\"none\"></audio>
 
   <script>
-  /************** CONFIG **************/
-  const SHEETS_URL = "https://script.google.com/macros/s/AKfycbxlNWaWtYEnn4rizDRYRhkxey6CfGczi2oYkmDgRKs7rUHvnyWs0FTaQr1XB8FzJmhi/exec";
+  const SHEETS_URL = \"https://script.google.com/macros/s/AKfycbxlNWaWtYEnn4rizDRYRhkxey6CfGczi2oYkmDgRKs7rUHvnyWs0FTaQr1XB8FzJmhi/exec\";
 
-  /************** UTIL **************/
   const $ = (id)=>document.getElementById(id);
   function onlyLetters(str){ return (str||'').toUpperCase().replace(/[^A-Z]/g,''); }
   function sumDigits(n){ n = String(n).replace(/[^0-9]/g,''); return n.split('').reduce((a,b)=>a+Number(b),0); }
   function reduceNum(n){ n = Number(n); while (![11,22,33].includes(n) && n>9){ n = sumDigits(n); } return n; }
   function nameNumber(name, type){
     const map = {A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,S:1,T:2,U:3,V:4,W:5,X:6,Y:7,Z:8};
-    const vowels = new Set(['A','E','I','O','U','Y']); // Y counts for Soul Urge here
+    const vowels = new Set(['A','E','I','O','U','Y']);
     let cleaned = onlyLetters(name);
     let val = 0;
     for(const ch of cleaned){
@@ -168,67 +184,67 @@
     return debts.length? debts.join(', ') : 'None';
   }
   function timeLeftString(ms){
-    if(ms<=0) return "0m";
+    if(ms<=0) return \"0m\";
     const s = Math.floor(ms/1000);
     const h = Math.floor(s/3600);
     const m = Math.floor((s%3600)/60);
     const sc = s%60;
-    return h + "h " + m + "m " + sc + "s";
+    return h + \"h \" + m + \"m \" + sc + \"s\";
   }
   function deterministicGuide(name,dob){
-    const guides = ["Zoriel","Nymera","Elarion","Serapha","Kael","Aven","Lyra","Thalen","Mireth","Orin"];
+    const guides = [\"Zoriel\",\"Nymera\",\"Elarion\",\"Serapha\",\"Kael\",\"Aven\",\"Lyra\",\"Thalen\",\"Mireth\",\"Orin\"];
     const seed = (onlyLetters(name)+dob).split('').reduce((a,c)=>a + c.charCodeAt(0),0);
     return guides[ seed % guides.length ];
   }
 
-  /************** STATE **************/
-  const STORAGE_KEY = "spirit-guide-state-v3";
+  const STORAGE_KEY = \"spirit-guide-state-v5\";
   let longDB = null;
   let countdownTimer = null;
+  let utterance = null;
 
-  /************** INIT **************/
   (function init(){
-    $("calcBtn").addEventListener("click", onCalculate);
-    $("demoBtn").addEventListener("click", onDemo);
-    $("resetBtn").addEventListener("click", onReset);
-    $("copyBtn").addEventListener("click", onCopy);
-    $("sendBtn").addEventListener("click", onSend);
-    $("ambient").addEventListener("change", onAmbientChange);
-    $("stopAudio").addEventListener("click", ()=>{ const a=$("player"); a.pause(); a.currentTime=0; });
+    $(\"calcBtn\").addEventListener(\"click\", onCalculate);
+    $(\"demoBtn\").addEventListener(\"click\", onDemo);
+    $(\"resetBtn\").addEventListener(\"click\", onReset);
+    $(\"copyBtn\").addEventListener(\"click\", onCopy);
+    $(\"sendBtn\").addEventListener(\"click\", onSend);
+    $(\"ambient\").addEventListener(\"change\", onAmbientChange);
+    $(\"stopAudio\").addEventListener(\"click\", ()=>{ const a=$(\"player\"); a.pause(); a.currentTime=0; });
 
-    // preload JSON (with cache-bust)
+    $(\"speakBtn\").addEventListener(\"click\", speakResults);
+    $(\"stopSpeakBtn\").addEventListener(\"click\", stopSpeak);
+
     fetch('numerology_descriptions.json?v=' + Date.now())
       .then(r=>r.json())
-      .then(db=>{ longDB = db; console.log("Loaded numerology JSON", db); })
-      .catch(err=>console.error("Failed to load numerology JSON", err));
+      .then(db=>{ longDB = db; console.log(\"Loaded numerology JSON\", db); })
+      .catch(err=>console.error(\"Failed to load numerology JSON\", err));
 
     const saved = localStorage.getItem(STORAGE_KEY);
     if(saved){
       try{
         const s = JSON.parse(saved);
-        $("name").value = s.name || "";
-        $("dob").value = s.dob || "";
+        $(\"name\").value = s.name || \"\";
+        $(\"dob\").value = s.dob || \"\";
         if(s.results){
           renderResults(s.results);
-          $("resultsCard").style.display = "block";
-          $("longCard").style.display = "block";
-          $("emailCard").style.display = "block";
+          $(\"resultsCard\").style.display = \"block\";
+          $(\"longCard\").style.display = \"block\";
+          $(\"emailCard\").style.display = \"block\";
           setupCountdown(s.firstCalcAt);
         }
-      }catch(e){ console.warn("Bad saved state", e); }
+      }catch(e){ console.warn(\"Bad saved state\", e); }
     }
   })();
 
-  /************** CORE **************/
   function onDemo(){
-    $("name").value = "Alex Example";
-    $("dob").value = "1990-07-14";
+    $(\"name\").value = \"Alex Example\";
+    $(\"dob\").value = \"1990-07-14\";
   }
 
   function onCalculate(){
-    const name = $("name").value.trim();
-    const dob = $("dob").value;
-    if(!name || !dob){ alert("Please enter your name and date of birth."); return; }
+    const name = $(\"name\").value.trim();
+    const dob = $(\"dob\").value;
+    if(!name || !dob){ alert(\"Please enter your name and date of birth.\"); return; }
 
     const {lifePath,birthday} = dateToNumbers(dob);
     const expression = nameNumber(name,'all');
@@ -236,7 +252,7 @@
     const personality = nameNumber(name,'consonants');
     const maturity = reduceNum(lifePath + expression);
     const balance = reduceNum(nameNumber(name[0]||'','all') + (new Date(dob)).getUTCDate());
-    const karmicLessons = "—";
+    const karmicLessons = \"—\";
     const karmicDebts = formatKarmicDebts(dob.replace(/-/g,''));
     const guide = deterministicGuide(name, dob);
 
@@ -246,81 +262,126 @@
     const firstCalcAt = Date.now();
     localStorage.setItem(STORAGE_KEY, JSON.stringify({name, dob, results, firstCalcAt}));
 
-    $("resultsCard").style.display = "block";
-    $("longCard").style.display = "block";
-    $("emailCard").style.display = "block";
+    $(\"resultsCard\").style.display = \"block\";
+    $(\"longCard\").style.display = \"block\";
+    $(\"emailCard\").style.display = \"block\";
     setupCountdown(firstCalcAt);
+    document.getElementById('emailCard').scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
+  function customiseTextForPlacement(info, label, n){
+    let text = [info.overview, info.strengths, info.challenges, info.relationships, info.watchouts, info.coaching].join(\"\n\n\");
+    const re1 = new RegExp(\"^\\s*Life\\s*Path\\s*\"+n+\"\\b\",\"i\");
+    text = text.replace(re1, label + \" \" + n);
+    const re2 = new RegExp(\"^\\s*Master\\s*Number\\s*\"+n+\"\\b\",\"i\");
+    text = text.replace(re2, label + \" \" + n + \" (Master Number)\");
+    return text;
   }
 
   function renderResults(r){
-    $("guideName").textContent = "Your Spirit Guide: " + r.guide;
-    $("lifePath").textContent = r.lifePath;
-    $("expression").textContent = r.expression;
-    $("soulUrge").textContent = r.soulUrge;
-    $("personality").textContent = r.personality;
-    $("birthday").textContent = r.birthday;
-    $("maturity").textContent = r.maturity;
-    $("karmicDebts").textContent = r.karmicDebts;
-    $("karmicLessons").textContent = r.karmicLessons;
-    $("balance").textContent = r.balance;
+    $(\"guideName\").textContent = \"Your Spirit Guide: \" + r.guide;
+    $(\"lifePath\").textContent = r.lifePath;
+    $(\"expression\").textContent = r.expression;
+    $(\"soulUrge\").textContent = r.soulUrge;
+    $(\"personality\").textContent = r.personality;
+    $(\"birthday\").textContent = r.birthday;
+    $(\"maturity\").textContent = r.maturity;
+    $(\"karmicDebts\").textContent = r.karmicDebts;
+    $(\"karmicLessons\").textContent = r.karmicLessons;
+    $(\"balance\").textContent = r.balance;
 
     if(longDB && longDB.numbers){
-      const fmt = (n)=>{
+      const fmt = (n,label)=>{
         const info = longDB.numbers[String(n)];
-        if(!info) return "Detailed meaning coming soon.";
-        return [info.overview, info.strengths, info.challenges, info.relationships, info.watchouts, info.coaching].join("\n\n");
+        if(!info) return label + \" \" + n + \": Detailed meaning coming soon.\";
+        return customiseTextForPlacement(info, label, n);
       };
-      $("lifePathLong").textContent   = fmt(r.lifePath);
-      $("expressionLong").textContent = fmt(r.expression);
-      $("soulUrgeLong").textContent   = fmt(r.soulUrge);
-      $("personalityLong").textContent= fmt(r.personality);
-      $("birthdayLong").textContent   = fmt(r.birthday);
-      $("maturityLong").textContent   = fmt(r.maturity);
-      $("balanceLong").textContent    = fmt(r.balance);
+      $(\"lifePathLong\").textContent   = fmt(r.lifePath,   \"Life Path\");
+      $(\"expressionLong\").textContent = fmt(r.expression, \"Expression\");
+      $(\"soulUrgeLong\").textContent   = fmt(r.soulUrge,   \"Soul Urge\");
+      $(\"personalityLong\").textContent= fmt(r.personality,\"Personality\");
+      $(\"birthdayLong\").textContent   = fmt(r.birthday,   \"Birthday\");
+      $(\"maturityLong\").textContent   = fmt(r.maturity,   \"Maturity\");
+      $(\"balanceLong\").textContent    = fmt(r.balance,    \"Balance\");
     }else{
-      const msg = "Loading meanings… (If this remains, numerology_descriptions.json did not load.)";
-      ["lifePathLong","expressionLong","soulUrgeLong","personalityLong","birthdayLong","maturityLong","balanceLong"].forEach(id=>$(id).textContent=msg);
+      const msg = \"Loading meanings… (If this remains, numerology_descriptions.json did not load.)\";
+      [\"lifePathLong\",\"expressionLong\",\"soulUrgeLong\",\"personalityLong\",\"birthdayLong\",\"maturityLong\",\"balanceLong\"].
+        forEach(id=>$ (id).textContent=msg);
     }
   }
 
   function setupCountdown(firstCalcAt){
     const unlockAt = firstCalcAt + 24*60*60*1000;
-    $("countdownCard").style.display = "block";
+    $(\"countdownCard\").style.display = \"block\";
     clearInterval(countdownTimer);
     countdownTimer = setInterval(()=>{
       const left = unlockAt - Date.now();
-      $("countdown").textContent = timeLeftString(left);
-      if(left <= 0){ clearInterval(countdownTimer); $("countdown").textContent = "0m"; }
+      $(\"countdown\").textContent = timeLeftString(left);
+      if(left <= 0){ clearInterval(countdownTimer); $(\"countdown\").textContent = \"0m\"; }
     }, 1000);
   }
 
   function onReset(){ localStorage.removeItem(STORAGE_KEY); location.reload(); }
   function onCopy(){
     const saved = localStorage.getItem(STORAGE_KEY);
-    if(!saved){ alert("Nothing to copy yet. Calculate your guide first."); return; }
-    navigator.clipboard.writeText(saved).then(()=> alert("Copied your summary to clipboard.") );
+    if(!saved){ alert(\"Nothing to copy yet. Calculate your guide first.\"); return; }
+    navigator.clipboard.writeText(saved).then(()=> alert(\"Copied your summary to clipboard.\") );
   }
   function onAmbientChange(e){
     const src = e.target.value;
-    const p = $("player");
+    const p = $(\"player\");
     if(!src){ p.pause(); return; }
     p.src = src; p.loop = true; p.play().catch(console.warn);
   }
   async function onSend(){
-    const email = $("email").value.trim();
-    const consent = $("consent").checked;
-    if(!email){ $("sendStatus").innerHTML = '<span style="color:#ff8f8f">Enter an email.</span>'; return; }
-    if(!consent){ $("sendStatus").innerHTML = '<span style="color:#ff8f8f">Please tick consent.</span>'; return; }
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    const email = $(\"email\").value.trim();
+    const consent = $(\"consent\").checked;
+    if(!email){ $(\"sendStatus\").innerHTML = '<span style=\"color:#ff8f8f\">Enter an email.</span>'; return; }
+    if(!consent){ $(\"sendStatus\").innerHTML = '<span style=\"color:#ff8f8f\">Please tick consent.</span>'; return; }
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || \"{}\");
     const payload = { email, consent:true, timestamp:new Date().toISOString(), result: saved.results || null };
-    $("sendStatus").textContent = "Sending…";
+    $(\"sendStatus\").textContent = \"Sending…\";
     try{
-      await fetch(SHEETS_URL, { method:"POST", mode:"no-cors", headers:{"Content-Type":"application/json"}, body: JSON.stringify(payload) });
-      $("sendStatus").innerHTML = '<span style="color:#7dffa3">Saved. We will follow up by email.</span>';
+      await fetch(SHEETS_URL, { method:\"POST\", mode:\"no-cors\", headers:{\"Content-Type\":\"application/json\"}, body: JSON.stringify(payload) });
+      $(\"sendStatus\").innerHTML = '<span style=\"color:#7dffa3\">Saved. We will follow up by email in ~24 hours.</span>';
     }catch(err){
       console.error(err);
-      $("sendStatus").innerHTML = '<span style="color:#ff8f8f">Could not send. Try again later.</span>';
+      $(\"sendStatus\").innerHTML = '<span style=\"color:#ff8f8f\">Could not send. Try again later.</span>';
     }
+  }
+
+  function buildNarration(){
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || \"{}\");
+    const r = saved.results; if(!r || !longDB) return \"Your reading is ready.\";
+    const get = (n)=> longDB.numbers[String(n)];
+    const join = (label, n, obj)=> obj? (label+\" \"+n+\". \"+obj.overview):\"\";
+    return [
+      \"Your spirit guide is \" + r.guide + \".\",
+      join(\"Life Path\", r.lifePath, get(r.lifePath)),
+      join(\"Expression\", r.expression, get(r.expression)),
+      join(\"Soul Urge\", r.soulUrge, get(r.soulUrge)),
+      join(\"Personality\", r.personality, get(r.personality)),
+      join(\"Birthday\", r.birthday, get(r.birthday)),
+      join(\"Maturity\", r.maturity, get(r.maturity)),
+      join(\"Balance\", r.balance, get(r.balance)),
+      \"We will email your full four hundred word backstory in approximately twenty four hours. Please ensure your email and consent are entered.\"
+    ].filter(Boolean).join(\" \");
+  }
+  function speakResults(){
+    try{
+      stopSpeak();
+      const text = buildNarration();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = 1; utter.pitch = 1;
+      speechSynthesis.speak(utter);
+      window.__utter = utter;
+    }catch(e){ console.warn(e); }
+  }
+  function stopSpeak(){
+    try{
+      if(speechSynthesis.speaking) speechSynthesis.cancel();
+      window.__utter = null;
+    }catch(e){}
   }
   </script>
 </body>

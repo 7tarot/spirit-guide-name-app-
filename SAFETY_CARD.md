@@ -1,12 +1,25 @@
-# Spirit Guide App — Matrix Theme + Voice Selector (Quick Restore)
-**Date:** 2025-09-03
+# Spirit Guide App — COMPLETE Restore Pack (Matrix + Voice + WebAudio)
+Date: 2025-09-03
 
-This pack contains:
-- `index.html` — Polished dark/mint UI, Matrix rain background, voice selector, expanded features.
-- `numerology_descriptions.json` — Deep meanings for 1–9, 11, 22, 33.
+Contents:
+- index.html — Matrix rain ON by default, voice selector narrator, WebAudio ambient (no MP3s), full UI.
+- numerology_descriptions.json — expanded deep meanings for 1–9, 11, 22, 33.
 
-## Restore (GitHub Desktop)
-1) Open your repo → **Repository → Show in Explorer**.
-2) Copy these two files into the repo root (same level as `style.css`).
-3) Back in GitHub Desktop → **Commit** (“restore: matrix theme + voice selector”) → **Push origin**.
-4) Test your Pages URL in **incognito**. If it looks cached, add a tiny comment to `index.html` and push again to force a rebuild.
+## Restore (GitHub/Netlify)
+1) Replace your site's `index.html` with the one in this pack.
+2) Put `numerology_descriptions.json` in the **same folder**.
+3) Commit & push (if using Git) or re‑upload.
+4) On Netlify: Deploys → *Trigger deploy* → **Clear cache and deploy site**.
+5) Open your site in **Incognito** (to dodge cache).
+
+## Verify you have the right build
+- View‑source and confirm these appear:
+  - `id="matrixCanvas"` (canvas present)
+  - `id="voiceSelect"` (voice dropdown)
+  - `const STORAGE_KEY = "spirit-guide-state-v13"` (version fingerprint)
+- In the UI you should see:
+  - A **Matrix rain background** immediately.
+  - A **Narrator** section with a **voice dropdown**.
+  - **Ambient** dropdown with Rain/Choir/Drone.
+
+If anything is off, paste any Console errors here and I’ll fix fast.

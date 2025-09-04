@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Spirit Guide App — Classic (Demo Fix)</title>
+<title>Spirit Guide App — Classic (Read‑All Narrator)</title>
 <style>
   :root{ --bg:#0c0f0c; --panel:#121712; --border:#1b291c; --text:#f1fff7; --muted:#b7d6c3; --accent:#7fffd4; --accent2:#57d9a9; }
   *{box-sizing:border-box}
@@ -36,7 +36,7 @@
 <body>
   <div class="wrap">
     <h1>🔮 Spirit Guide App</h1>
-    <p class="sub">Classic layout • Ambient sounds (your own MP3 supported) • Narrator voice choice • 24‑hour email follow‑up.</p>
+    <p class="sub">Classic layout • Single ambient track (your MP3) • Read‑all narrator • 24‑hour email follow‑up.</p>
 
     <!-- Enable Sound (autoplay fix) -->
     <p><button id="enableSound" class="pill"><span>🔊</span><strong>Enable sound</strong> (one click)</button>
@@ -60,17 +60,11 @@
           <div class="row" style="align-items:center">
             <select id="ambient">
               <option value="">None</option>
-              <option value="ambient/meditation.mp3">Your MP3 in /ambient/meditation.mp3</option>
-              <option value="ambient/binaural.mp3">Your MP3 in /ambient/binaural.mp3</option>
-              <option value="ambient/rain.mp3">Rain (rain.mp3)</option>
-              <option value="ambient/choir.mp3">Choir (choir.mp3)</option>
-              <option value="ambient/drone.mp3">Drone (drone.mp3)</option>
-              <option value="__custom__">➕ Upload custom file…</option>
+              <option value="ambient/binaural.mp3">Rhino Beat (binaural.mp3)</option>
             </select>
-            <input id="customFile" type="file" accept="audio/*" style="display:none"/>
             <button id="stopAudio">Stop</button>
           </div>
-          <div class="tiny muted" style="margin-top:6px">Tip: rename your Ableton export to <code>ambient/meditation.mp3</code> or <code>binaural.mp3</code> for a one‑click pick.</div>
+          <div class="tiny muted" style="margin-top:6px">Using your Ableton track at <code>ambient/binaural.mp3</code>.</div>
         </div>
         <div>
           <label>&nbsp;</label>
@@ -155,26 +149,18 @@
 
   <script>
   const SHEETS_URL = "https://script.google.com/macros/s/AKfycbxlNWaWtYEnn4rizDRYRhkxey6CfGczi2oYkmDgRKs7rUHvnyWs0FTaQr1XB8FzJmhi/exec";
-  const STORAGE_KEY = "spirit-guide-classic-user-mp3-v2";
+  const STORAGE_KEY = "spirit-guide-readall-v1";
   const $ = (id)=>document.getElementById(id);
   let longDB=null, countdownTimer=null;
 
   // Enable sound
   $('enableSound').onclick = ()=>{ $('player').muted=false; $('player').play().catch(()=>{}); $('player').pause(); };
 
-  // Ambient list (supports your MP3 + file upload)
+  // Ambient (only your MP3)
   $('ambient').onchange = (e)=>{
-    if(e.target.value === "__custom__"){ $('customFile').click(); return; }
-    const src = e.target.value;
-    const p = $('player');
+    const src = e.target.value, p=$('player');
     if(!src){ p.pause(); return; }
     p.src = src; p.loop = true;
-    p.play().catch(()=>alert("Click ‘Enable sound’ then choose again."));
-  };
-  $('customFile').onchange = (e)=>{
-    const file = e.target.files[0]; if(!file) return;
-    const url = URL.createObjectURL(file);
-    const p = $('player'); p.src = url; p.loop = true;
     p.play().catch(()=>alert("Click ‘Enable sound’ then choose again."));
   };
   $('stopAudio').onclick = ()=>{ const p=$('player'); p.pause(); p.currentTime=0; };
@@ -236,6 +222,69 @@
     clearInterval(countdownTimer); countdownTimer=setInterval(()=>{ const left=unlockAt-Date.now(); $('countdown').textContent=timeLeftString(left); if(left<=0){ clearInterval(countdownTimer); $('countdown').textContent="0m"; } }, 1000);
   }
 
+  // Narration builder (READ EVERYTHING with preamble)
+  function buildFullNarration(){
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+    const r = saved.results || {};
+    const hasLong = !!(longDB && longDB.numbers);
+    const lines = [];
+
+    // Preamble (as you requested)
+    lines.push("This is a general overview. Your name and date of birth are captured via our Google Sheet when you provide your email and consent, so we can send your full backstory. That email follow-up contains a more precise spirit name and tailored backstory.");
+
+    if(r.guide){ lines.push(`Your Spirit Guide is ${r.guide}.`); }
+
+    // Snapshot
+    const snap = [
+      ["Life Path", r.lifePath],
+      ["Expression", r.expression],
+      ["Soul Urge", r.soulUrge],
+      ["Personality", r.personality],
+      ["Birthday", r.birthday],
+      ["Maturity", r.maturity],
+      ["Karmic Debts", r.karmicDebts],
+      ["Karmic Lessons", r.karmicLessons],
+      ["Balance", r.balance],
+    ].filter(x=>x[1]!=null && x[1] !== undefined);
+    if(snap.length){
+      lines.push("Snapshot of your numbers:");
+      snap.forEach(([k,v])=> lines.push(`${k}: ${v}.`));
+    }
+
+    // Long sections (if available)
+    function longFor(n, label){
+      if(!hasLong) return null;
+      const info = longDB.numbers[String(n)];
+      if(!info) return null;
+      const text = [info.overview, info.strengths, info.challenges, info.relationships, info.watchouts, info.coaching]
+                   .filter(Boolean).join(" ");
+      return `${label} ${n}. ${text}`;
+    }
+    if(r.lifePath)    { const s = longFor(r.lifePath, "Life Path"); if(s) lines.push(s); }
+    if(r.expression)  { const s = longFor(r.expression, "Expression"); if(s) lines.push(s); }
+    if(r.soulUrge)    { const s = longFor(r.soulUrge, "Soul Urge"); if(s) lines.push(s); }
+    if(r.personality) { const s = longFor(r.personality, "Personality"); if(s) lines.push(s); }
+    if(r.birthday)    { const s = longFor(r.birthday, "Birthday"); if(s) lines.push(s); }
+    if(r.maturity)    { const s = longFor(r.maturity, "Maturity"); if(s) lines.push(s); }
+    if(r.balance)     { const s = longFor(r.balance, "Balance"); if(s) lines.push(s); }
+
+    return lines.join(" ");
+  }
+
+  function speakAll(){
+    try{
+      const text = buildFullNarration();
+      if(!text || !text.trim()){ alert("Please calculate your reading first."); return; }
+      if(speechSynthesis.speaking) speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      const voices = speechSynthesis.getVoices()||[];
+      const sel = $('voiceSelect'); if(sel && sel.value && voices[sel.value]) u.voice = voices[sel.value];
+      // Slightly slower and calmer
+      u.rate = 0.95; u.pitch = 1.0; u.volume = 1.0;
+      speechSynthesis.speak(u);
+    }catch(e){ console.warn(e); }
+  }
+
   // Voices
   function populateVoices(){
     const sel = $('voiceSelect'); sel.innerHTML="";
@@ -243,12 +292,7 @@
     voices.forEach((v,i)=>{ const opt=document.createElement("option"); opt.value=i; opt.textContent=v.name+" ("+v.lang+")"; sel.appendChild(opt); });
   }
   populateVoices(); if('onvoiceschanged' in speechSynthesis) speechSynthesis.onvoiceschanged = populateVoices;
-  $('speakBtn').onclick = ()=>{
-    const u = new SpeechSynthesisUtterance("Your reading is ready. Choose a voice above to change this narrator.");
-    const voices = speechSynthesis.getVoices()||[];
-    if($('voiceSelect').value && voices[$('voiceSelect').value]) u.voice = voices[$('voiceSelect').value];
-    speechSynthesis.speak(u);
-  };
+  $('speakBtn').onclick = speakAll;
   $('stopSpeakBtn').onclick = ()=>{ if(speechSynthesis.speaking) speechSynthesis.cancel(); };
 
   // Main events

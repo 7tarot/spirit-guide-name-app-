@@ -1,0 +1,37 @@
+
+/* voices.css — minimal styles for the voice controls */
+.voice-bar {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 8px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 10px;
+  background: #0b0f10;
+  border: 1px solid #1c2a2d;
+  color: #d1f7ff;
+  margin: 10px 0 16px;
+}
+.voice-bar label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+.voice-bar select, .voice-bar button, .voice-bar input[type="checkbox"] {
+  background: #0f191b;
+  color: #d1f7ff;
+  border: 1px solid #1c2a2d;
+  border-radius: 8px;
+  padding: 8px;
+}
+.voice-bar button {
+  cursor: pointer;
+}
+.voice-bar .force-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.is-speaking .voice-bar {
+  outline: 2px solid #4bf0ff;
+  box-shadow: 0 0 12px rgba(75,240,255,0.25);
+}

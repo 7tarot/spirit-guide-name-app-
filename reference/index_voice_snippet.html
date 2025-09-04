@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Voice Controls Demo — Spirit Guide App</title>
+  <link rel="stylesheet" href="../patch/voices.css">
+  <style>
+    body { background:#05090a; color:#d1f7ff; font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif; padding:20px; }
+    h1 { color:#7efcff; }
+    .card { background:#081215; border:1px solid #102227; border-radius:14px; padding:16px; margin:16px 0; }
+    textarea { width:100%; min-height:120px; padding:10px; background:#0b1214; color:#d1f7ff; border:1px solid #1c2a2d; border-radius:8px; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+    .row > * { flex:1; }
+  </style>
+</head>
+<body>
+  <h1>Voice Controls — Reference Snippet</h1>
+  <p>Copy the voice bar into your main <code>index.html</code> and include <code>patch/narrator.js</code> as a module.</p>
+
+  <!-- Voice bar (copy into your app) -->
+  <div class="voice-bar card">
+    <label for="voiceSelect">Voice</label>
+    <select id="voiceSelect" aria-label="Select narrator voice"></select>
+    <div class="force-wrap">
+      <input type="checkbox" id="forceEnglish" />
+      <label for="forceEnglish" title="Force English language output even with non-English voices">Force English</label>
+    </div>
+    <div class="row" style="flex:0 0 auto; gap:8px; width:auto;">
+      <button id="testVoiceBtn" type="button">Test voice</button>
+      <button id="stopNarrationBtn" type="button">Stop</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Try it</h3>
+    <textarea id="demoText">This is a demonstration of the narrator module. Select a voice, toggle Force English if you need, then press Test.</textarea>
+    <div style="margin-top:10px; display:flex; gap:8px;">
+      <button id="readDemoBtn">Read Text</button>
+      <button id="readBlocksBtn">Read Blocks (with disclaimer)</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { narrator } from "../patch/narrator.js";
+    document.getElementById("readDemoBtn").addEventListener("click", () => {
+      const t = document.getElementById("demoText").value;
+      narrator.speak(t, { interrupt:true });
+    });
+    document.getElementById("readBlocksBtn").addEventListener("click", () => {
+      const chunks = [
+        "Welcome to the Spirit Guide App voice demo.",
+        "This will read multiple blocks, respecting the Stop button at any time."
+      ];
+      narrator.readBlocks(chunks, { interrupt:true });
+    });
+  </script>
+</body>
+</html>

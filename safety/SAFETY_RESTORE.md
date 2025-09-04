@@ -1,0 +1,1 @@
+Delete patch/, remove added UI/script lines from index.html, redeploy.

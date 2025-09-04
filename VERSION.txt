@@ -1,2 +1,2 @@
-Spirit Guide App — Golden Backup with Volume Slider + Narrator Highlight
-Built: 2025-09-04T09:37:48.250865
+Spirit Guide App — Minimal TTS Fix demo build
+Built: 2025-09-04T10:19:03.479731

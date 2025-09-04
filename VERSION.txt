@@ -1,2 +1,2 @@
-Spirit Guide App — Golden Backup with Volume Slider
-Built: 2025-09-04T09:25:14.887871
+Spirit Guide App — Golden Backup with Volume Slider + Narrator Highlight
+Built: 2025-09-04T09:37:48.250865

@@ -3,41 +3,41 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Voice Controls Demo — Spirit Guide App</title>
+  <title>Voices+ Naturaliser — Reference</title>
   <link rel="stylesheet" href="../patch/voices.css">
   <style>
     body { background:#05090a; color:#d1f7ff; font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif; padding:20px; }
     h1 { color:#7efcff; }
     .card { background:#081215; border:1px solid #102227; border-radius:14px; padding:16px; margin:16px 0; }
     textarea { width:100%; min-height:120px; padding:10px; background:#0b1214; color:#d1f7ff; border:1px solid #1c2a2d; border-radius:8px; }
-    .row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
-    .row > * { flex:1; }
   </style>
 </head>
 <body>
-  <h1>Voice Controls — Reference Snippet</h1>
-  <p>Copy the voice bar into your main <code>index.html</code> and include <code>patch/narrator.js</code> as a module.</p>
-
-  <!-- Voice bar (copy into your app) -->
+  <h1>Naturaliser Controls</h1>
   <div class="voice-bar card">
-    <label for="voiceSelect">Voice</label>
     <select id="voiceSelect" aria-label="Select narrator voice"></select>
     <div class="force-wrap">
-      <input type="checkbox" id="forceEnglish" />
-      <label for="forceEnglish" title="Force English language output even with non-English voices">Force English</label>
+      <input type="checkbox" id="forceEnglish"/>
+      <label for="forceEnglish">Force English</label>
     </div>
-    <div class="row" style="flex:0 0 auto; gap:8px; width:auto;">
+    <div style="display:flex; gap:8px;">
       <button id="testVoiceBtn" type="button">Test voice</button>
+      <button id="naturalPresetBtn" type="button">Natural preset</button>
       <button id="stopNarrationBtn" type="button">Stop</button>
+    </div>
+    <div class="sliders" style="margin-top:8px;">
+      <label>Rate <input id="rateSlider" type="range" min="0.7" max="1.2" step="0.01"></label>
+      <label>Pitch <input id="pitchSlider" type="range" min="0.7" max="1.3" step="0.01"></label>
+      <label>Pause (ms) <input id="pauseSlider" type="range" min="120" max="600" step="10"></label>
     </div>
   </div>
 
   <div class="card">
     <h3>Try it</h3>
-    <textarea id="demoText">This is a demonstration of the narrator module. Select a voice, toggle Force English if you need, then press Test.</textarea>
+    <textarea id="demoText">This should sound a little smoother. The reader will pause briefly between sentences. You can adjust rate, pitch, and the pause value above.</textarea>
     <div style="margin-top:10px; display:flex; gap:8px;">
-      <button id="readDemoBtn">Read Text</button>
-      <button id="readBlocksBtn">Read Blocks (with disclaimer)</button>
+      <button id="readDemoBtn">Read (natural)</button>
+      <button id="readAsOneBtn">Read (single block)</button>
     </div>
   </div>
 
@@ -45,14 +45,11 @@
     import { narrator } from "../patch/narrator.js";
     document.getElementById("readDemoBtn").addEventListener("click", () => {
       const t = document.getElementById("demoText").value;
-      narrator.speak(t, { interrupt:true });
+      narrator.readNaturally(t);
     });
-    document.getElementById("readBlocksBtn").addEventListener("click", () => {
-      const chunks = [
-        "Welcome to the Spirit Guide App voice demo.",
-        "This will read multiple blocks, respecting the Stop button at any time."
-      ];
-      narrator.readBlocks(chunks, { interrupt:true });
+    document.getElementById("readAsOneBtn").addEventListener("click", () => {
+      const t = document.getElementById("demoText").value;
+      narrator.speak(t, { interrupt:true });
     });
   </script>
 </body>

@@ -1,2 +1,2 @@
-Spirit Guide App — FULL Golden Backup (UI restored) + Volume Slider + Narrator Highlight + TTS improvements
-Built: 2025-09-04T10:25:35.020599
+Spirit Guide App — FULL Golden Backup (Stopfix + Force-English) regenerated
+Built: 2025-09-04T11:15:36.437374

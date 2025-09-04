@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Spirit Guide App — Classic (Sheet Fix v2)</title>
+<title>Spirit Guide App — Classic (Sheet Fix v3)</title>
 <style>
-  :root{ --bg:#0c0f0c; --panel:#121712; --border:#1b291c; --text:#f1fff7; --muted:#b7d6c3; --accent:#7fffd4; --accent2:#57d9a9; --err:#ff9b9b; }
+  :root{ --bg:#0c0f0c; --panel:#121712; --border:#1b291c; --text:#f1fff7; --muted:#b7d6c3; --accent:#7fffd4; --accent2:#57d9a9; }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Arial,sans-serif}
   .wrap{max-width:980px;margin:0 auto;padding:28px}
@@ -13,7 +13,7 @@
   .sub{color:var(--muted);margin:0 0 18px;font-size:15px}
   .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;margin:16px 0;box-shadow:0 8px 30px rgba(0,0,0,.22)}
   label{display:block;font-weight:600;margin:.5rem 0 .35rem}
-  input,select,button{font:inherit;border-radius:10px;border:1px solid var(--border);background:#0f130f;color:var(--text);padding:.6rem .75rem}
+  input,select,button{font:inherit;border-radius:10px;border:1px solid var(--border);background:#0f130f;color:#f1fff7;padding:.6rem .75rem}
   button{cursor:pointer}
   .row{display:flex;gap:12px;flex-wrap:wrap}
   .row > *{flex:1 1 240px}
@@ -22,24 +22,15 @@
   .kpi h3{margin:0 0 6px;font-size:16px;color:var(--accent)}
   .kpi div{font-weight:700;font-size:20px}
   .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
-  .long{white-space:pre-line;background:#0f130f;border:1px solid var(--border);padding:14px;border-radius:10px;font-size:15px;line-height:1.5}
-  .section-title{margin:18px 0 10px}
   .banner{background:linear-gradient(90deg,#113d27,#10353a);border:1px solid var(--border);padding:14px;border-radius:12px}
-  .banner strong{color:var(--accent)}
   .primary{background:var(--accent2);border-color:var(--accent2);color:#001e11;font-weight:700}
-  .primary:hover{filter:brightness(1.05)}
   .muted{color:var(--muted)} .tiny{font-size:12px}
-  .status { margin-top: 8px; }
-  .status.ok { color: var(--accent); }
-  .status.err { color: var(--err); }
-  details summary { cursor: pointer; }
-  code { white-space: pre-wrap; word-break: break-word; }
 </style>
 </head>
 <body>
   <div class="wrap">
     <h1>🔮 Spirit Guide App</h1>
-    <p class="sub">Classic layout • Sheet Fix v2 (auto‑retry JSON → form‑encoded → FormData)</p>
+    <p class="sub">Classic layout • Sheet Fix v3 (no‑CORS form submit)</p>
 
     <section class="card">
       <div class="row">
@@ -83,18 +74,17 @@
           <label><input type="checkbox" id="consent"/> I agree to be contacted.</label>
           <button id="sendBtn" class="primary">Send my result</button>
         </div>
-        <div id="sendStatus" class="status tiny muted"></div>
-        <details id="sendDebug" class="tiny" style="margin-top:6px; display:none">
-          <summary>Details</summary>
-          <div><code id="debugOut"></code></div>
-        </details>
+        <div id="sendStatus" class="tiny muted"></div>
       </div>
     </section>
   </div>
 
+  <!-- Hidden iframe sink to avoid page navigation -->
+  <iframe name="sheetSink" style="display:none"></iframe>
+
 <script>
 const SHEETS_URL = "https://script.google.com/macros/s/AKfycbxlNWaWtYEnn4rizDRYRhkxey6CfGczi2oYkmDgRKs7rUHvnyWs0FTaQr1XB8FzJmhi/exec";
-const STORAGE_KEY = "sg-fix-v2";
+const STORAGE_KEY = "sg-fix-v3";
 const $ = (id)=>document.getElementById(id);
 
 function onlyLetters(str){ return (str||'').toUpperCase().replace(/[^A-Z]/g,''); }
@@ -124,54 +114,32 @@ function deterministicGuide(name,dob){
   return g[seed%g.length];
 }
 function renderResults(r){
-  $('guideName').textContent="Your Spirit Guide: "+r.guide;
-  $('lifePath').textContent=r.lifePath; $('expression').textContent=r.expression; $('soulUrge').textContent=r.soulUrge;
-  $('personality').textContent=r.personality; $('birthday').textContent=r.birthday; $('maturity').textContent=r.maturity;
-  $('karmicDebts').textContent=r.karmicDebts; $('karmicLessons').textContent=r.karmicLessons; $('balance').textContent=r.balance;
+  document.getElementById('guideName').textContent="Your Spirit Guide: "+r.guide;
+  document.getElementById('lifePath').textContent=r.lifePath; document.getElementById('expression').textContent=r.expression; document.getElementById('soulUrge').textContent=r.soulUrge;
+  document.getElementById('personality').textContent=r.personality; document.getElementById('birthday').textContent=r.birthday; document.getElementById('maturity').textContent=r.maturity;
+  document.getElementById('karmicDebts').textContent=r.karmicDebts; document.getElementById('karmicLessons').textContent=r.karmicLessons; document.getElementById('balance').textContent=r.balance;
 }
 
-$('demoBtn').onclick = ()=>{ $('name').value="Alex Example"; $('dob').value="1990-07-14"; };
-$('calcBtn').onclick = ()=>{
-  const nm=$('name').value.trim(), d=$('dob').value; if(!nm||!d){ alert("Enter your name and date of birth."); return; }
+document.getElementById('demoBtn').onclick = ()=>{ document.getElementById('name').value="Alex Example"; document.getElementById('dob').value="1990-07-14"; };
+document.getElementById('calcBtn').onclick = ()=>{
+  const nm=document.getElementById('name').value.trim(), d=document.getElementById('dob').value; if(!nm||!d){ alert("Enter your name and date of birth."); return; }
   const dn = dateToNumbers(d);
   const res = { name:nm, dob:d, guide:deterministicGuide(nm,d), lifePath:dn.lifePath, expression:nameNumber(nm,'all'), soulUrge:nameNumber(nm,'vowels'), personality:nameNumber(nm,'consonants'), birthday:dn.birthday, maturity:reduceNum(dn.lifePath + nameNumber(nm,'all')), karmicDebts:"—", karmicLessons:"—", balance:reduceNum(nameNumber(nm[0]||'','all') + (new Date(d)).getUTCDate()) };
-  $('resultsCard').style.display=$('emailCard').style.display="block"; renderResults(res);
+  document.getElementById('resultsCard').style.display=document.getElementById('emailCard').style.display="block"; renderResults(res);
   localStorage.setItem(STORAGE_KEY, JSON.stringify({results:res}));
 };
-$('resetBtn').onclick = ()=>{ localStorage.removeItem(STORAGE_KEY); location.reload(); };
+document.getElementById('resetBtn').onclick = ()=>{ localStorage.removeItem(STORAGE_KEY); location.reload(); };
 
-async function sendToSheet(payload) {
-  const attempts = [
-    { label:"JSON", opts: { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(payload) } },
-    { label:"FORM_URLENCODED", opts: { method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body: new URLSearchParams(payload).toString() } },
-    { label:"FORMDATA", opts: { method:"POST", body: (()=>{ const fd = new FormData(); for (const k in payload) fd.append(k, String(payload[k])); return fd; })() } }
-  ];
-  let last = { via:null, status:null, body:null, error:null };
-  for (const a of attempts) {
-    try {
-      const res = await fetch(SHEETS_URL, a.opts);
-      const text = await res.text().catch(()=> "");
-      if (res.ok) {
-        // If body parses and ok!==false, treat as success
-        let ok = true;
-        try { const j = JSON.parse(text); if (j && j.ok === false) ok = false; } catch(e) {/* ignore */}
-        if (ok) return { ok:true, via:a.label, body:text };
-      }
-      last = { via:a.label, status:res.status, body:text, error:null };
-    } catch (e) {
-      last = { via:a.label, status:null, body:null, error:String(e) };
-    }
-  }
-  return { ok:false, last };
-}
-
-$('sendBtn').onclick = async ()=>{
-  const email = $('email').value.trim(); const consent = $('consent').checked;
-  if(!email){ $('sendStatus').textContent="Enter an email."; $('sendStatus').className="status err"; return; }
-  if(!consent){ $('sendStatus').textContent="Please tick consent."; $('sendStatus').className="status err"; return; }
+// v3: hidden form + iframe to bypass CORS/preflight
+document.getElementById('sendBtn').onclick = ()=>{
+  const email = document.getElementById('email').value.trim(); const consent = document.getElementById('consent').checked;
+  const statusEl = document.getElementById('sendStatus');
+  if(!email){ statusEl.textContent="Enter an email."; return; }
+  if(!consent){ statusEl.textContent="Please tick consent."; return; }
 
   const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
   const r = saved.results || {};
+
   const payload = {
     email, consent: consent ? "Yes":"No", timestamp: new Date().toISOString(),
     name: r.name || "", dob: r.dob || "",
@@ -181,24 +149,31 @@ $('sendBtn').onclick = async ()=>{
     result_json: JSON.stringify(r||{})
   };
 
-  $('sendStatus').textContent="Sending…"; $('sendStatus').className="status muted";
-  $('sendDebug').style.display="none"; $('debugOut').textContent="";
-  const result = await sendToSheet(payload);
-  if (result.ok) {
-    $('sendStatus').textContent="Saved ✅ We will follow up by email within ~24 hours.";
-    $('sendStatus').className="status ok";
-  } else {
-    $('sendStatus').textContent="Could not send. Try again later.";
-    $('sendStatus').className="status err";
-    const info = result.last || {};
-    $('debugOut').textContent = "Tried via: " + (info.via||"unknown") + "\nStatus: " + (info.status??"n/a") + "\nBody: " + (info.body??"") + "\nError: " + (info.error??"");
-    $('sendDebug').style.display="block";
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = SHEETS_URL;
+  form.target = 'sheetSink';
+  for (const k in payload) {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = k;
+    input.value = String(payload[k]);
+    form.appendChild(input);
+  }
+  document.body.appendChild(form);
+  try {
+    form.submit();
+    statusEl.textContent = "Sent ✅ — check your Google Sheet for a new row.";
+  } catch(e) {
+    statusEl.textContent = "Could not send — form submit failed.";
+  } finally {
+    setTimeout(()=>{ try{ document.body.removeChild(form); }catch(e){} }, 2000);
   }
 };
 
-// Restore state if any
+// Restore if any
 (function restore(){
-  try{ const s = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}"); if(s.results){ renderResults(s.results); $('resultsCard').style.display=$('emailCard').style.display="block"; } }catch(e){}
+  try{ const s = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}"); if(s.results){ renderResults(s.results); document.getElementById('resultsCard').style.display=document.getElementById('emailCard').style.display="block"; } }catch(e){}
 })();
 </script>
 </body>

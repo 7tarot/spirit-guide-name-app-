@@ -186,7 +186,6 @@
   // Enable sound
   $('enableSound').onclick = ()=>{ $('player').muted=false; $('player').play().catch(()=>{}); $('player').pause(); $('player').volume = parseFloat(($('ambientVol')||{value:'0.35'}).value); };
 
-
   // Volume slider
   const VOL_KEY = 'spirit-guide-ambient-vol';
   const volEl = $('ambientVol');
@@ -198,7 +197,6 @@
 
   // Ambient (only your MP3)
   $('ambient').onchange = (e)=>{
-
     const src = e.target.value, p=$('player');
     if(!src){ p.pause(); return; }
     p.src = src; p.loop = true; applyVolume();
@@ -211,7 +209,7 @@
   function sumDigits(n){ n = String(n).replace(/[^0-9]/g,''); return n.split('').reduce((a,b)=>a+Number(b),0); }
   function reduceNum(n){ n = Number(n); while (![11,22,33].includes(n) && n>9){ n = sumDigits(n); } return n; }
   function nameNumber(name, type){
-    const map = {A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,S:1,T:2,U:3,V:4,W:5,X:6,Y:7,Z:8};
+    const map = {A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,S:1,T:2,U:3,V:3,W:5,X:6,Y:7,Z:8};
     const vowels = new Set(['A','E','I','O','U','Y']);
     let cleaned = onlyLetters(name), val = 0;
     for(const ch of cleaned){
@@ -237,9 +235,9 @@
   function timeLeftString(ms){ if(ms<=0) return "0m"; const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60; return h+"h "+m+"m "+sc+"s"; }
 
   function customiseTextForPlacement(info,label,n){
-    let text=[info.overview, info.strengths, info.challenges, info.relationships, info.watchouts, info.coaching].join("\\n\\n");
-    const re1=new RegExp("^\\s*Life\\s*Path\\s*"+n+"\\b","i"); text=text.replace(re1,label+" "+n);
-    const re2=new RegExp("^\\s*Master\\s*Number\\s*"+n+"\\b","i"); text=text.replace(re2,label+" "+n+" (Master Number)");
+    let text=[info.overview, info.strengths, info.challenges, info.relationships, info.watchouts, info.coaching].join("\n\n");
+    const re1=new RegExp("^\s*Life\s*Path\s*"+n+"\b","i"); text=text.replace(re1,label+" "+n);
+    const re2=new RegExp("^\s*Master\s*Number\s*"+n+"\b","i"); text=text.replace(re2,label+" "+n+" (Master Number)");
     return text;
   }
 
@@ -263,19 +261,14 @@
     clearInterval(countdownTimer); countdownTimer=setInterval(()=>{ const left=unlockAt-Date.now(); $('countdown').textContent=timeLeftString(left); if(left<=0){ clearInterval(countdownTimer); $('countdown').textContent="0m"; } }, 1000);
   }
 
-  // Narration builder (READ EVERYTHING with preamble)
+  // Narration builder
   function buildFullNarration(){
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
     const r = saved.results || {};
     const hasLong = !!(longDB && longDB.numbers);
     const lines = [];
-
-    // Preamble (as you requested)
     lines.push("This is a general overview. Your name and date of birth are captured via our Google Sheet when you provide your email and consent, so we can send your full backstory. That email follow-up contains a more precise spirit name and tailored backstory.");
-
     if(r.guide){ lines.push(`Your Spirit Guide is ${r.guide}.`); }
-
-    // Snapshot
     const snap = [
       ["Life Path", r.lifePath],
       ["Expression", r.expression],
@@ -291,8 +284,6 @@
       lines.push("Snapshot of your numbers:");
       snap.forEach(([k,v])=> lines.push(`${k}: ${v}.`));
     }
-
-    // Long sections (if available)
     function longFor(n, label){
       if(!hasLong) return null;
       const info = longDB.numbers[String(n)];
@@ -308,7 +299,6 @@
     if(r.birthday)    { const s = longFor(r.birthday, "Birthday"); if(s) lines.push(s); }
     if(r.maturity)    { const s = longFor(r.maturity, "Maturity"); if(s) lines.push(s); }
     if(r.balance)     { const s = longFor(r.balance, "Balance"); if(s) lines.push(s); }
-
     return lines.join(" ");
   }
 
@@ -320,13 +310,11 @@
       const u = new SpeechSynthesisUtterance(text);
       const voices = speechSynthesis.getVoices()||[];
       const sel = $('voiceSelect'); if(sel && sel.value && voices[sel.value]) u.voice = voices[sel.value];
-      // Slightly slower and calmer
       u.rate = 0.95; u.pitch = 1.0; u.volume = 1.0;
       speechSynthesis.speak(u);
     }catch(e){ console.warn(e); }
   }
 
-  // Voices
   function populateVoices(){
     const sel = $('voiceSelect'); sel.innerHTML="";
     const voices = speechSynthesis.getVoices()||[];
@@ -347,18 +335,41 @@
   };
   $('resetBtn').onclick = ()=>{ localStorage.removeItem(STORAGE_KEY); location.reload(); };
   $('copyBtn').onclick = ()=>{ const saved=localStorage.getItem(STORAGE_KEY); if(!saved) return alert("Nothing to copy yet."); navigator.clipboard.writeText(saved).then(()=>alert("Copied.")); };
+
+  // *** SHEET SEND — FIXED (uses FormData, no JSON/CORS issues) ***
   $('sendBtn').onclick = async ()=>{
     const email = $('email').value.trim(); const consent = $('consent').checked;
     if(!email){ $('sendStatus').innerHTML='<span style="color:#ffb3b3">Enter an email.</span>'; return; }
     if(!consent){ $('sendStatus').innerHTML='<span style="color:#ffb3b3">Please tick consent.</span>'; return; }
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}"); const payload = { email, consent:true, timestamp:new Date().toISOString(), result: saved.results || null };
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+    const res   = saved.results || {};
+    const fd = new FormData();
+    fd.append('email', email);
+    fd.append('consent', consent ? 'Yes' : 'No');
+    fd.append('timestamp', new Date().toISOString());
+    fd.append('name', saved.name || '');
+    fd.append('dob', saved.dob || '');
+    fd.append('guide', res.guide ?? '');
+    fd.append('lifePath', res.lifePath ?? '');
+    fd.append('expression', res.expression ?? '');
+    fd.append('soulUrge', res.soulUrge ?? '');
+    fd.append('personality', res.personality ?? '');
+    fd.append('birthday', res.birthday ?? '');
+    fd.append('maturity', res.maturity ?? '');
+    fd.append('karmicDebts', res.karmicDebts ?? '');
+    fd.append('karmicLessons', res.karmicLessons ?? '');
+    fd.append('balance', res.balance ?? '');
+    fd.append('result_json', JSON.stringify(res));
     $('sendStatus').textContent = "Sending…";
-    try{ await fetch(SHEETS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    try{
+      await fetch(SHEETS_URL, { method:"POST", body: fd });
       $('sendStatus').innerHTML='<span style="color:#a7ffd8">Saved. We will follow up by email in ~24 hours.</span>';
-    }catch(err){ $('sendStatus').innerHTML='<span style="color:#ffb3b3">Could not send. Try again later.</span>'; }
+    }catch(err){
+      $('sendStatus').innerHTML='<span style="color:#ffb3b3">Could not send. Try again later.</span>';
+    }
   };
 
-  // Load numerology file if present (optional)
+  // Load numerology (optional)
   fetch('numerology_descriptions.json?v='+Date.now()).then(r=>r.ok?r.json():Promise.reject()).then(db=>{ longDB=db; }).catch(()=>{});
 
   // Restore state

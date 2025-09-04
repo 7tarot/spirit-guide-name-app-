@@ -63,6 +63,10 @@
               <option value="ambient/binaural.mp3">Rhino Beat (binaural.mp3)</option>
             </select>
             <button id="stopAudio">Stop</button>
+            <label class="tiny" style="display:flex;align-items:center;gap:8px;margin-left:8px">
+              Ambient volume
+              <input type="range" id="ambientVol" min="0" max="1" step="0.05" value="0.35" style="width:160px">
+            </label>
           </div>
           <div class="tiny muted" style="margin-top:6px">Using your Ableton track at <code>ambient/binaural.mp3</code>.</div>
         </div>
@@ -154,13 +158,24 @@
   let longDB=null, countdownTimer=null;
 
   // Enable sound
-  $('enableSound').onclick = ()=>{ $('player').muted=false; $('player').play().catch(()=>{}); $('player').pause(); };
+  $('enableSound').onclick = ()=>{ $('player').muted=false; $('player').play().catch(()=>{}); $('player').pause(); $('player').volume = parseFloat(($('ambientVol')||{value:'0.35'}).value); };
+
+
+  // Volume slider
+  const VOL_KEY = 'spirit-guide-ambient-vol';
+  const volEl = $('ambientVol');
+  const savedVol = parseFloat(localStorage.getItem(VOL_KEY));
+  if(!isNaN(savedVol)) { volEl.value = savedVol.toFixed(2); }
+  const applyVolume = ()=>{ $('player').volume = parseFloat(volEl.value || '0.35'); localStorage.setItem(VOL_KEY, $('player').volume); };
+  volEl.oninput = applyVolume;
+  applyVolume();
 
   // Ambient (only your MP3)
   $('ambient').onchange = (e)=>{
+
     const src = e.target.value, p=$('player');
     if(!src){ p.pause(); return; }
-    p.src = src; p.loop = true;
+    p.src = src; p.loop = true; applyVolume();
     p.play().catch(()=>alert("Click ‘Enable sound’ then choose again."));
   };
   $('stopAudio').onclick = ()=>{ const p=$('player'); p.pause(); p.currentTime=0; };

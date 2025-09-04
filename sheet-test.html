@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spirit Guide — Sheet Test</title>
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+  <div class="wrap">
+    <h1>Sheet Connection Test</h1>
+    <p class="muted">This page only checks that your Google Sheet receives a row. It does not change your main app.</p>
+
+    <form id="testForm" class="card">
+      <label>Name <input id="name" name="name" placeholder="Test Steve" required></label>
+      <label>Email <input id="email" name="email" type="email" placeholder="test@me.com" required></label>
+      <label>DOB <input id="dob" name="dob" type="date" required></label>
+      <label class="chk"><input id="consent" name="consent" type="checkbox" checked> I agree</label>
+      <button type="submit" id="sendBtn">Send test</button>
+      <div id="status" class="status"></div>
+    </form>
+
+    <details class="card">
+      <summary>Technical (optional)</summary>
+      <div>Posting to:<br><code>https://script.google.com/macros/s/AKfycbxlNWaWtYEnn4rizDRYRhkxey6CfGczi2oYkmDgRKs7rUHvnyWs0FTaQr1XB8FzJmhi/exec</code></div>
+    </details>
+
+    <p class="small muted">If this writes a new row in your Google Sheet, your Apps Script is OK. Next we can wire your main app to the same URL with a drag-and-drop bundle.</p>
+  </div>
+
+  <script>
+  const URL = "https://script.google.com/macros/s/AKfycbxlNWaWtYEnn4rizDRYRhkxey6CfGczi2oYkmDgRKs7rUHvnyWs0FTaQr1XB8FzJmhi/exec";
+  const form = document.getElementById('testForm');
+  const statusBox = document.getElementById('status');
+  const btn = document.getElementById('sendBtn');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    btn.disabled = true;
+    statusBox.textContent = "Sending…";
+    try {
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        dob: document.getElementById('dob').value,
+        consent: document.getElementById('consent').checked
+      };
+      const res = await fetch(URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const text = await res.text();
+      statusBox.textContent = "Response: " + text;
+      statusBox.className = "status " + (res.ok ? "ok" : "err");
+    } catch (err) {
+      statusBox.textContent = "Error: " + err;
+      statusBox.className = "status err";
+    } finally {
+      btn.disabled = false;
+    }
+  });
+  </script>
+</body>
+</html>

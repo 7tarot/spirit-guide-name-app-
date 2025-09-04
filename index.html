@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Spirit Guide App — Classic</title>
+<title>Spirit Guide App — Classic (Demo Fix)</title>
 <style>
   :root{ --bg:#0c0f0c; --panel:#121712; --border:#1b291c; --text:#f1fff7; --muted:#b7d6c3; --accent:#7fffd4; --accent2:#57d9a9; }
   *{box-sizing:border-box}
@@ -11,7 +11,7 @@
   .wrap{max-width:980px;margin:0 auto;padding:28px}
   h1{margin:0 0 6px;font-size:34px}
   .sub{color:var(--muted);margin:0 0 18px;font-size:15px}
-  .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;margin:16px 0;box-shadow: 0 8px 30px rgba(0,0,0,.22)}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;margin:16px 0;box-shadow:0 8px 30px rgba(0,0,0,.22)}
   label{display:block;font-weight:600;margin:.5rem 0 .35rem}
   input,select,button{font:inherit;border-radius:10px;border:1px solid var(--border);background:#0f130f;color:var(--text);padding:.6rem .75rem}
   button{cursor:pointer}
@@ -31,7 +31,6 @@
   .primary:hover{filter:brightness(1.05)}
   .muted{color:var(--muted)} .tiny{font-size:12px}
   .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:#0f130f}
-  .filebox{display:inline-flex;align-items:center;gap:8px}
 </style>
 </head>
 <body>
@@ -62,6 +61,7 @@
             <select id="ambient">
               <option value="">None</option>
               <option value="ambient/meditation.mp3">Your MP3 in /ambient/meditation.mp3</option>
+              <option value="ambient/binaural.mp3">Your MP3 in /ambient/binaural.mp3</option>
               <option value="ambient/rain.mp3">Rain (rain.mp3)</option>
               <option value="ambient/choir.mp3">Choir (choir.mp3)</option>
               <option value="ambient/drone.mp3">Drone (drone.mp3)</option>
@@ -70,7 +70,7 @@
             <input id="customFile" type="file" accept="audio/*" style="display:none"/>
             <button id="stopAudio">Stop</button>
           </div>
-          <div class="tiny muted" style="margin-top:6px">Tip: rename your Ableton export to <code>ambient/meditation.mp3</code> for a one-click pick.</div>
+          <div class="tiny muted" style="margin-top:6px">Tip: rename your Ableton export to <code>ambient/meditation.mp3</code> or <code>binaural.mp3</code> for a one‑click pick.</div>
         </div>
         <div>
           <label>&nbsp;</label>
@@ -155,32 +155,29 @@
 
   <script>
   const SHEETS_URL = "https://script.google.com/macros/s/AKfycbxlNWaWtYEnn4rizDRYRhkxey6CfGczi2oYkmDgRKs7rUHvnyWs0FTaQr1XB8FzJmhi/exec";
-  const STORAGE_KEY = "spirit-guide-classic-user-mp3-v1";
+  const STORAGE_KEY = "spirit-guide-classic-user-mp3-v2";
   const $ = (id)=>document.getElementById(id);
   let longDB=null, countdownTimer=null;
 
   // Enable sound
-  enableSound.onclick = ()=>{ player.muted=false; player.play().catch(()=>{}); player.pause(); };
+  $('enableSound').onclick = ()=>{ $('player').muted=false; $('player').play().catch(()=>{}); $('player').pause(); };
 
-  // Ambient list (supports your own MP3 + file upload)
-  ambient.onchange = (e)=>{
-    if(e.target.value === "__custom__"){
-      customFile.click();
-      return;
-    }
+  // Ambient list (supports your MP3 + file upload)
+  $('ambient').onchange = (e)=>{
+    if(e.target.value === "__custom__"){ $('customFile').click(); return; }
     const src = e.target.value;
-    if(!src){ player.pause(); return; }
-    player.src = src; player.loop = true;
-    player.play().catch(()=>alert("Click ‘Enable sound’ then choose again."));
+    const p = $('player');
+    if(!src){ p.pause(); return; }
+    p.src = src; p.loop = true;
+    p.play().catch(()=>alert("Click ‘Enable sound’ then choose again."));
   };
-  customFile.onchange = (e)=>{
-    const file = e.target.files[0];
-    if(!file) return;
+  $('customFile').onchange = (e)=>{
+    const file = e.target.files[0]; if(!file) return;
     const url = URL.createObjectURL(file);
-    player.src = url; player.loop = true;
-    player.play().catch(()=>alert("Click ‘Enable sound’ then choose again."));
+    const p = $('player'); p.src = url; p.loop = true;
+    p.play().catch(()=>alert("Click ‘Enable sound’ then choose again."));
   };
-  stopAudio.onclick = ()=>{ player.pause(); player.currentTime=0; };
+  $('stopAudio').onclick = ()=>{ const p=$('player'); p.pause(); p.currentTime=0; };
 
   // Numerology helpers
   function onlyLetters(str){ return (str||'').toUpperCase().replace(/[^A-Z]/g,''); }
@@ -220,60 +217,60 @@
   }
 
   function renderResults(r){
-    guideName.textContent="Your Spirit Guide: "+r.guide;
-    lifePath.textContent=r.lifePath; expression.textContent=r.expression; soulUrge.textContent=r.soulUrge;
-    personality.textContent=r.personality; birthday.textContent=r.birthday; maturity.textContent=r.maturity;
-    karmicDebts.textContent=r.karmicDebts; karmicLessons.textContent=r.karmicLessons; balance.textContent=r.balance;
+    $('guideName').textContent="Your Spirit Guide: "+r.guide;
+    $('lifePath').textContent=r.lifePath; $('expression').textContent=r.expression; $('soulUrge').textContent=r.soulUrge;
+    $('personality').textContent=r.personality; $('birthday').textContent=r.birthday; $('maturity').textContent=r.maturity;
+    $('karmicDebts').textContent=r.karmicDebts; $('karmicLessons').textContent=r.karmicLessons; $('balance').textContent=r.balance;
     if(longDB&&longDB.numbers){
       const fmt=(n,label)=>{ const info=longDB.numbers[String(n)]; return info?customiseTextForPlacement(info,label,n):(label+" "+n+": Detailed meaning coming soon."); };
-      lifePathLong.textContent=fmt(r.lifePath,"Life Path"); expressionLong.textContent=fmt(r.expression,"Expression");
-      soulUrgeLong.textContent=fmt(r.soulUrge,"Soul Urge"); personalityLong.textContent=fmt(r.personality,"Personality");
-      birthdayLong.textContent=fmt(r.birthday,"Birthday"); maturityLong.textContent=fmt(r.maturity,"Maturity"); balanceLong.textContent=fmt(r.balance,"Balance");
+      $('lifePathLong').textContent=fmt(r.lifePath,"Life Path"); $('expressionLong').textContent=fmt(r.expression,"Expression");
+      $('soulUrgeLong').textContent=fmt(r.soulUrge,"Soul Urge"); $('personalityLong').textContent=fmt(r.personality,"Personality");
+      $('birthdayLong').textContent=fmt(r.birthday,"Birthday"); $('maturityLong').textContent=fmt(r.maturity,"Maturity"); $('balanceLong').textContent=fmt(r.balance,"Balance");
     } else {
       const msg="Loading meanings…"; ["lifePathLong","expressionLong","soulUrgeLong","personalityLong","birthdayLong","maturityLong","balanceLong"].forEach(id=>$(id).textContent=msg);
     }
   }
 
   function setupCountdown(firstCalcAt){
-    const unlockAt=firstCalcAt+24*60*60*1000; countdownCard.style.display="block";
-    clearInterval(countdownTimer); countdownTimer=setInterval(()=>{ const left=unlockAt-Date.now(); countdown.textContent=timeLeftString(left); if(left<=0){ clearInterval(countdownTimer); countdown.textContent="0m"; } }, 1000);
+    const unlockAt=firstCalcAt+24*60*60*1000; $('countdownCard').style.display="block";
+    clearInterval(countdownTimer); countdownTimer=setInterval(()=>{ const left=unlockAt-Date.now(); $('countdown').textContent=timeLeftString(left); if(left<=0){ clearInterval(countdownTimer); $('countdown').textContent="0m"; } }, 1000);
   }
 
   // Voices
   function populateVoices(){
-    const sel = voiceSelect; sel.innerHTML="";
+    const sel = $('voiceSelect'); sel.innerHTML="";
     const voices = speechSynthesis.getVoices()||[];
     voices.forEach((v,i)=>{ const opt=document.createElement("option"); opt.value=i; opt.textContent=v.name+" ("+v.lang+")"; sel.appendChild(opt); });
   }
   populateVoices(); if('onvoiceschanged' in speechSynthesis) speechSynthesis.onvoiceschanged = populateVoices;
-  speakBtn.onclick = ()=>{
+  $('speakBtn').onclick = ()=>{
     const u = new SpeechSynthesisUtterance("Your reading is ready. Choose a voice above to change this narrator.");
     const voices = speechSynthesis.getVoices()||[];
-    if(voiceSelect.value && voices[voiceSelect.value]) u.voice = voices[voiceSelect.value];
+    if($('voiceSelect').value && voices[$('voiceSelect').value]) u.voice = voices[$('voiceSelect').value];
     speechSynthesis.speak(u);
   };
-  stopSpeakBtn.onclick = ()=>{ if(speechSynthesis.speaking) speechSynthesis.cancel(); };
+  $('stopSpeakBtn').onclick = ()=>{ if(speechSynthesis.speaking) speechSynthesis.cancel(); };
 
   // Main events
-  demoBtn.onclick = ()=>{ name.value="Alex Example"; dob.value="1990-07-14"; };
-  calcBtn.onclick = ()=>{
-    const nm=name.value.trim(), d=dob.value; if(!nm||!d){ alert("Please enter your name and date of birth."); return; }
+  $('demoBtn').onclick = ()=>{ $('name').value="Alex Example"; $('dob').value="1990-07-14"; };
+  $('calcBtn').onclick = ()=>{
+    const nm=$('name').value.trim(), d=$('dob').value; if(!nm||!d){ alert("Please enter your name and date of birth."); return; }
     const dn = dateToNumbers(d);
     const res = { name:nm, dob:d, guide:deterministicGuide(nm,d), lifePath:dn.lifePath, expression:nameNumber(nm,'all'), soulUrge:nameNumber(nm,'vowels'), personality:nameNumber(nm,'consonants'), birthday:dn.birthday, maturity:reduceNum(dn.lifePath + nameNumber(nm,'all')), karmicDebts:formatKarmicDebts(d.replace(/-/g,'')), karmicLessons:"—", balance:reduceNum(nameNumber(nm[0]||'','all') + (new Date(d)).getUTCDate()) };
-    resultsCard.style.display=longCard.style.display=emailCard.style.display="block"; renderResults(res);
+    $('resultsCard').style.display=$('longCard').style.display=$('emailCard').style.display="block"; renderResults(res);
     const firstCalcAt=Date.now(); localStorage.setItem(STORAGE_KEY, JSON.stringify({name:nm, dob:d, results:res, firstCalcAt})); setupCountdown(firstCalcAt);
   };
-  resetBtn.onclick = ()=>{ localStorage.removeItem(STORAGE_KEY); location.reload(); };
-  copyBtn.onclick = ()=>{ const saved=localStorage.getItem(STORAGE_KEY); if(!saved) return alert("Nothing to copy yet."); navigator.clipboard.writeText(saved).then(()=>alert("Copied.")); };
-  sendBtn.onclick = async ()=>{
-    const email = document.getElementById("email").value.trim(); const consent = document.getElementById("consent").checked;
-    if(!email){ sendStatus.innerHTML='<span style="color:#ffb3b3">Enter an email.</span>'; return; }
-    if(!consent){ sendStatus.innerHTML='<span style="color:#ffb3b3">Please tick consent.</span>'; return; }
+  $('resetBtn').onclick = ()=>{ localStorage.removeItem(STORAGE_KEY); location.reload(); };
+  $('copyBtn').onclick = ()=>{ const saved=localStorage.getItem(STORAGE_KEY); if(!saved) return alert("Nothing to copy yet."); navigator.clipboard.writeText(saved).then(()=>alert("Copied.")); };
+  $('sendBtn').onclick = async ()=>{
+    const email = $('email').value.trim(); const consent = $('consent').checked;
+    if(!email){ $('sendStatus').innerHTML='<span style="color:#ffb3b3">Enter an email.</span>'; return; }
+    if(!consent){ $('sendStatus').innerHTML='<span style="color:#ffb3b3">Please tick consent.</span>'; return; }
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}"); const payload = { email, consent:true, timestamp:new Date().toISOString(), result: saved.results || null };
-    sendStatus.textContent = "Sending…";
+    $('sendStatus').textContent = "Sending…";
     try{ await fetch(SHEETS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-      sendStatus.innerHTML='<span style="color:#a7ffd8">Saved. We will follow up by email in ~24 hours.</span>';
-    }catch(err){ sendStatus.innerHTML='<span style="color:#ffb3b3">Could not send. Try again later.</span>'; }
+      $('sendStatus').innerHTML='<span style="color:#a7ffd8">Saved. We will follow up by email in ~24 hours.</span>';
+    }catch(err){ $('sendStatus').innerHTML='<span style="color:#ffb3b3">Could not send. Try again later.</span>'; }
   };
 
   // Load numerology file if present (optional)
@@ -283,7 +280,7 @@
   (function restore(){
     const saved = localStorage.getItem(STORAGE_KEY);
     if(!saved) return;
-    try{ const s = JSON.parse(saved); name.value=s.name||""; dob.value=s.dob||""; if(s.results){ renderResults(s.results); resultsCard.style.display=longCard.style.display=emailCard.style.display="block"; setupCountdown(s.firstCalcAt); } }catch(e){}
+    try{ const s = JSON.parse(saved); $('name').value=s.name||""; $('dob').value=s.dob||""; if(s.results){ renderResults(s.results); $('resultsCard').style.display=$('longCard').style.display=$('emailCard').style.display="block"; setupCountdown(s.firstCalcAt); } }catch(e){}
   })();
   </script>
 </body>

@@ -1,2 +1,2 @@
-Spirit Guide App — Minimal TTS Fix demo build
-Built: 2025-09-04T10:19:03.479731
+Spirit Guide App — FULL Golden Backup (UI restored) + Volume Slider + Narrator Highlight + TTS improvements
+Built: 2025-09-04T10:25:35.020599

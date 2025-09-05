@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Endpoint Check & Send — ep-PNVsmsc</title>
+  <style>
+    body { margin:0; font-family: system-ui, Segoe UI, Roboto, Arial, sans-serif; background:#05090a; color:#d1f7ff }
+    .wrap { max-width: 760px; margin: 24px auto; padding: 0 16px }
+    .card { background:#081215; border:1px solid #102227; border-radius:14px; padding:16px; margin:16px 0 }
+    code { word-break: break-all }
+    iframe { width:100%; min-height:160px; background:#0b1214; border:1px solid #102227; border-radius:10px }
+    label { display:block; margin:8px 0 4px; font-weight:600 }
+    input { width:100%; padding:10px; border-radius:10px; border:1px solid #102227; background:#0b1214; color:#d1f7ff }
+    button { padding:10px 14px; border-radius:10px; border:1px solid #1c2a2d; background:#0f191b; color:#d1f7ff; cursor:pointer }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h2>Endpoint Check & Send</h2>
+      <p>This page posts to:<br><code id="ep">https://script.google.com/macros/s/AKfycbxg14tVEU3AJ210QQ0Ul3BfZAhOIQgz-MW5PNVsmsc/exec</code></p>
+      <form action="https://script.google.com/macros/s/AKfycbxg14tVEU3AJ210QQ0Ul3BfZAhOIQgz-MW5PNVsmsc/exec" method="POST" target="sink">
+        <label>Email <input type="email" name="email" value="stevenabbott1976@googlemail.com" required></label>
+        <label>Date of Birth <input type="date" name="dob" required></label>
+        <label>Name <input type="text" name="name" value="Netlify Check" required></label>
+        <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="consent" value="Yes" checked> I agree</label>
+        <button type="submit">Send to Sheet</button>
+        <input type="hidden" name="timestamp" value="">
+        <input type="hidden" name="guide" value="Orin">
+        <input type="hidden" name="lifePath" value="3">
+        <input type="hidden" name="expression" value="5">
+        <input type="hidden" name="soulUrge" value="7">
+        <input type="hidden" name="personality" value="4">
+        <input type="hidden" name="birthday" value="2">
+        <input type="hidden" name="maturity" value="8">
+        <input type="hidden" name="karmicDebts" value="None">
+        <input type="hidden" name="karmicLessons" value="—">
+        <input type="hidden" name="balance" value="6">
+        <input type="hidden" name="result_json" value='{"netlify":true}'>
+      </form>
+    </div>
+    <div class="card">
+      <h3>Server response</h3>
+      <iframe name="sink"></iframe>
+    </div>
+  </div>
+  <script>
+    const form = document.querySelector('form');
+    form.addEventListener('submit', () => { form.querySelector('input[name="timestamp"]').value = new Date().toISOString(); });
+  </script>
+</body>
+</html>

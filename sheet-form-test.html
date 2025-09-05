@@ -3,29 +3,37 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Google Sheet — Form Test</title>
+  <title>Google Sheet — Quiet Test (no iframe)</title>
   <style>
-    body { margin:0; font-family: system-ui, Segoe UI, Roboto, Arial, sans-serif; background:#05090a; color:#d1f7ff }
+    :root { --bg:#05090a; --card:#081215; --edge:#102227; --text:#d1f7ff; --mint:#7efcff; --ok:#a7ffd8; --err:#ff9b9b }
+    html, body { margin:0; padding:0; background:var(--bg); color:var(--text); font-family: system-ui, Segoe UI, Roboto, Arial, sans-serif }
     .wrap { max-width: 760px; margin: 24px auto; padding: 0 16px }
-    .card { background:#081215; border:1px solid #102227; border-radius:14px; padding:16px; margin:16px 0 }
-    code { word-break: break-all }
-    iframe { width:100%; min-height:160px; background:#0b1214; border:1px solid #102227; border-radius:10px }
-    label { display:block; margin:8px 0 4px; font-weight:600 }
-    input { width:100%; padding:10px; border-radius:10px; border:1px solid #102227; background:#0b1214; color:#d1f7ff }
-    button { padding:10px 14px; border-radius:10px; border:1px solid #1c2a2d; background:#0f191b; color:#d1f7ff; cursor:pointer }
+    .card { background:var(--card); border:1px solid var(--edge); border-radius:14px; padding:16px; margin:16px 0 }
+    label { display:block; margin:10px 0 6px; font-weight:600 }
+    input[type="text"], input[type="email"], input[type="date"] { width:100%; padding:10px; border-radius:10px; border:1px solid var(--edge); background:#0b1214; color:var(--text) }
+    button { background:#0f191b; color:var(--text); border:1px solid #1c2a2d; border-radius:10px; padding:10px 14px; cursor:pointer }
+    .muted { color:#9bc7d1 }
+    .ok { color: var(--ok) }
+    .err { color: var(--err) }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
-      <h2>Endpoint Test</h2>
-      <p>Posting to:<br><code id="ep">https://script.google.com/macros/s/AKfycbxg14tVEU3AJ210QQ0Ul3BfZAhOIQgz-MW5PNVsmsc/exec</code></p>
-      <form action="https://script.google.com/macros/s/AKfycbxg14tVEU3AJ210QQ0Ul3BfZAhOIQgz-MW5PNVsmsc/exec" method="POST" target="sink">
+      <h2>Quiet Endpoint Test</h2>
+      <p class="muted">Posting to: <code>https://script.google.com/macros/s/AKfycbxg14tVEU3AJ210QQ0Ul3BfZAhOIQgz-MW5PNVsmsc/exec</code></p>
+      <form id="quietForm" action="https://script.google.com/macros/s/AKfycbxg14tVEU3AJ210QQ0Ul3BfZAhOIQgz-MW5PNVsmsc/exec" method="POST" target="quietSink">
         <label>Email <input type="email" name="email" value="stevenabbott1976@googlemail.com" required></label>
         <label>Date of Birth <input type="date" name="dob" required></label>
-        <label>Name <input type="text" name="name" value="Endpoint Test" required></label>
-        <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="consent" value="Yes" checked> I agree</label>
-        <button type="submit">Send to Sheet</button>
+        <label>Name <input type="text" name="name" value="Quiet Test" required></label>
+        <label style="display:flex;align-items:center;gap:8px">
+          <input type="checkbox" name="consent" value="Yes" checked> I agree
+        </label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button type="submit">Send to Sheet</button>
+          <span id="status" class="muted">Waiting…</span>
+        </div>
+        <!-- hidden extras -->
         <input type="hidden" name="timestamp" value="">
         <input type="hidden" name="guide" value="Orin">
         <input type="hidden" name="lifePath" value="3">
@@ -37,17 +45,20 @@
         <input type="hidden" name="karmicDebts" value="None">
         <input type="hidden" name="karmicLessons" value="—">
         <input type="hidden" name="balance" value="6">
-        <input type="hidden" name="result_json" value='{"demo":true}'>
+        <input type="hidden" name="result_json" value='{"quiet":true}'>
       </form>
-    </div>
-    <div class="card">
-      <h3>Server response</h3>
-      <iframe name="sink"></iframe>
+      <!-- Hidden iframe target so Google response doesn't display -->
+      <iframe name="quietSink" style="display:none"></iframe>
     </div>
   </div>
   <script>
-    const form = document.querySelector('form');
-    form.addEventListener('submit', () => { form.querySelector('input[name="timestamp"]').value = new Date().toISOString(); });
+    const form = document.getElementById('quietForm');
+    const statusEl = document.getElementById('status');
+    form.addEventListener('submit', () => {
+      form.querySelector('input[name="timestamp"]').value = new Date().toISOString();
+      statusEl.textContent = "Sent — check your Google Sheet for a new row."; statusEl.className = "ok";
+      setTimeout(() => { statusEl.textContent = "If no row appears, redeploy Apps Script as Anyone access, then resend."; statusEl.className = "muted"; }, 4000);
+    });
   </script>
 </body>
 </html>

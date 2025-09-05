@@ -22,8 +22,6 @@
 <body>
   <div class="wrap">
     <h1>Google Sheet — Form Test</h1>
-    <p class="muted">This page sends a classic HTML form directly to your Google Apps Script. If the response shows <code>{"ok":true}</code> (or similar) and a row appears in your Sheet, you’re done.</p>
-
     <div class="card">
       <p class="muted">Endpoint:<br><code>https://script.google.com/macros/s/AKfycbxlNWaWtYEnn4rizDRYRhkxey6CfGczi2oYkmDgRKs7rUHvnyWs0FTaQr1XB8FzJmhi/exec</code></p>
       <form action="https://script.google.com/macros/s/AKfycbxlNWaWtYEnn4rizDRYRhkxey6CfGczi2oYkmDgRKs7rUHvnyWs0FTaQr1XB8FzJmhi/exec" method="POST" target="sink">
@@ -36,7 +34,6 @@
           </label>
           <button type="submit">Send to Sheet</button>
         </div>
-        <!-- Minimal extras to mimic your app -->
         <input type="hidden" name="timestamp" value="">
         <input type="hidden" name="guide" value="Orin">
         <input type="hidden" name="lifePath" value="3">
@@ -50,17 +47,13 @@
         <input type="hidden" name="balance" value="6">
         <input type="hidden" name="result_json" value='{"demo":true}'>
       </form>
-      <p class="muted">After sending, check your Google Sheet for a new row.</p>
     </div>
-
     <div class="card">
       <h3>Server response</h3>
       <iframe name="sink"></iframe>
-      <p class="muted">This shows whatever your Apps Script returns.</p>
     </div>
   </div>
   <script>
-    // Stamp timestamp each submit
     const form = document.querySelector('form');
     form.addEventListener('submit', () => { form.querySelector('input[name="timestamp"]').value = new Date().toISOString(); });
   </script>

@@ -33,7 +33,6 @@
     <h1>🔮 Spirit Guide App</h1>
     <p class="sub">Classic dark/mint UI • Snapshot now • Backstory in 24 hours • Optional ambient.</p>
 
-    <!-- NAME + DOB + AMBIENT -->
     <section class="card">
       <div class="row">
         <div style="flex:1 1 260px">
@@ -65,7 +64,6 @@
       </div>
     </section>
 
-    <!-- SNAPSHOT -->
     <section class="card" id="resultsCard" style="display:none">
       <h2 id="guideName">Your Spirit Guide</h2>
       <div class="grid">
@@ -81,7 +79,6 @@
       </div>
     </section>
 
-    <!-- EMAIL + CONSENT -->
     <section class="card" id="emailCard" style="display:none">
       <div class="banner">
         <strong>📩 We’ll email your full 400‑word backstory in <u>24 hours</u>.</strong>
@@ -95,7 +92,6 @@
       </div>
     </section>
 
-    <!-- LONG EXPLANATIONS -->
     <section class="card" id="longCard" style="display:none">
       <h3>📖 Life Path — Deep Meaning</h3>
       <div id="lifePathLong" class="long">—</div>
@@ -113,7 +109,6 @@
       <div id="balanceLong" class="long">—</div>
     </section>
 
-    <!-- COUNTDOWN -->
     <section class="card" id="countdownCard" style="display:none">
       <strong>🕒 Backstory unlocks in: <span id="countdown">—</span></strong>
       <div class="tiny muted">(24 hours after first calculation on this device)</div>
@@ -124,8 +119,8 @@
   <iframe name="sheetSink" style="display:none"></iframe>
 
 <script>
-const SHEETS_URL = "https://script.google.com/macros/s/AKfycbxlNWaWtYEnn4rizDRYRhkxey6CfGczi2oYkmDgRKs7rUHvnyWs0FTaQr1XB8FzJmhi/exec";
-const STORAGE_KEY = "spirit-guide-complete-v1";
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbx1FH6rukhjkusG2mxM35BSrTJlklMKqOeWMbOWBYAkWa9UvsNxREy5YfJxb9exvQxp/exec";
+const STORAGE_KEY = "spirit-guide-complete-v2";
 const $ = (id)=>document.getElementById(id);
 
 let longDB=null, timer=null;

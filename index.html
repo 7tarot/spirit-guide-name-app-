@@ -3,35 +3,33 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Spirit Guide App — Main (Endpoint Patched)</title>
-<meta name="description" content="Numerology snapshot + 24h backstory + ambient.">
+<title>Spirit Guide App — Main (Patched)</title>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
 <style>
   :root{ --bg:#05090a; --card:#081215; --edge:#102227; --text:#d1f7ff; --mint:#7efcff; --muted:#9bc7d1; --ok:#a7ffd8; --err:#ff9b9b; }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
+  *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
   .wrap{max-width:1000px;margin:0 auto;padding:22px 16px 40px}
   h1{margin:0 0 6px;color:var(--mint)}
   .sub{margin:0 0 16px;color:var(--muted)}
-  .card{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:16px;margin:14px 0;box-shadow:0 10px 30px rgba(0,0,0,.22)}
+  .badge{font-size:11px;color:#8abfcc;border:1px dashed #22444b;border-radius:8px;padding:3px 8px;display:inline-block;margin-left:8px;vertical-align:middle}
+  .card{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:16px;margin:14px 0}
   .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
   label{font-weight:600;display:block;margin:.4rem 0 .2rem}
-  input,select,button{font:inherit;border-radius:10px;border:1px solid var(--edge);background:#0b1214;color:var(--text);padding:.6rem .75rem}
+  input,button,select{font:inherit;border-radius:10px;border:1px solid var(--edge);background:#0b1214;color:var(--text);padding:.6rem .75rem}
   button{cursor:pointer}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
   .kpi{background:#0b1214;border:1px solid var(--edge);border-radius:10px;padding:12px}
   .kpi h3{margin:0 0 6px;color:var(--mint);font-size:15px}
   .kpi div{font-weight:700;font-size:20px;font-family:ui-monospace,Menlo,Consolas,monospace}
-  .tiny{font-size:12px} .muted{color:var(--muted)}
-  .badge{font-size:11px;color:#8abfcc;border:1px dashed #22444b;border-radius:8px;padding:3px 8px;display:inline-block;margin-left:8px;vertical-align:middle}
+  .tiny{font-size:12px} .muted{color:var(--muted)} .ok{color:var(--ok)} .err{color:var(--err)}
 </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>🔮 Spirit Guide App <span class="badge" title="Endpoint + cache-bust">EP-PNVsmsc v1</span></h1>
-    <p class="sub">Classic dark/mint UI • Snapshot now • Backstory in 24 hours • Optional ambient.</p>
+    <h1>🔮 Spirit Guide App <span class="badge">EP‑PNVsmsc v2</span></h1>
+    <p class="sub">Snapshot now • Backstory in 24h • Optional ambient.</p>
 
     <section class="card">
       <div class="row">
@@ -50,16 +48,6 @@
           <button id="calcBtn">Calculate</button>
           <button id="resetBtn">Reset</button>
           <button id="copyBtn">Copy summary</button>
-        </div>
-        <div class="row" style="margin-left:auto">
-          <select id="ambient">
-            <option value="">Ambient: None</option>
-            <option value="ambient/binaural.mp3">Ambient: binaural.mp3</option>
-          </select>
-          <label class="tiny muted" style="display:flex;align-items:center;gap:8px">
-            Volume <input type="range" id="ambientVol" min="0" max="1" step="0.05" value="0.35" style="width:160px">
-          </label>
-          <button id="stopAudio">Stop</button>
         </div>
       </div>
     </section>
@@ -90,21 +78,13 @@
     </section>
   </div>
 
-  <audio id="player" preload="none"></audio>
   <iframe name="sheetSink" style="display:none"></iframe>
 
 <script>
 const SHEETS_URL = "https://script.google.com/macros/s/AKfycbxg14tVEU3AJ210QQ0Ul3BfZAhOIQgz-MW5PNVsmsc/exec";
-const STORAGE_KEY = "spirit-guide-main-patch";
+console.log("Posting to endpoint:", SHEETS_URL);
+const STORAGE_KEY = "spirit-guide-main-v2";
 const $ = (id)=>document.getElementById(id);
-
-// Ambient
-const p = $('player'); const volEl=$('ambientVol');
-function applyVolume(){ p.volume = parseFloat(volEl.value||'0.35'); localStorage.setItem('sg-vol', p.volume); }
-const savedVol = parseFloat(localStorage.getItem('sg-vol')); if(!isNaN(savedVol)) volEl.value = savedVol.toFixed(2);
-volEl.oninput = applyVolume; applyVolume();
-$('ambient').onchange = (e)=>{ const src=e.target.value; if(!src){p.pause();return;} p.src=src; p.loop=true; applyVolume(); p.play().catch(()=>alert("If blocked, click Calculate once then choose again.")); };
-$('stopAudio').onclick = ()=>{ p.pause(); p.currentTime=0; };
 
 // Numerology helpers
 function onlyLetters(str){ return (str||'').toUpperCase().replace(/[^A-Z]/g,''); }
@@ -145,22 +125,22 @@ document.getElementById('calcBtn').onclick = ()=>{
 document.getElementById('resetBtn').onclick = ()=>{ localStorage.removeItem(STORAGE_KEY); location.reload(); };
 document.getElementById('copyBtn').onclick = ()=>{ const s=localStorage.getItem(STORAGE_KEY); if(!s) return alert("Nothing to copy yet."); navigator.clipboard.writeText(s).then(()=>alert("Copied.")); };
 
-// *** SHEET SEND — hidden form via iframe (bypasses CORS) ***
+// Submit to Google via hidden form
 document.getElementById('sendBtn').onclick = ()=>{
-  const email = $('email').value.trim(); const consent = $('consent').checked;
-  const statusEl = $('sendStatus');
-  if(!email){ statusEl.textContent = "Enter an email."; statusEl.className="tiny err"; return; }
-  if(!consent){ statusEl.textContent = "Please tick consent."; statusEl.className="tiny err"; return; }
+  const email = document.getElementById('email').value.trim();
+  const consent = document.getElementById('consent').checked;
+  const statusEl = document.getElementById('sendStatus');
+  if(!email){ statusEl.textContent="Enter an email."; statusEl.className="tiny err"; return; }
+  if(!consent){ statusEl.textContent="Please tick consent."; statusEl.className="tiny err"; return; }
 
   const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
   const r = saved.results || {};
-
   const payload = {
     email, consent: consent ? "Yes":"No", timestamp: new Date().toISOString(),
-    name: r.name || "", dob: r.dob || "",
-    guide: r.guide ?? "", lifePath: r.lifePath ?? "", expression: r.expression ?? "", soulUrge: r.soulUrge ?? "",
-    personality: r.personality ?? "", birthday: r.birthday ?? "", maturity: r.maturity ?? "",
-    karmicDebts: r.karmicDebts ?? "", karmicLessons: r.karmicLessons ?? "", balance: r.balance ?? "",
+    name: r.name || "", dob: r.dob || "", guide: r.guide || "",
+    lifePath: r.lifePath || "", expression: r.expression || "", soulUrge: r.soulUrge || "",
+    personality: r.personality || "", birthday: r.birthday || "", maturity: r.maturity || "",
+    karmicDebts: r.karmicDebts || "", karmicLessons: r.karmicLessons || "", balance: r.balance || "",
     result_json: JSON.stringify(r||{})
   };
 

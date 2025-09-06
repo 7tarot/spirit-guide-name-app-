@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Synchronicity Reader — Mystical Pro v4.3.9 HOTFIX</title>
+<title>Synchronicity Reader — Mystical Pro v4.3.10 HOTFIX-2</title>
 <style>
   :root{ --bg:#05090a; --card:#081215; --edge:#102227; --text:#d1f7ff; --mint:#7efcff; --muted:#9bc7d1; --ok:#a7ffd8; --err:#ff9b9b }
   *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
@@ -34,8 +34,8 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>🔢 Synchronicity Reader — Mystical Pro <span class="badge">v4.3.9 HOTFIX</span></h1>
-    <p class="sub">Hotfix: speech + analysis restored. Classic digit-sum base. Pattern-aware categories. Single-file, dedupe on.</p>
+    <h1>🔢 Synchronicity Reader — Mystical Pro <span class="badge">v4.3.10 HOTFIX‑2</span></h1>
+    <p class="sub">Adds missing diagnostics helper. Classic digit‑sum base. Pattern‑aware categories. Single‑file, dedupe on.</p>
 
     <div id="errbar" class="errbar"></div>
 
@@ -91,7 +91,7 @@
   </div>
 
 <script>
-const VERSION = 'v4.3.9-hotfix';
+const VERSION = 'v4.3.10-hotfix2';
 const $ = id => document.getElementById(id);
 
 // ===== mapping =====
@@ -105,6 +105,22 @@ function segmentBase(seg){ if(OV[seg]) return { base: OV[seg].base, master: seg,
 function unique(arr){ return Array.from(new Set(arr.filter(Boolean))); }
 function mapDigitToEntry(d){ const db=(DB && (DB.numbers||DB))||{}; return db[String(d)] || {}; }
 function minorsForBase(d){ const names={1:'Ace',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine'}; const label=names[d]; if(!label) return []; return [`${label} of Wands`,`${label} of Cups`,`${label} of Swords`,`${label} of Pentacles`]; }
+
+// ===== diagnostics chips helper (FIX ADDED) =====
+function buildChipsGrouped(order, counts, infoMap){
+  const chipHtml = [];
+  order.forEach((seg, idx) => {
+    const info = infoMap[seg] || {};
+    const entry = mapDigitToEntry(info.base) || {};
+    const majors = entry.majors || entry.Majors || [];
+    const signs  = unique([...(entry.signs||entry.Signs||[]), ...(((info.ov||{}).signs)||[])]);
+    const minors = minorsForBase(info.base||0);
+    const x = (counts[seg]||0) > 1 ? ` ×${counts[seg]}` : '';
+    const arrow = info.master ? info.master + '→' : '';
+    chipHtml.push(`<div class="chip">Seg ${idx+1}: ${seg} → ${arrow}${info.base||'?' }${x} · ${signs.join('/')} · Majors: ${(majors.length?majors.join(', '):'—')} · Minors: ${minors.join(', ')}</div>`);
+  });
+  return chipHtml.join('');
+}
 
 // ===== features =====
 function computeFeatures(segs){
@@ -299,10 +315,9 @@ function waitForVoices(){
 async function populateVoices(){
   if (!('speechSynthesis' in window)) { diag('Speech API not supported'); return; }
   const all = await waitForVoices();
-  const list = getCandidateVoices(all);
-  voices = list;
+  voices = getCandidateVoices(all);
   const sel = $('voiceSelect'); sel.innerHTML='';
-  list.forEach(v=>{ const opt=document.createElement('option'); opt.value=v.name+'::'+v.lang; opt.textContent=`${v.name} (${v.lang})`; sel.appendChild(opt); });
+  voices.forEach(v=>{ const opt=document.createElement('option'); opt.value=v.name+'::'+v.lang; opt.textContent=`${v.name} (${v.lang})`; sel.appendChild(opt); });
 
   const savedName = localStorage.getItem(STORAGE.name), savedLang = localStorage.getItem(STORAGE.lang);
   if(savedName && savedLang){
@@ -310,7 +325,6 @@ async function populateVoices(){
     if(idx>=0){ sel.selectedIndex=idx; }
   }
   if (sel.selectedIndex<0 && sel.options.length){
-    // Try preferred names
     let picked=false;
     for(const p of prefer){
       const idx = Array.from(sel.options).findIndex(o => o.textContent.includes(p));
@@ -353,7 +367,6 @@ function getSpeechText(html){
   return text;
 }
 function chunkText(text, maxLen=220){
-  // Robust sentence chunker (no lookbehind)
   const sentences = text.match(/[^.!?]+[.!?]*/g) || [text];
   const chunks = [];
   let buf = '';
@@ -410,7 +423,7 @@ $('testVoiceBtn').onclick = async ()=>{
   savePrefs(); if(!('speechSynthesis' in window)) return alert('Speech not supported.');
   window.speechSynthesis.cancel();
   await new Promise(r=>setTimeout(r,120));
-  const u=new SpeechSynthesisUtterance('This is your saved narrator voice. Categories will be read after you analyze a number.');
+  const u=new SpeechSynthesisUtterance('This is your saved narrator voice. The diagnostics helper bug has been fixed.');
   const v=currentVoice(); if(v) u.voice=v; u.rate=parseFloat($('rate').value||'1'); u.pitch=parseFloat($('pitch').value||'1');
   try { window.speechSynthesis.speak(u); } catch(e){ showErr('Unable to speak. Click the page once, then try again.'); }
   diag('Test voice played');

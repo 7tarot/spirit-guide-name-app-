@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Synchronicity Reader — Mystical Pro v4.3.7 FOCUS VARIANTS</title>
+<title>Synchronicity Reader — Mystical Pro v4.3.8 FOCUS VARIANTS</title>
 <style>
   :root{ --bg:#05090a; --card:#081215; --edge:#102227; --text:#d1f7ff; --mint:#7efcff; --muted:#9bc7d1; --ok:#a7ffd8; --err:#ff9b9b }
   *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
@@ -34,8 +34,8 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>🔢 Synchronicity Reader — Mystical Pro <span class="badge">v4.3.7 FOCUS VARIANTS</span></h1>
-    <p class="sub">Categories vary by number pattern (11/22/33, repeater, mirror, ladder, zeros). Single‑file, dedupe on, narrator on.</p>
+    <h1>🔢 Synchronicity Reader — Mystical Pro <span class="badge">v4.3.8 FOCUS VARIANTS</span></h1>
+    <p class="sub">FIXED: final base uses classic digit-sum of whole number. Categories adapt by base + pattern (masters, repeater, mirror, ladder, zeros). Single-file, dedupe on, narrator on.</p>
 
     <section class="card">
       <div class="row">
@@ -89,11 +89,11 @@
   </div>
 
 <script>
-const VERSION = 'v4.3.7-focus-variants';
+const VERSION = 'v4.3.8-focus-variants-classic';
 const $ = id => document.getElementById(id);
 
-// ===== embedded mapping (no network) =====
-const DB = {}; // can be extended later
+// ===== mapping =====
+const DB = {}; // for future expansion
 const OV = { "11":{base:2, signs:["Libra"]}, "22":{base:4, signs:["Scorpio","Aries"]}, "33":{base:6, signs:["Capricorn","Gemini"]} };
 
 // ===== helpers =====
@@ -104,7 +104,7 @@ function unique(arr){ return Array.from(new Set(arr.filter(Boolean))); }
 function mapDigitToEntry(d){ const db=(DB && (DB.numbers||DB))||{}; return db[String(d)] || {}; }
 function minorsForBase(d){ const names={1:'Ace',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine'}; const label=names[d]; if(!label) return []; return [`${label} of Wands`,`${label} of Cups`,`${label} of Swords`,`${label} of Pentacles`]; }
 
-// ===== features from segments =====
+// ===== features =====
 function computeFeatures(segs){
   const info = segs.map(s=>({seg:s, ...segmentBase(s), n:parseInt(s,10)}));
   const counts = {}; const order=[]; const infoMap={};
@@ -118,25 +118,8 @@ function computeFeatures(segs){
   const repeater = new Set(segs).size===1;
   const palindrome = segs.join('') === segs.slice().reverse().join('');
   const hasZero = segs.some(s=>/0/.test(s));
-  const features = {order, counts, infoMap, has11, has22, has33, asc, desc, repeater, palindrome, hasZero};
-  return features;
+  return {order, counts, infoMap, has11, has22, has33, asc, desc, repeater, palindrome, hasZero};
 }
-
-// ===== chips =====
-function buildChipsGrouped(order, counts, infoMap){
-  const chipHtml = [];
-  order.forEach((seg, idx) => {
-    const info = infoMap[seg];
-    const entry = mapDigitToEntry(info.base);
-    const majors = entry.majors || entry.Majors || [];
-    const signs  = unique([...(entry.signs||entry.Signs||[]), ...(info.ov && info.ov.signs || [])]);
-    const minors = minorsForBase(info.base);
-    const x = counts[seg] > 1 ? ` ×${counts[seg]}` : '';
-    chipHtml.push(`<div class="chip">Seg ${idx+1}: ${seg} → ${info.master? info.master+'→':''}${info.base}${x} · ${signs.join('/')} · Majors: ${(majors.length?majors.join(', '):'—')} · Minors: ${minors.join(', ')}</div>`);
-  });
-  return chipHtml.join('');
-}
-
 function describePattern(f){
   const tags=[];
   if(f.repeater) tags.push('repeater');
@@ -150,7 +133,7 @@ function describePattern(f){
   return tags.join(' · ') || 'mixed';
 }
 
-// ===== 400+ word category generator with variants =====
+// ===== categories with variants =====
 function catLongVariant(finalBase, topic, f){
   const tone = {
     1:{verb:'begin', gift:'clarity', caution:'impulse', anchor:'first steps', image:'a key and a simple room'},
@@ -164,119 +147,87 @@ function catLongVariant(finalBase, topic, f){
     9:{verb:'complete', gift:'release', caution:'lingering', anchor:'clean endings', image:'a tide line and one kept shell'}
   }[finalBase] || {verb:'move', gift:'balance', caution:'overreach', anchor:'simple steps', image:'a calm path'};
 
-  // base paragraphs per topic (as in your preferred style)
   function baseLove(){ return [
-    `When love sits under this number, the request is to ${tone.verb} in ways that protect both hearts. The gift here is ${tone.gift}; the shadow is ${tone.caution}. Begin repair by regulating, not proving. If there’s an argument, assume your nervous systems are in courtroom mode—each mind collecting evidence to win. Winning is lonely; repair is warm. Call a respectful pause of twenty to forty minutes. No sulking, no disappearing—just name the pause and take it. Move your body, drink water, lower the physiological noise. When you return, lead with impact and care rather than accusation: “When X happened, I felt Y, because I was trying to protect Z.” This names your value without making the other person the villain.`,
-    `Keep to one topic. If old cases rush in, park them on paper and look for the common thread—usually an unmet need for safety, closeness, clarity, or respect. Use the three‑step rhythm: reflect, ask, suggest. Reflect neutrally (“I heard you say you felt unseen when I looked away.”). Ask one honest question (“What would care have looked like in that moment?”). Suggest one concrete next step you can keep today (“I can look up when you enter and finish the message after.”). Boundaries become bridges when they are small, kind, and enforceable. If the boundary is time, offer options that honor capacity: “I have fifteen minutes now or half an hour after dinner—what helps?”`,
-    `Create a micro‑ritual for seven days: tea with phones away, a short evening walk, a two‑minute gratitude, a one‑card pull for “what would help us today.” Praise keeping the rhythm more than policing outcomes. Let affection return as the room becomes safer. Hold the picture: ${tone.image}. Under this number, love strengthens when you repeat clear kindness rather than escalate grand gestures. If you slip, repair quickly: name the slip, restate the value, and take the next right step. That is how a relationship remembers itself.`
+    `Under Base ${finalBase}, love asks you to ${tone.verb}. The gift here is ${tone.gift}; the shadow is ${tone.caution}. Begin repair by regulating, not proving. If there’s an argument, assume your nervous systems are in courtroom mode—each mind collecting evidence to win. Winning is lonely; repair is warm. Call a respectful pause of twenty to forty minutes. No sulking, no disappearing—just name the pause and take it. Move your body, drink water, lower the physiological noise. When you return, lead with impact and care rather than accusation: “When X happened, I felt Y, because I was trying to protect Z.”`,
+    `Keep to one topic. If old cases rush in, park them on paper and look for an unmet need (safety, closeness, clarity, respect). Use the three‑step rhythm: reflect, ask, suggest. Boundaries become bridges when they are small, kind, and enforceable. Offer time options that honor capacity.`,
+    `Build a seven‑day micro‑ritual—phones down tea, evening walk, two‑minute gratitude, a one‑card pull for “what would help us today.” Praise the keeping of rhythm. Hold the picture: ${tone.image}. If you slip, repair quickly: name the slip, restate the value, and take the next right step.`
   ]; }
   function baseWork(){ return [
-    `Work under this number asks you to ${tone.verb} where it matters and stop where it doesn’t. Your superpower is ${tone.gift}; your caution is ${tone.caution}. Trade heroics for ${tone.anchor}. Map your pipeline in four plain stages: capture, shape, deliver, review. For each, write a one‑sentence definition of “done” that a stranger could understand. Pick the smallest unit that moves the whole thing forward and schedule ninety protected minutes. Close extra tabs, silence pings, clear the surface. Progress is a kindness to future you.`,
-    `Replace status meetings with one‑page dashboards: task, owner, date, status, next visible step. Send a weekly note listing what shipped, what’s next, and risks. If priorities compete, ask which action buys the most learning or removes the biggest blocker; do only that. Template anything that repeats. Retire steps that never help. When a request arrives without context, ask for the problem statement and success measure before you accept. You’re not being difficult—you’re building a runway that won’t collapse at takeoff.`,
-    `If you lead others, set quality by example: on time, kindly direct, specific about outcomes. Give feedback that pairs context with one concrete suggestion. Protect energy with service‑framed boundaries: “I can deliver X by Friday or Y by Wednesday; which helps more?” Track reps, not moods. Close each day by naming three completions—your nervous system stores evidence that you can trust your rhythm. The room becomes sane when you hold a steady pace and a warm tone. That is this number’s quiet power.`
+    `Work under Base ${finalBase} asks you to ${tone.verb} where it matters and stop where it doesn’t. Trade heroics for ${tone.anchor}. Map your pipeline in four stages: capture, shape, deliver, review. Define “done” so a stranger would agree. Block ninety minutes and move the smallest unit that moves the whole.`,
+    `Replace status meetings with one‑page dashboards. Send weekly “shipped / next / risks.” When priorities compete, choose the action that buys the most learning or removes the biggest blocker. Template repeats, prune dead steps, and ask for the problem statement + success measure when requests arrive fuzzy.`,
+    `Lead by example. Use service‑framed boundaries. Track reps, not moods. Name three completions at day’s end; teach your nervous system that it can trust your rhythm.`
   ]; }
   function baseConfusion(){ return [
-    `Confusion here is resolved by ${tone.gift}. Shrink the question until it fits on one honest line a friend could understand. Close extra inputs—fewer tabs, fewer opinions, more quiet. Choose one channel today: written page, voice memo, or sketch. If you pull cards, try a triad: what I control, the tone to keep, the obvious action. The goal isn’t a perfect map; it’s traction.`,
-    `Run a fifty‑minute focus and touch only the part of the problem that moves the whole thing. At the knot, write the dumbest version of the solution—smart shows up once there’s a shape to improve. If you’re stuck between options, test the futures with compassionate realism: which path keeps you consistent and kind six weeks from now, even on a tired day? Choose that, not the one that flatters anxiety or ego.`,
-    `Finish with a body check: shoulders down, jaw soft, longer exhale. Confusion isn’t cured by intensity but by the right next step repeated until it teaches you something. Hold the picture: ${tone.image}. Let the day agree with a small, true act and allow the result—not the feeling—to guide the next move.`
+    `Confusion is resolved by ${tone.gift}. Shrink the question to one honest line. Close extra inputs. Choose one channel today: page, memo, or sketch. If you pull cards, try the triad: what I control, the tone to keep, the obvious action.`,
+    `Run a fifty‑minute focus and touch only the leverage point. Draft the dumb version first; smart arrives once a shape exists. Test futures with compassionate realism: which path keeps you consistent and kind on a tired day? Choose that.`,
+    `Finish with a body check—shoulders down, jaw soft, longer exhale. Let result, not feeling, guide the next move. Picture ${tone.image}.`
   ]; }
   function baseFamily(){ return [
-    `Family steadies when you make the frame visible. Post the plan where everyone can see it: schedule, chores, budget, quiet hours. Keep it brief and kind. In a hot moment, ask for a pause: “I want to get this right; can we take ten and try again?” Return with the shared goal clearly stated: safety, fairness, a home that feels like a team. Translate instead of accuse: “What I heard is…” rather than “You always…”. Offer two options you can truly sustain and let the group pick. Rituals do heavy lifting: weekly check‑ins where each person names one gratitude, one ask, and one small promise for the week.`,
-    `When a line is crossed repeatedly, set a boundary you can enforce without drama. Boundaries aren’t punishments; they are the shape that keeps relationship possible. Praise keeping the cadence more than you punish mistakes. Create tiny islands of connection for each relationship dyad—five minutes of undivided attention can change the day’s weather. If you’re the caretaker, practice saying what you actually have capacity for before resentment speaks for you. This number loves stability that breathes.`,
-    `End the evening with a reset ritual: clear a surface, light a small candle for the living and the gone, or pull a card as a family for “what would help the house tomorrow.” Hold the picture: ${tone.image}. Over time, consistency communicates love louder than eloquence ever could.`
+    `Family steadies when the frame is visible. Post plan where everyone can see it: schedule, chores, budget, quiet hours. In a hot moment, ask for a pause and return with the shared goal—safety, fairness, a team home. Translate instead of accuse.`,
+    `Offer two sustainable options and let the group pick. Rituals do heavy lifting: weekly check‑in of one gratitude, one ask, one small promise. When a line is crossed repeatedly, set a boundary you can keep without drama; boundaries protect possibility.`,
+    `Create five‑minute islands of connection per relationship. If you caretake, state capacity before resentment speaks. End with a reset ritual; picture ${tone.image}.`
   ]; }
   function baseFrustration(){ return [
-    `Frustration is bottled motion. Before you speak, move—walk briskly, shake your hands, breathe down into the belly. Then choose the smallest visible action that moves the situation by an inch. Under this number, ${tone.anchor} are medicine: fix the hinge, send the paragraph, tidy the square foot, log the rep. Let your body feel useful; it calms your mind faster than an argument with reality.`,
-    `If another person is the trigger, speak in impact and request: “When X happens, I feel Y; could we try Z?” If they can’t or won’t, adjust your boundary rather than your worth. Shorten lists and tighten loops. Put a timer on the problem and give yourself credit for keeping the box, not for dramatic results. You are allowed to exit no‑win conversations with grace.`,
-    `Close the day by naming what did move. Your nervous system remembers completions; feed it evidence. Hold the picture: ${tone.image}. Over weeks, this rhythm changes more than force ever could—and it makes you kinder to live with, including to yourself.`
+    `Frustration is bottled motion. Move first, then speak. Choose the smallest visible action that moves the situation an inch. Under Base ${finalBase}, ${tone.anchor} are medicine—fix the hinge, send the paragraph, tidy the square foot, log the rep.`,
+    `Speak in impact and request. If they can’t or won’t, adjust your boundary rather than your worth. Shorten lists, tighten loops, and use a timer. Credit yourself for keeping the box, not for dramatic outcomes.`,
+    `Close the day by naming what moved. Your nervous system remembers completions; feed it evidence. Picture ${tone.image}.`
   ]; }
 
   const base = {love:baseLove(), work:baseWork(), confusion:baseConfusion(), family:baseFamily(), frustration:baseFrustration()}[topic] || [];
 
-  // Variant paragraphs based on features
   const variants = [];
+  if (f.has11) variants.push(`With Master 11 present, practice justice in the relationship: equal airtime, clear agreements, and the bravery to say “I don’t know yet.” Treat decisions as drafts you refine together.`);
+  if (f.has22) variants.push(`Master 22 brings builder energy. Keep promises small and measurable—shared list, time‑boxed repair, weekly date. Prune whatever steals focus. Stability is a frame kind enough to hold growth.`);
+  if (f.has33) variants.push(`Master 33 leans toward service. Offer skill without martyrdom. Teach shorter and kinder than usual. Consider what helps the wider circle without draining you.`);
+  if (f.repeater) variants.push(`Repeater pattern: treat the lesson as intensified. Do one round well instead of three dramatic rounds. Cadence beats performance.`);
+  if (f.palindrome) variants.push(`Mirror pattern: align inner and outer. Close the loop—say the thing, show the change, and ask if it helped.`);
+  if (f.asc) variants.push(`Ladder up: build momentum in keepable increments. Each step should survive a tired day; if not, shrink it.`);
+  if (f.desc) variants.push(`Ladder down: simplify. Archive the old version, return to first principles, finish a clean ending before adding anything new.`);
+  if (f.hasZero) variants.push(`Zeros mark sacred pauses. Add a breath before replies, a buffer day before big changes, and whitespace so care isn’t crushed by urgency.`);
 
-  if (f.has11){
-    variants.push(`Where Master 11 is present, practice justice inside the relationship: equal airtime, clear agreements, and the courage to say “I don’t know yet.” Treat decisions as provisional drafts you refine together. Listen for the small fair thing you can do today and do it without ceremony.`);
-  }
-  if (f.has22){
-    variants.push(`Master 22 adds builder’s gravity. Keep the promise small and measurable: a shared list, a time‑boxed repair, a weekly standing date. Prune what steals focus, even if it is a habit you like. Stability is not stiffness; it is a frame kind enough to hold growth.`);
-  }
-  if (f.has33){
-    variants.push(`Master 33 speaks in service and teaching. Offer your skill without martyrdom. If you explain, make it shorter and kinder than usual. Consider what would help the wider circle too—community care that doesn’t drain you.`);
-  }
-  if (f.repeater){
-    variants.push(`Because this pattern repeats, assume the lesson is intensified. Do one round well rather than three rounds dramatically. A consistent, humane cadence will beat any surge of performance.`);
-  }
-  if (f.palindrome){
-    variants.push(`The mirror signature invites you to match inner and outer: behave how you want to feel. Close a feedback loop—say the thing, show the change, ask if it helped.`);
-  }
-  if (f.asc){
-    variants.push(`With a ladder‑up motion, build momentum in humane increments. Each step should be keepable on a tired day; if it isn’t, shrink it until it is.`);
-  }
-  if (f.desc){
-    variants.push(`With a ladder‑down motion, simplify. Archive the past version, return to first principles, and finish one clean ending before adding anything new.`);
-  }
-  if (f.hasZero){
-    variants.push(`Zeros mark sacred pauses. Insert a breath between stimulus and response, a buffer day before big changes, and whitespace in your calendar so care does not get crushed by urgency.`);
-  }
-
-  // Assemble and ensure length
-  const allParas = base.concat(variants);
-  let html = allParas.map(p=>`<p>${p}</p>`).join('\\n');
+  const all = base.concat(variants);
+  let html = all.map(p=>`<p>${p}</p>`).join('\\n');
   const wc = html.replace(/<[^>]+>/g,' ').split(/\\s+/).filter(Boolean).length;
-  if (wc < 400){
-    html += `<p>Keep the guidance embarrassingly simple, then repeat. You are training your environment to trust your rhythm. That is the quiet miracle of this number.</p>`;
-  }
+  if (wc < 400){ html += `<p>Keep it simple and repeatable. You are teaching your world to trust your rhythm—this is how numbers become lived guidance.</p>`; }
   return html;
 }
 
-// ===== overview builder (one paragraph) =====
-function buildOverview(num, segs, f, finalBase){
+// ===== overview =====
+function buildOverview(num, segs, f, finalBaseClassic, finalBasePair){
   const grouped = f.order.map(seg => {
     const info = f.infoMap[seg];
     const times = f.counts[seg]>1 ? `×${f.counts[seg]}` : '';
     const arrow = info.master ? info.master+'→' : '';
     return `${seg}${times} (${arrow}${info.base})`;
   }).join(', ');
-  const anchorTitle = {1:"Clean Beginnings",2:"Living Balance",3:"True Expression",4:"Good Structure",5:"Gentle Change",6:"Caring Harmony",7:"Quiet Insight",8:"Calm Strength",9:"Clean Completion"}[finalBase] || "Anchor";
+  const title = {1:"Clean Beginnings",2:"Living Balance",3:"True Expression",4:"Good Structure",5:"Gentle Change",6:"Caring Harmony",7:"Quiet Insight",8:"Calm Strength",9:"Clean Completion"}[finalBaseClassic] || "Anchor";
   const pattern = describePattern(f);
   const masters = [f.has11?'11':null, f.has22?'22':null, f.has33?'33':null].filter(Boolean).join(', ') || '—';
-  return `We split ${num} into ${grouped}. The bases resolve to <strong>${finalBase}</strong> — “${anchorTitle}”. Pattern: <em>${pattern}</em>. Masters present: <em>${masters}</em>. Your detailed guidance is below.`;
+  return `We split ${num} into ${grouped}. Final base (classic): <strong>${finalBaseClassic}</strong> — “${title}”. <span class="tiny">(pair method: ${finalBasePair})</span>. Pattern: <em>${pattern}</em>. Masters: <em>${masters}</em>.`;
 }
 
-// ===== categories-only (variant) =====
-function buildReadingHTML(finalBase, f){
-  const parts = [];
-  parts.push(`<h3>If the question is Love</h3>${catLongVariant(finalBase, 'love', f)}`);
-  parts.push(`<h3>If the question is Work/Vocation</h3>${catLongVariant(finalBase, 'work', f)}`);
-  parts.push(`<h3>If the question is Confusion</h3>${catLongVariant(finalBase, 'confusion', f)}`);
-  parts.push(`<h3>If the question is Family</h3>${catLongVariant(finalBase, 'family', f)}`);
-  parts.push(`<h3>If the question is Frustration</h3>${catLongVariant(finalBase, 'frustration', f)}`);
-  parts.push(`<p>— Spirit Guide App</p>`);
-  return parts.join('\\n');
-}
-
-// ===== UI actions =====
+// ===== UI =====
 function analyze(){
   const raw = $('num').value.trim();
   if(!raw){ alert('Enter a number.'); return; }
 
-  const segs = splitPairsLeft(raw);
+  const digitsOnly = String(raw).replace(/\\D/g,'');
+  if(!digitsOnly){ alert('Enter at least one digit.'); return; }
+
+  const segs = splitPairsLeft(digitsOnly);
   if (!segs.length){ alert('Need at least two digits.'); return; }
 
-  // Compute features (also builds order/counts/infoMap)
   const f = computeFeatures(segs);
 
-  // compute final base from ALL segments (not deduped)
-  const basesAll = segs.map(s => segmentBase(s).base);
-  const finalBase = reduceDigit(basesAll.reduce((a,b)=>a+b,0));
+  // final base — classic (digits of whole number) and pair (prior method) for visibility
+  const finalBaseClassic = reduceDigit(digitsOnly);
+  const basesPairAll = segs.map(s => segmentBase(s).base);
+  const finalBasePair = reduceDigit(basesPairAll.reduce((a,b)=>a+b,0));
 
   $('resultCard').style.display = 'block';
-  $('overview').innerHTML = buildOverview(raw, segs, f, finalBase);
+  $('overview').innerHTML = buildOverview(raw, segs, f, finalBaseClassic, finalBasePair);
   $('segments').textContent = segs.join(', ');
 
-  // Grouped bases like "22→4 ×2, 33→6"
   const basesGrouped = f.order.map(seg => {
     const info = f.infoMap[seg];
     const arrow = info.master ? info.master+'→' : '';
@@ -284,11 +235,16 @@ function analyze(){
     return `${seg} → ${arrow}${info.base}${times}`;
   });
   $('bases').textContent = basesGrouped.join(', ');
-  $('finalBase').textContent = String(finalBase);
+  $('finalBase').textContent = String(finalBaseClassic);
   $('chips').innerHTML = buildChipsGrouped(f.order, f.counts, f.infoMap);
   $('pattern').textContent = 'Pattern tags: ' + describePattern(f);
 
-  const html = buildReadingHTML(finalBase, f);
+  const html = catLongVariant(finalBaseClassic, 'love', f)
+             + '<h3>If the question is Work/Vocation</h3>' + catLongVariant(finalBaseClassic, 'work', f)
+             + '<h3>If the question is Confusion</h3>' + catLongVariant(finalBaseClassic, 'confusion', f)
+             + '<h3>If the question is Family</h3>' + catLongVariant(finalBaseClassic, 'family', f)
+             + '<h3>If the question is Frustration</h3>' + catLongVariant(finalBaseClassic, 'frustration', f)
+             + '<p>— Spirit Guide App</p>';
   $('reading').innerHTML = html;
 
   $('status').textContent = 'Done';
@@ -311,7 +267,7 @@ $('analyzeBtn').onclick = analyze;
 $('copyBtn').onclick = copyReading;
 $('copyHtmlBtn').onclick = copyReadingHtml;
 
-// ===== Narrator (Google‑only) + speech sanitizer + robust chunked queue =====
+// ===== Narrator =====
 const STORAGE = { name:'sg_voice_name', lang:'sg_voice_lang', force:'sg_voice_force_en', rate:'sg_voice_rate', pitch:'sg_voice_pitch' };
 const prefer = ["Google UK English Female","Google UK English Male","Google US English","Google US English Female","Google US English Male"];
 let voices = [];
@@ -379,7 +335,7 @@ function getSpeechText(html){
   return text;
 }
 function chunkText(text, maxLen=220){
-  const sentences = text.split(/(?<=[\.\!\?])\s+/);
+  const sentences = text.split(/(?<=[\.\!\?])\s+)/);
   const chunks = [];
   let buf = '';
   sentences.forEach(s=>{
@@ -432,7 +388,7 @@ function stopSpeaking(){ window.speechSynthesis && window.speechSynthesis.cancel
 $('testVoiceBtn').onclick = async ()=>{
   savePrefs(); window.speechSynthesis.cancel();
   await new Promise(r=>setTimeout(r,120));
-  const u=new SpeechSynthesisUtterance('This is your saved Google narrator voice. The reading now varies by the exact number pattern.');
+  const u=new SpeechSynthesisUtterance('This is your saved Google narrator voice. The final base now uses the classic digit sum of the whole number.');
   const v=currentVoice(); if(v) u.voice=v; u.rate=parseFloat($('rate').value||'1'); u.pitch=parseFloat($('pitch').value||'1');
   window.speechSynthesis.speak(u); diag('Test voice played');
 };

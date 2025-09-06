@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Synchronicity Reader — Mystical Pro v4.3.5 ULTRA MAX</title>
+<title>Synchronicity Reader — Mystical Pro v4.3.6 FOCUS</title>
 <style>
   :root{ --bg:#05090a; --card:#081215; --edge:#102227; --text:#d1f7ff; --mint:#7efcff; --muted:#9bc7d1; --ok:#a7ffd8; --err:#ff9b9b }
   *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
@@ -29,12 +29,13 @@
   .badge{display:inline-block;margin-left:8px;padding:2px 8px;border:1px dashed #204b54;border-radius:999px;color:#8fd7e3;font-size:12px}
   .diag{margin-top:8px;font-size:12px;color:#9bc7d1}
   .diag b{color:#a7ffd8}
+  details summary{cursor:pointer;color:#9bd5e3}
 </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>🔢 Synchronicity Reader — Mystical Pro <span class="badge">v4.3.5 ULTRA MAX</span></h1>
-    <p class="sub">Single‑file build (no external files). Dedupe identical segments. Robust Speak. 400‑word categories. Diagnostics on.</p>
+    <h1>🔢 Synchronicity Reader — Mystical Pro <span class="badge">v4.3.6 FOCUS</span></h1>
+    <p class="sub">Categories‑only reading. Minimal intro. Dedupe identical segments. Robust Speak. Diagnostics on.</p>
 
     <section class="card">
       <div class="row">
@@ -60,34 +61,34 @@
         <label class="tiny">Rate <input type="range" id="rate" min="0.6" max="1.4" step="0.02" value="0.98"></label>
         <label class="tiny">Pitch <input type="range" id="pitch" min="0.6" max="1.4" step="0.02" value="1.0"></label>
         <button id="testVoiceBtn">Test Voice</button>
-        <button id="speakBtn">Speak (full)</button>
+        <button id="speakBtn">Speak (categories)</button>
         <button id="stopBtn">Stop</button>
       </div>
-      <div class="disclaimer">Narration uses a cleaned, chunked version so long readings don’t fail. Reflective guidance only.</div>
+      <div class="disclaimer">Narration reads the category guidance only. Reflective guidance; not a directive.</div>
       <div id="diag" class="diag">Diagnostics: <b>loading…</b></div>
     </section>
 
     <section class="card" id="resultCard" style="display:none">
-      <div class="grid">
-        <div class="kpi"><h3>Segments (2‑digit)</h3><div id="segments">—</div></div>
-        <div class="kpi"><h3>Segment Bases</h3><div id="bases">—</div></div>
+      <div id="overview" class="long muted tiny">—</div>
+
+      <div class="grid" style="margin-top:10px">
+        <div class="kpi"><h3>Segments</h3><div id="segments">—</div></div>
+        <div class="kpi"><h3>Bases</h3><div id="bases">—</div></div>
         <div class="kpi"><h3>Final Base</h3><div id="finalBase">—</div></div>
       </div>
 
-      <h3>Tarot & Astro Mapping</h3>
-      <div id="chips"></div>
+      <details style="margin-top:10px">
+        <summary>Show advanced analysis (chips)</summary>
+        <div id="chips" style="margin-top:8px"></div>
+      </details>
 
-      <h3>Reading</h3>
+      <h3 style="margin-top:14px">Reading</h3>
       <div id="reading" class="long">—</div>
-    </section>
-
-    <section class="card tiny muted">
-      Single file: just upload <code>synchronicity.html</code> next to your existing index.html. Voices: Google only. If Speak stalls, press Stop then Speak again.
     </section>
   </div>
 
 <script>
-const VERSION = 'v4.3.5-ultra-max';
+const VERSION = 'v4.3.6-focus';
 const $ = id => document.getElementById(id);
 
 // ===== embedded mapping (no network) =====
@@ -101,29 +102,6 @@ function segmentBase(seg){ if(OV[seg]) return { base: OV[seg].base, master: seg,
 function unique(arr){ return Array.from(new Set(arr.filter(Boolean))); }
 function mapDigitToEntry(d){ const db=(DB && (DB.numbers||DB))||{}; return db[String(d)] || {}; }
 function minorsForBase(d){ const names={1:'Ace',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine'}; const label=names[d]; if(!label) return []; return [`${label} of Wands`,`${label} of Cups`,`${label} of Swords`,`${label} of Pentacles`]; }
-
-// ===== ultra-long segment generator =====
-function ultraSegmentHTML(idx, rawSeg, base, majors, minors, signs, master){
-  const baseNames={1:'Ace',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine'};
-  const baseName = baseNames[base]||String(base);
-  const quartet = minors.length? minors.join(', ') : `${baseName} of Wands, ${baseName} of Cups, ${baseName} of Swords, ${baseName} of Pentacles`;
-  const majTxt = majors.length? majors.join(', ') : (base===4? 'Emperor, Death (13)' : base===8? 'Strength, Star (17)' : 'key archetypes for this number');
-  const signTxt = signs.length? signs.join(', ') : (base===4? 'Aries and Scorpio' : base===8? 'Leo and Aquarius' : 'signs that mirror this theme');
-
-  const open  = `Segment ${idx} (${rawSeg} to ${base}) changes the air with the calm of a well‑kept workshop. The Major Arcana voice ${majTxt}; the Minors arrange as ${quartet}. ${signTxt} provide the weather.${master? ` This is Master ${master} resolving into ${base}, proof that large tides prefer practical shores.`:''}`;
-  const doTxt = `Give the current a shape. Dedicate an hour that belongs to it alone, send a message that rings true, and let one old pattern slip from the frame. Each repetition adds weight; the room remembers your name.`;
-  const feel  = `There is a hush when a decision lands, and a small choir of second thoughts when you keep it. Invite the hush to stay: tidy light, water near, a brief bow to what you trust. The frame is a mercy that lets wild talent bloom against something true.`;
-  const examplesByBase = {4:`Examples: write a two‑step checklist; rename folders so the next version has a home; time‑box a first draft and allow it to exist.`,8:`Examples: pick one drill that improves craft by one percent; schedule short updates with simple numbers; practice until the groove returns.`};
-  const examples = examplesByBase[base] || `Examples: choose one small act at this number’s frequency and repeat it without ceremony.`;
-  const minorsExplain = {4:`Fours stabilize—Wands celebrate belonging; Cups refine appetite; Swords protect rest; Pentacles set containers.`,8:`Eights master—Wands streamline motion; Cups choose honest deepening; Swords reveal limits; Pentacles train skill.`}[base] || '';
-  const masterPara = master ? `Master ${master} resolves into ${base}. The echo is the guide itself—tide choosing a narrow channel so it can carve stone.` : '';
-
-  const paras = [open, doTxt, feel, examples, minorsExplain, masterPara, `Picture ${base===4?'a bench by a window and four patient stones':'coals in a quiet forge, a rhythm your hands remember'}. By doing less, more on purpose, you watch the day decide to resemble you.`];
-  let joined = paras.map(t=>`<p>${t}</p>`).join('\\n');
-  const wc = joined.replace(/<[^>]+>/g,' ').split(/\\s+/).filter(Boolean).length;
-  if (wc < 400){ joined += `<p>Let patience do the heavy lifting. Align with one ally, measure what matters, and return to the simplest next act you can keep. The day rewards cadence over drama.</p>`; }
-  return joined;
-}
 
 // ===== 400+ word category generator =====
 function catLong(base, topic){
@@ -188,34 +166,26 @@ function buildChipsGrouped(order, counts, infoMap){
   return chipHtml.join('');
 }
 
-// ===== full reading builder (dedupe) =====
-function buildReadingHTML(num, segs, order, counts, infoMap, finalBase){
-  const parts = [];
-  const anchorTitle = {1:"Clean Beginnings",2:"Living Balance",3:"True Expression",4:"Good Structure",5:"Gentle Change",6:"Caring Harmony",7:"Quiet Insight",8:"Calm Strength",9:"Clean Completion"}[finalBase] || "Anchor";
-
-  parts.push(`<h2>${num} — ${anchorTitle} <span class="badge">${VERSION}</span></h2>`);
-  parts.push(`<p>We split ${num} into ${segs.join(', ')}. Adding the bases resolves to ${finalBase}.</p>`);
-
-  order.forEach((seg, i)=>{
+// ===== overview builder (one paragraph) =====
+function buildOverview(num, segs, order, counts, infoMap, finalBase){
+  const grouped = order.map(seg => {
     const info = infoMap[seg];
-    const entry = mapDigitToEntry(info.base);
-    const majors = entry.majors || entry.Majors || [];
-    const signs  = unique([...(entry.signs||entry.Signs||[]), ...(info.ov && info.ov.signs || [])]);
-    const minors = minorsForBase(info.base);
-    const countNote = counts[seg] > 1 ? ` <span class="badge">appears ${counts[seg]}× today</span>` : '';
-    parts.push(`<h3>Segment ${i+1} — ${info.master? 'Master '+info.master+' → ':''}${info.base}${countNote}</h3>`);
-    parts.push(ultraSegmentHTML(i+1, seg, info.base, majors, minors, signs, info.master));
-    if (counts[seg] > 1){
-      parts.push(`<p><em>Echo note:</em> This pattern repeats; treat it as an intensifier. Do the guidance once, with double steadiness and patience.</p>`);
-    }
-  });
+    const times = counts[seg]>1 ? `×${counts[seg]}` : '';
+    const arrow = info.master ? info.master+'→' : '';
+    return `${seg}${times} (${arrow}${info.base})`;
+  }).join(', ');
+  const anchorTitle = {1:"Clean Beginnings",2:"Living Balance",3:"True Expression",4:"Good Structure",5:"Gentle Change",6:"Caring Harmony",7:"Quiet Insight",8:"Calm Strength",9:"Clean Completion"}[finalBase] || "Anchor";
+  return `We split ${num} into ${grouped}. The bases resolve to <strong>${finalBase}</strong> — “${anchorTitle}”. Your detailed guidance is below.`;
+}
 
+// ===== categories only (no long segments) =====
+function buildReadingHTML(finalBase){
+  const parts = [];
   parts.push(`<h3>If the question is Love</h3>${catLong(finalBase, 'love')}`);
   parts.push(`<h3>If the question is Work/Vocation</h3>${catLong(finalBase, 'work')}`);
   parts.push(`<h3>If the question is Confusion</h3>${catLong(finalBase, 'confusion')}`);
   parts.push(`<h3>If the question is Family</h3>${catLong(finalBase, 'family')}`);
   parts.push(`<h3>If the question is Frustration</h3>${catLong(finalBase, 'frustration')}`);
-
   parts.push(`<p>— Spirit Guide App</p>`);
   return parts.join('\\n');
 }
@@ -248,6 +218,7 @@ function analyze(){
   const finalBase = reduceDigit(basesAll.reduce((a,b)=>a+b,0));
 
   $('resultCard').style.display = 'block';
+  $('overview').innerHTML = buildOverview(raw, segs, order, counts, infoMap, finalBase);
   $('segments').textContent = segs.join(', ');
 
   // Show grouped bases like "22→4 ×2, 33→6"
@@ -261,7 +232,7 @@ function analyze(){
   $('finalBase').textContent = String(finalBase);
   $('chips').innerHTML = buildChipsGrouped(order, counts, infoMap);
 
-  const html = buildReadingHTML(raw, segs, order, counts, infoMap, finalBase);
+  const html = buildReadingHTML(finalBase);
   $('reading').innerHTML = html;
 
   $('status').textContent = 'Done';
@@ -405,7 +376,7 @@ function stopSpeaking(){ window.speechSynthesis && window.speechSynthesis.cancel
 $('testVoiceBtn').onclick = async ()=>{
   savePrefs(); window.speechSynthesis.cancel();
   await new Promise(r=>setTimeout(r,120));
-  const u=new SpeechSynthesisUtterance('This is your saved Google narrator voice.');
+  const u=new SpeechSynthesisUtterance('This is your saved Google narrator voice. The reading will focus on categories.');
   const v=currentVoice(); if(v) u.voice=v; u.rate=parseFloat($('rate').value||'1'); u.pitch=parseFloat($('pitch').value||'1');
   window.speechSynthesis.speak(u); diag('Test voice played');
 };
@@ -423,9 +394,7 @@ function diag(msg){
 }
 
 if('speechSynthesis' in window){
-  loadPrefs();
-  populateVoices();
-  diag('Ready ('+VERSION+')');
+  populateVoices().then(()=>{ loadPrefs(); diag('Ready ('+VERSION+')'); });
 } else {
   $('status').textContent = 'Speech not supported in this browser';
   diag('Speech API not supported');

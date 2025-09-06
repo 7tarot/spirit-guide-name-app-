@@ -1,0 +1,148 @@
+{
+    "0": {
+        "majors": [
+            "Fool"
+        ],
+        "signs": [],
+        "minors": [],
+        "note": "Wild card, no star sign, sits outside cycle."
+    },
+    "1": {
+        "majors": [
+            "Magician",
+            "Wheel of Fortune (10)",
+            "Sun (19)"
+        ],
+        "signs": [],
+        "minors": [
+            "Aces",
+            "10s"
+        ]
+    },
+    "2": {
+        "majors": [
+            "High Priestess",
+            "Justice",
+            "Judgement (20)"
+        ],
+        "signs": [
+            "Libra"
+        ],
+        "minors": [
+            "2 of Wands",
+            "2 of Cups",
+            "2 of Swords",
+            "2 of Pentacles"
+        ]
+    },
+    "3": {
+        "majors": [
+            "Empress",
+            "Hanged Man",
+            "World (21)"
+        ],
+        "signs": [
+            "Pisces"
+        ],
+        "minors": [
+            "3 of Wands",
+            "3 of Cups",
+            "3 of Swords",
+            "3 of Pentacles"
+        ]
+    },
+    "4": {
+        "majors": [
+            "Emperor",
+            "Death (13)"
+        ],
+        "signs": [
+            "Aries",
+            "Scorpio"
+        ],
+        "minors": [
+            "4 of Wands",
+            "4 of Cups",
+            "4 of Swords",
+            "4 of Pentacles"
+        ]
+    },
+    "5": {
+        "majors": [
+            "Hierophant",
+            "Temperance (14)"
+        ],
+        "signs": [
+            "Taurus",
+            "Sagittarius"
+        ],
+        "minors": [
+            "5 of Wands",
+            "5 of Cups",
+            "5 of Swords",
+            "5 of Pentacles"
+        ]
+    },
+    "6": {
+        "majors": [
+            "Lovers",
+            "Devil (15)"
+        ],
+        "signs": [
+            "Gemini",
+            "Capricorn"
+        ],
+        "minors": [
+            "6 of Wands",
+            "6 of Cups",
+            "6 of Swords",
+            "6 of Pentacles"
+        ]
+    },
+    "7": {
+        "majors": [
+            "Chariot",
+            "Tower (16)"
+        ],
+        "signs": [
+            "Cancer"
+        ],
+        "minors": [
+            "7 of Wands",
+            "7 of Cups",
+            "7 of Swords",
+            "7 of Pentacles"
+        ]
+    },
+    "8": {
+        "majors": [
+            "Strength",
+            "Star (17)"
+        ],
+        "signs": [
+            "Leo",
+            "Aquarius"
+        ],
+        "minors": [
+            "8 of Wands",
+            "8 of Cups",
+            "8 of Swords",
+            "8 of Pentacles"
+        ]
+    },
+    "9": {
+        "majors": [
+            "Hermit",
+            "Moon (18)"
+        ],
+        "signs": [
+            "Virgo"
+        ],
+        "minors": [
+            "9 of Wands",
+            "9 of Cups",
+            "9 of Swords",
+            "9 of Pentacles"
+        ]
+    }
+}

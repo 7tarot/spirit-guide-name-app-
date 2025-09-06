@@ -1,0 +1,22 @@
+{
+  "11": {
+    "base": 2,
+    "signs": [
+      "Libra"
+    ]
+  },
+  "22": {
+    "base": 4,
+    "signs": [
+      "Scorpio",
+      "Aries"
+    ]
+  },
+  "33": {
+    "base": 6,
+    "signs": [
+      "Capricorn",
+      "Gemini"
+    ]
+  }
+}

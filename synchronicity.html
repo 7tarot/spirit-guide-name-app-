@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Synchronicity Reader — Mystical Pro v4.3.8 FOCUS VARIANTS</title>
+<title>Synchronicity Reader — Mystical Pro v4.3.9 HOTFIX</title>
 <style>
   :root{ --bg:#05090a; --card:#081215; --edge:#102227; --text:#d1f7ff; --mint:#7efcff; --muted:#9bc7d1; --ok:#a7ffd8; --err:#ff9b9b }
   *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
@@ -29,13 +29,15 @@
   .badge{display:inline-block;margin-left:8px;padding:2px 8px;border:1px dashed #204b54;border-radius:999px;color:#8fd7e3;font-size:12px}
   .diag{margin-top:8px;font-size:12px;color:#9bc7d1}
   .diag b{color:#a7ffd8}
-  details summary{cursor:pointer;color:#9bd5e3}
+  .errbar{background:#2a0e10;border:1px solid #5a1a1e;color:#ffb3b3;padding:8px;border-radius:10px;margin:10px 0;display:none}
 </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>🔢 Synchronicity Reader — Mystical Pro <span class="badge">v4.3.8 FOCUS VARIANTS</span></h1>
-    <p class="sub">FIXED: final base uses classic digit-sum of whole number. Categories adapt by base + pattern (masters, repeater, mirror, ladder, zeros). Single-file, dedupe on, narrator on.</p>
+    <h1>🔢 Synchronicity Reader — Mystical Pro <span class="badge">v4.3.9 HOTFIX</span></h1>
+    <p class="sub">Hotfix: speech + analysis restored. Classic digit-sum base. Pattern-aware categories. Single-file, dedupe on.</p>
+
+    <div id="errbar" class="errbar"></div>
 
     <section class="card">
       <div class="row">
@@ -89,11 +91,11 @@
   </div>
 
 <script>
-const VERSION = 'v4.3.8-focus-variants-classic';
+const VERSION = 'v4.3.9-hotfix';
 const $ = id => document.getElementById(id);
 
 // ===== mapping =====
-const DB = {}; // for future expansion
+const DB = {};
 const OV = { "11":{base:2, signs:["Libra"]}, "22":{base:4, signs:["Scorpio","Aries"]}, "33":{base:6, signs:["Capricorn","Gemini"]} };
 
 // ===== helpers =====
@@ -219,7 +221,6 @@ function analyze(){
 
   const f = computeFeatures(segs);
 
-  // final base — classic (digits of whole number) and pair (prior method) for visibility
   const finalBaseClassic = reduceDigit(digitsOnly);
   const basesPairAll = segs.map(s => segmentBase(s).base);
   const finalBasePair = reduceDigit(basesPairAll.reduce((a,b)=>a+b,0));
@@ -239,7 +240,7 @@ function analyze(){
   $('chips').innerHTML = buildChipsGrouped(f.order, f.counts, f.infoMap);
   $('pattern').textContent = 'Pattern tags: ' + describePattern(f);
 
-  const html = catLongVariant(finalBaseClassic, 'love', f)
+  const html = '<h3>If the question is Love</h3>' + catLongVariant(finalBaseClassic, 'love', f)
              + '<h3>If the question is Work/Vocation</h3>' + catLongVariant(finalBaseClassic, 'work', f)
              + '<h3>If the question is Confusion</h3>' + catLongVariant(finalBaseClassic, 'confusion', f)
              + '<h3>If the question is Family</h3>' + catLongVariant(finalBaseClassic, 'family', f)
@@ -277,32 +278,49 @@ let speaking = false;
 function isGoogle(v){ return /google/i.test(v.name||''); }
 function englishOnly(v){ return $('forceEnglish').checked ? /^en[-_]/i.test(v.lang||'') : true; }
 
+function getCandidateVoices(all){
+  // Try Google EN first, then any EN, then any
+  let list = all.filter(v => isGoogle(v) && englishOnly(v));
+  if (!list.length) list = all.filter(v => englishOnly(v));
+  if (!list.length) list = all.slice();
+  return list;
+}
+
 function waitForVoices(){
   return new Promise(resolve => {
+    const ready = () => resolve(window.speechSynthesis.getVoices()||[]);
     const list = window.speechSynthesis.getVoices();
     if (list && list.length){ resolve(list); return; }
-    window.speechSynthesis.onvoiceschanged = () => resolve(window.speechSynthesis.getVoices());
-    setTimeout(()=> resolve(window.speechSynthesis.getVoices()||[]), 800);
+    window.speechSynthesis.onvoiceschanged = ready;
+    setTimeout(ready, 800);
   });
 }
 
 async function populateVoices(){
-  const list = await waitForVoices();
-  voices = (list||[]).filter(v => isGoogle(v) && englishOnly(v));
+  if (!('speechSynthesis' in window)) { diag('Speech API not supported'); return; }
+  const all = await waitForVoices();
+  const list = getCandidateVoices(all);
+  voices = list;
   const sel = $('voiceSelect'); sel.innerHTML='';
-  voices.forEach(v=>{ const opt=document.createElement('option'); opt.value=v.name+'::'+v.lang; opt.textContent=`${v.name} (${v.lang})`; sel.appendChild(opt); });
+  list.forEach(v=>{ const opt=document.createElement('option'); opt.value=v.name+'::'+v.lang; opt.textContent=`${v.name} (${v.lang})`; sel.appendChild(opt); });
 
   const savedName = localStorage.getItem(STORAGE.name), savedLang = localStorage.getItem(STORAGE.lang);
   if(savedName && savedLang){
     const idx = Array.from(sel.options).findIndex(o => o.value === (savedName+'::'+savedLang));
-    if(idx>=0){ sel.selectedIndex=idx; } else { sel.selectedIndex=0; }
-  } else {
+    if(idx>=0){ sel.selectedIndex=idx; }
+  }
+  if (sel.selectedIndex<0 && sel.options.length){
+    // Try preferred names
     let picked=false;
     for(const p of prefer){
       const idx = Array.from(sel.options).findIndex(o => o.textContent.includes(p));
       if(idx>=0){ sel.selectedIndex=idx; picked=true; break; }
     }
-    if(!picked && sel.options.length) sel.selectedIndex=0;
+    if(!picked) sel.selectedIndex=0;
+  }
+
+  if (!sel.options.length){
+    showErr('No speech voices available. Click the page once (user gesture), then press Test Voice. If using iOS Safari, ensure Speak Selection/Voices are enabled in Settings.');
   }
   diag(`Voices ready: ${voices.length}`);
 }
@@ -335,20 +353,23 @@ function getSpeechText(html){
   return text;
 }
 function chunkText(text, maxLen=220){
-  const sentences = text.split(/(?<=[\.\!\?])\s+)/);
+  // Robust sentence chunker (no lookbehind)
+  const sentences = text.match(/[^.!?]+[.!?]*/g) || [text];
   const chunks = [];
   let buf = '';
   sentences.forEach(s=>{
-    if ((buf + ' ' + s).trim().length > maxLen){
+    const piece = s.trim();
+    if (!piece) return;
+    if ((buf + ' ' + piece).trim().length > maxLen){
       if (buf) chunks.push(buf.trim());
-      if (s.length > maxLen){
-        for (let i=0;i<s.length;i+=maxLen){ chunks.push(s.slice(i,i+maxLen)); }
+      if (piece.length > maxLen){
+        for (let i=0;i<piece.length;i+=maxLen){ chunks.push(piece.slice(i,i+maxLen)); }
         buf = '';
       } else {
-        buf = s;
+        buf = piece;
       }
     } else {
-      buf = (buf? buf+' ' : '') + s;
+      buf = (buf? buf+' ' : '') + piece;
     }
   });
   if (buf) chunks.push(buf.trim());
@@ -376,7 +397,7 @@ async function speakQueueStart(text){
     if (v) u.voice = v; u.rate = rate; u.pitch = pitch; u.volume = 1.0;
     u.onstart = ()=> { $('status').textContent='Speaking…'; diag('Speaking'); };
     u.onend = ()=> next();
-    u.onerror = ()=> next();
+    u.onerror = (e)=> { console.warn('TTS error', e); next(); };
     speaking = true;
     try { window.speechSynthesis.speak(u); }
     catch(e){ setTimeout(()=> window.speechSynthesis.speak(u), 120); }
@@ -386,11 +407,13 @@ async function speakQueueStart(text){
 function stopSpeaking(){ window.speechSynthesis && window.speechSynthesis.cancel(); speakQueue=[]; speaking=false; $('status').textContent='Stopped'; diag('Stopped'); setTimeout(()=>$('status').textContent='',1200); }
 
 $('testVoiceBtn').onclick = async ()=>{
-  savePrefs(); window.speechSynthesis.cancel();
+  savePrefs(); if(!('speechSynthesis' in window)) return alert('Speech not supported.');
+  window.speechSynthesis.cancel();
   await new Promise(r=>setTimeout(r,120));
-  const u=new SpeechSynthesisUtterance('This is your saved Google narrator voice. The final base now uses the classic digit sum of the whole number.');
+  const u=new SpeechSynthesisUtterance('This is your saved narrator voice. Categories will be read after you analyze a number.');
   const v=currentVoice(); if(v) u.voice=v; u.rate=parseFloat($('rate').value||'1'); u.pitch=parseFloat($('pitch').value||'1');
-  window.speechSynthesis.speak(u); diag('Test voice played');
+  try { window.speechSynthesis.speak(u); } catch(e){ showErr('Unable to speak. Click the page once, then try again.'); }
+  diag('Test voice played');
 };
 $('speakBtn').onclick     = ()=> speakQueueStart();
 $('stopBtn').onclick      = ()=> stopSpeaking();
@@ -398,13 +421,20 @@ $('voiceSelect').onchange = savePrefs;
 $('forceEnglish').onchange= ()=>{ savePrefs(); populateVoices(); };
 $('rate').oninput = savePrefs; $('pitch').oninput = savePrefs;
 
-// diagnostics
+// diagnostics + error bar
 function diag(msg){
   const nav = navigator.userAgent||'';
   const vv = (window.speechSynthesis && window.speechSynthesis.getVoices && window.speechSynthesis.getVoices().length) || 0;
   $('diag').innerHTML = `Diagnostics: <b>${msg}</b> · Voices: ${vv} · Browser: ${nav.split(')')[0]+')'}`;
 }
+function showErr(msg){
+  const bar = $('errbar'); bar.textContent = '⚠ ' + msg; bar.style.display='block';
+}
+window.onerror = function(message, source, lineno, colno, error){
+  showErr(String(message||'Script error') + ' @ ' + lineno + ':' + colno);
+};
 
+// init
 if('speechSynthesis' in window){
   populateVoices().then(()=>{ loadPrefs(); diag('Ready ('+VERSION+')'); });
 } else {

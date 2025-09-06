@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Synchronicity Reader — Deep</title>
+<title>Synchronicity Reader — Voice Lock</title>
 <style>
   :root{ --bg:#05090a; --card:#081215; --edge:#102227; --text:#d1f7ff; --mint:#7efcff; --muted:#9bc7d1; --ok:#a7ffd8; --err:#ff9b9b }
   *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
@@ -12,219 +12,122 @@
   .sub{margin:0 0 16px;color:var(--muted)}
   .card{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:16px;margin:14px 0}
   .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-  .kpi{background:#0b1214;border:1px solid var(--edge);border-radius:10px;padding:12px}
-  .kpi h3{margin:0 0 6px;color:var(--mint);font-size:15px}
-  .kpi div{font-weight:700;font-size:20px;font-family:ui-monospace,Menlo,Consolas,monospace}
-  label{font-weight:600;display:block;margin:.4rem 0 .2rem}
-  input,button,select{font:inherit;border-radius:10px;border:1px solid var(--edge);background:#0b1214;color:var(--text);padding:.55rem .7rem}
-  button{cursor:pointer}
-  .chip{display:inline-block;border:1px solid #1f3b41;border-radius:999px;padding:4px 8px;margin:4px 6px 0 0;color:#9bc7d1;font-size:12px}
   .long{white-space:pre-line;line-height:1.6}
-  .tiny{font-size:12px} .muted{color:var(--muted)} .ok{color:var(--ok)} .err{color:var(--err)}
-  .tts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  .disclaimer{font-size:12px;color:#9bc7d1;margin-top:6px}
+  label{font-weight:600;display:block;margin:.4rem 0 .2rem}
+  input,button,select{font:inherit;border-radius:10px;border:1px solid var(--edge);background:#0b1214;color:#d1f7ff;padding:.55rem .7rem}
+  button{cursor:pointer}
+  .tiny{font-size:12px} .muted{color:var(--muted)} .ok{color:var(--ok)} .err{{color:var(--err)}}
 </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>🔢 Synchronicity Reader — Deep</h1>
-    <p class="sub">Type the number you keep seeing. This generates a flowing, card‑linked reading using your mapping + 11/22/33 rules.</p>
+    <h1>🔢 Synchronicity Reader — Voice Lock</h1>
+    <p class="sub">Same narrator voice every time, across pages (saved as a site-wide preference).</p>
 
     <section class="card">
       <div class="row">
-        <label>Synchronicity number
-          <input id="num" placeholder="e.g., 2011, 2222, 1234" style="min-width:220px">
-        </label>
+        <label>Number <input id="num" placeholder="e.g., 2222" style="min-width:220px"></label>
         <button id="analyzeBtn">Analyze</button>
-        <button id="copyBtn">Copy reading</button>
+        <button id="speakBtn">Speak</button>
+        <button id="stopBtn">Stop</button>
         <span id="status" class="tiny muted" style="margin-left:auto"></span>
       </div>
-      <div class="tts" style="margin-top:8px">
+      <div class="row">
         <label>Voice <select id="voiceSelect"></select></label>
-        <label class="tiny"><input type="checkbox" id="forceEnglish" checked> Force English voices</label>
+        <label class="tiny"><input type="checkbox" id="forceEnglish"> Force English voices</label>
+        <label class="tiny">Rate <input type="range" id="rate" min="0.6" max="1.4" step="0.02" value="0.98"></label>
+        <label class="tiny">Pitch <input type="range" id="pitch" min="0.6" max="1.4" step="0.02" value="1.0"></label>
         <button id="testVoiceBtn">Test voice</button>
-        <button id="speakBtn">Speak reading</button>
-        <button id="stopBtn">Stop</button>
       </div>
-      <div class="disclaimer">Narration is for reflection only. Trust your own intuition and judgment.</div>
+      <div class="tiny muted">Your selection is saved as a site preference and reused automatically.</div>
     </section>
 
-    <section class="card" id="resultCard" style="display:none">
-      <div class="grid">
-        <div class="kpi"><h3>Segments (2‑digit)</h3><div id="segments">—</div></div>
-        <div class="kpi"><h3>Segment Bases</h3><div id="bases">—</div></div>
-        <div class="kpi"><h3>Final Base</h3><div id="finalBase">—</div></div>
-      </div>
-
-      <h3 style="margin-top:12px">Tarot & Astro Mapping</h3>
-      <div id="chips"></div>
-
-      <h3 style="margin-top:12px">Reading</h3>
+    <section class="card" id="out" style="display:none">
       <div id="reading" class="long">—</div>
-    </section>
-
-    <section class="card tiny muted">
-      Uses <code>synchronicity_mapping.json</code> (your mapping) + <code>synchronicity_overrides.json</code> (11/22/33).<br>
-      11→2 (Libra), 22→4 (Scorpio/Aries), 33→6 (Capricorn/Gemini). Minors are the quartet of the base digit (e.g., 2 → Two of Wands/Cups/Swords/Pentacles).
     </section>
   </div>
 
 <script>
-const MAP_URL = 'synchronicity_mapping.json?v='+Date.now();
-const OV_URL  = 'synchronicity_overrides.json?v='+Date.now();
-
-const $ = id => document.getElementById(id);
-let DB = null, OV = null;
-
-// --- segmentation & math ---
-function splitPairsLeft(str){
-  const s = String(str).replace(/\D/g,'');
-  if (!s) return [];
-  const out = [];
-  for (let i=0; i<s.length; i+=2) out.push(s.slice(i, i+2));
-  return out;
-}
-function reduceDigit(n){
-  n = String(n).replace(/\D/g,'');
-  if (!n) return null;
-  let sum = 0; for (const ch of n) sum += Number(ch);
-  while (sum>9){ let t=0; for (const ch of String(sum)) t += Number(ch); sum=t; }
-  return sum;
-}
-function segmentBase(seg){
-  if (OV[seg]) return { base: OV[seg].base, master: seg, ov: OV[seg] };
-  return { base: reduceDigit(seg), master: null, ov: null };
-}
-function unique(arr){ return Array.from(new Set(arr.filter(Boolean))); }
-
-// --- mapping helpers ---
-function mapDigitToEntry(d){ return (DB && DB[String(d)]) || {}; }
-function minorsForBase(d){
-  const names = {1:'Ace',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine'};
-  if (!names[d]) return [];
-  const label = names[d];
-  return [`${label} of Wands`,`${label} of Cups`,`${label} of Swords`,`${label} of Pentacles`];
-}
-const THEMES = {
-  1:{theme:"initiative, independence, clean starts", do:"Choose one decisive step and lead with clarity.", watch:"Impatience; lone-wolfing."},
-  2:{theme:"cooperation, balance, soft power", do:"Pair up; listen first, align second, act third.", watch:"People-pleasing; wobbly boundaries."},
-  3:{theme:"expression, creativity, social links", do:"Speak your idea and invite one ally to riff.", watch:"Scattered focus; overpromising."},
-  4:{theme:"structure, discipline, foundations", do:"Block 30 minutes to systematize one repeating task.", watch:"Rigidity; perfectionism."},
-  5:{theme:"change, movement, flexibility", do:"Simplify, then test a small safe experiment.", watch:"Impulsiveness; shiny-object syndrome."},
-  6:{theme:"responsibility, care, harmonizing", do:"Tend to the relationship/space that needs balance.", watch:"Over-giving; martyr vibes."},
-  7:{theme:"inner work, analysis, spiritual focus", do:"Take a quiet hour; study one signal without distraction.", watch:"Overthinking; withdrawal."},
-  8:{theme:"power, resources, sustained effort", do:"Commit to an 8‑day streak toward the goal.", watch:"Control issues; burnout."},
-  9:{theme:"completion, release, service", do:"Close a loop and offer help where it matters.", watch:"Clinging to endings; fatigue."},
+const STORAGE = {
+  name:  'sg_voice_name',
+  lang:  'sg_voice_lang',
+  force: 'sg_voice_force_en',
+  rate:  'sg_voice_rate',
+  pitch: 'sg_voice_pitch'
 };
 
-function buildNarrative(num, segs, basesInfo, finalBase){
-  const lines = [];
-  lines.push(`You’re noticing ${num}. That splits as ${segs.join(', ')}.`);
+const preferNames = [
+  // Natural, high-quality English voices commonly present
+  "Microsoft Sonia Online (Natural)", "Microsoft Aria Online (Natural)",
+  "Microsoft Ryan Online (Natural)", "Microsoft Guy Online (Natural)",
+  "Google UK English Female", "Google UK English Male",
+  "Google US English", "Google US English Female", "Google US English Male"
+];
 
-  basesInfo.forEach(({base, master, ov}, idx) => {
-    const entry = mapDigitToEntry(base);
-    const majors = entry.majors || entry.Majors || [];
-    const signs  = unique([...(entry.signs||entry.Signs||[]), ...(ov && ov.signs || [])]);
-    const minors = minorsForBase(base);
-    const segLabel = master ? `${master} → ${base}` : String(base);
-    const parts = [];
-    if (majors.length) parts.push(`Majors: ${majors.join(', ')}`);
-    if (minors.length) parts.push(`Minors: ${minors.join(', ')}`);
-    if (signs.length)  parts.push(`Astro: ${signs.join(', ')}`);
-    lines.push(`Segment ${idx+1} (${segs[idx]} → ${segLabel}): ${parts.join(' • ')}`);
-  });
-
-  const core = THEMES[finalBase];
-  if (core){
-    lines.push("");
-    lines.push(`Together these add to **${finalBase}**, the day’s anchor: ${core.theme}.`);
-    lines.push(`Do: ${core.do}`);
-    lines.push(`Watch for: ${core.watch}`);
-  }
-  return lines.join("\n");
-}
-
-// --- UI actions ---
-function analyze(){
-  const raw = $('num').value.trim();
-  if (!raw){ alert('Enter a number.'); return; }
-
-  const segs = splitPairsLeft(raw);
-  const basesInfo = segs.map(s => segmentBase(s));
-  const bases = basesInfo.map(x => x.base);
-  const finalBase = reduceDigit(bases.reduce((a,b)=>a+b,0));
-
-  // chips
-  const chipHtml = [];
-  const allSigns = [];
-  basesInfo.forEach(({base, master, ov}, idx) => {
-    const entry = mapDigitToEntry(base) || {};
-    const majors = entry.majors || entry.Majors || [];
-    const signs  = unique([...(entry.signs||entry.Signs||[]), ...(ov && ov.signs || [])]);
-    const minors = minorsForBase(base);
-    allSigns.push(...signs);
-    chipHtml.push(`<div class="chip">Seg ${idx+1}: ${master? master+'→':''}${base} · ${signs.join('/')} · Majors: ${majors.join(', ')} · Minors: ${minors.join(', ')}</div>`);
-  });
-
-  const reading = buildNarrative(raw, segs, basesInfo, finalBase);
-
-  // Render
-  $('resultCard').style.display = 'block';
-  $('segments').textContent = segs.join(', ');
-  $('bases').textContent = basesInfo.map(x => (x.master? x.master+'→':'') + x.base).join(', ');
-  $('finalBase').textContent = String(finalBase);
-  $('chips').innerHTML = chipHtml.join('');
-  $('reading').textContent = reading;
-
-  $('status').textContent = 'Done';
-  setTimeout(()=> $('status').textContent='', 2000);
-}
-
-function copyReading(){
-  const num = $('num').value.trim();
-  const text = [
-    'Synchronicity: ' + num,
-    'Segments: ' + $('segments').textContent,
-    'Base digits: ' + $('bases').textContent,
-    'Final base: ' + $('finalBase').textContent,
-    '',
-    $('reading').textContent,
-    '',
-    '— Spirit Guide App'
-  ].join('\n');
-  navigator.clipboard.writeText(text).then(()=> alert('Copied reading'));
-}
-
-// --- Narrator (Web Speech API) ---
+const $ = id => document.getElementById(id);
 let voices = [];
-function getEnglishVoices(){
-  const onlyEn = $('forceEnglish').checked;
-  return voices.filter(v => !onlyEn || /^en[-_]/i.test(v.lang));
+
+// --- dummy reader text (kept minimal; your full page supplies the narrative) ---
+function analyze(){
+  const raw = $('num').value.trim() || '2222';
+  $('out').style.display = 'block';
+  $('reading').textContent = "This is a placeholder reading for " + raw + ". The real page will generate ~400 words.";
 }
+
+function savePrefs(){
+  const sel = $('voiceSelect');
+  const opt = sel.options[sel.selectedIndex];
+  const [name, lang] = (opt && opt.value ? opt.value.split('::') : ['','']);
+  localStorage.setItem(STORAGE.name, name||'');
+  localStorage.setItem(STORAGE.lang, lang||'');
+  localStorage.setItem(STORAGE.force, $('forceEnglish').checked ? '1' : '0');
+  localStorage.setItem(STORAGE.rate, String($('rate').value));
+  localStorage.setItem(STORAGE.pitch, String($('pitch').value));
+}
+
+function loadPrefs(){
+  const force = localStorage.getItem(STORAGE.force);
+  $('forceEnglish').checked = force === '1';
+  const r = parseFloat(localStorage.getItem(STORAGE.rate)); if (!isNaN(r)) $('rate').value = r;
+  const p = parseFloat(localStorage.getItem(STORAGE.pitch)); if (!isNaN(p)) $('pitch').value = p;
+}
+
+function englishFiltered(list){
+  return list.filter(v => $('forceEnglish').checked ? /^en[-_]/i.test(v.lang) : true);
+}
+
 function populateVoices(){
-  const list = window.speechSynthesis.getVoices();
-  if (!list || !list.length){ setTimeout(populateVoices, 300); return; }
+  const list = window.speechSynthesis.getVoices() || [];
+  if (!list.length){ setTimeout(populateVoices, 250); return; }
   voices = list.slice().sort((a,b)=> (a.lang||'').localeCompare(b.lang||''));
+
   const sel = $('voiceSelect');
   sel.innerHTML = '';
-  const en = getEnglishVoices();
-  (en.length? en : voices).forEach((v,i) => {
+  const avail = englishFiltered(voices);
+
+  avail.forEach(v => {
     const opt = document.createElement('option');
     opt.value = v.name + '::' + v.lang;
     opt.textContent = `${v.name} (${v.lang})`;
     sel.appendChild(opt);
   });
-  // Try to preselect a natural English option if available
-  const prefer = ["Google UK English Female","Google US English","Microsoft Sonia Online (Natural)","Microsoft Aria Online (Natural)"];
-  for (const p of prefer){
-    const idx = Array.from(sel.options).findIndex(o => o.textContent.includes(p));
-    if (idx >= 0){ sel.selectedIndex = idx; break; }
+
+  // 1) Try saved voice
+  const savedName = localStorage.getItem(STORAGE.name);
+  const savedLang = localStorage.getItem(STORAGE.lang);
+  if (savedName && savedLang){
+    const idx = Array.from(sel.options).findIndex(o => o.value === (savedName + '::' + savedLang));
+    if (idx >= 0){ sel.selectedIndex = idx; $('status').textContent = 'Using saved voice'; setTimeout(()=>$('status').textContent='', 2000); return; }
   }
-}
-if ('speechSynthesis' in window){
-  window.speechSynthesis.onvoiceschanged = populateVoices;
-  populateVoices();
+
+  // 2) Try preferred list
+  for (const p of preferNames){
+    const idx = Array.from(sel.options).findIndex(o => o.textContent.includes(p));
+    if (idx >= 0){ sel.selectedIndex = idx; $('status').textContent = 'Selected preferred voice'; setTimeout(()=>$('status').textContent='', 2000); return; }
+  }
+
+  // 3) Default to first
+  if (sel.options.length) sel.selectedIndex = 0;
 }
 
 function currentVoice(){
@@ -233,33 +136,34 @@ function currentVoice(){
   const [name, lang] = sel.value.split('::');
   return voices.find(v => v.name === name && v.lang === lang) || null;
 }
+
 function speak(text){
   if (!('speechSynthesis' in window)) { alert('Speech not supported in this browser.'); return; }
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance();
-  u.text = "This narration is reflective guidance, not medical or legal advice. " + text;
-  u.rate = 0.98; u.pitch = 1.0; u.volume = 1.0;
+  u.text = "Reflective guidance only. " + (text || "Please analyze a number first.");
+  u.rate = parseFloat($('rate').value||'1'); u.pitch = parseFloat($('pitch').value||'1'); u.volume = 1.0;
   const v = currentVoice(); if (v) u.voice = v;
   window.speechSynthesis.speak(u);
 }
-$('testVoiceBtn').onclick = ()=> speak('This is the narrator test. Hello from the Synchronicity Reader.');
-$('speakBtn').onclick = ()=> speak(($('reading').textContent||'').trim() || 'Please analyze a number first.');
-$('stopBtn').onclick  = ()=> window.speechSynthesis && window.speechSynthesis.cancel();
-$('forceEnglish').onchange = populateVoices;
-
-// --- boot ---
-Promise.all([fetch(MAP_URL).then(r=>r.json()).catch(()=>null),
-             fetch(OV_URL).then(r=>r.json()).catch(()=>({}))])
-  .then(([map, ov]) => {
-    // Normalize DB for digits 0-9; support either { "2": {...} } or { numbers: { "2": {...} } }
-    const db = (map && (map.numbers || map)) || {};
-    DB = db;
-    OV = ov || {};
-    $('status').textContent = 'Ready';
-  });
 
 $('analyzeBtn').onclick = analyze;
-$('copyBtn').onclick = copyReading;
+$('speakBtn').onclick  = ()=> speak(($('reading').textContent||'').trim());
+$('stopBtn').onclick   = ()=> window.speechSynthesis && window.speechSynthesis.cancel();
+$('testVoiceBtn').onclick = ()=> { savePrefs(); speak("This is your saved narrator voice. It will be reused next time."); };
+
+$('voiceSelect').onchange = savePrefs;
+$('forceEnglish').onchange = ()=>{ savePrefs(); populateVoices(); };
+$('rate').oninput = savePrefs;
+$('pitch').oninput = savePrefs;
+
+if ('speechSynthesis' in window){
+  loadPrefs();
+  window.speechSynthesis.onvoiceschanged = populateVoices;
+  populateVoices();
+} else {
+  $('status').textContent = 'Speech not supported in this browser';
+}
 </script>
 </body>
 </html>

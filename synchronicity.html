@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Synchronicity Reader</title>
+<title>Synchronicity Reader — Deep</title>
 <style>
   :root{ --bg:#05090a; --card:#081215; --edge:#102227; --text:#d1f7ff; --mint:#7efcff; --muted:#9bc7d1; --ok:#a7ffd8; --err:#ff9b9b }
   *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
@@ -17,17 +17,19 @@
   .kpi h3{margin:0 0 6px;color:var(--mint);font-size:15px}
   .kpi div{font-weight:700;font-size:20px;font-family:ui-monospace,Menlo,Consolas,monospace}
   label{font-weight:600;display:block;margin:.4rem 0 .2rem}
-  input,button{font:inherit;border-radius:10px;border:1px solid var(--edge);background:#0b1214;color:var(--text);padding:.55rem .7rem}
+  input,button,select{font:inherit;border-radius:10px;border:1px solid var(--edge);background:#0b1214;color:var(--text);padding:.55rem .7rem}
   button{cursor:pointer}
   .chip{display:inline-block;border:1px solid #1f3b41;border-radius:999px;padding:4px 8px;margin:4px 6px 0 0;color:#9bc7d1;font-size:12px}
-  .long{white-space:pre-line;line-height:1.55}
+  .long{white-space:pre-line;line-height:1.6}
   .tiny{font-size:12px} .muted{color:var(--muted)} .ok{color:var(--ok)} .err{color:var(--err)}
+  .tts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .disclaimer{font-size:12px;color:#9bc7d1;margin-top:6px}
 </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>🔢 Synchronicity Reader</h1>
-    <p class="sub">Enter the exact number you keep seeing. We’ll map it to your numerology + your tarot/astro sequence.</p>
+    <h1>🔢 Synchronicity Reader — Deep</h1>
+    <p class="sub">Type the number you keep seeing. This generates a flowing, card‑linked reading using your mapping + 11/22/33 rules.</p>
 
     <section class="card">
       <div class="row">
@@ -38,6 +40,14 @@
         <button id="copyBtn">Copy reading</button>
         <span id="status" class="tiny muted" style="margin-left:auto"></span>
       </div>
+      <div class="tts" style="margin-top:8px">
+        <label>Voice <select id="voiceSelect"></select></label>
+        <label class="tiny"><input type="checkbox" id="forceEnglish" checked> Force English voices</label>
+        <button id="testVoiceBtn">Test voice</button>
+        <button id="speakBtn">Speak reading</button>
+        <button id="stopBtn">Stop</button>
+      </div>
+      <div class="disclaimer">Narration is for reflection only. Trust your own intuition and judgment.</div>
     </section>
 
     <section class="card" id="resultCard" style="display:none">
@@ -55,8 +65,8 @@
     </section>
 
     <section class="card tiny muted">
-      Uses <code>synchronicity_mapping.json</code> (your mapping) + <code>synchronicity_overrides.json</code> (11/22/33 signs).<br>
-      Segments are split left→right in 2‑digit groups (e.g., 2011 → 20, 11). 11/22/33 keep their named energy, but reduce to 2/4/6 for minors & base math.
+      Uses <code>synchronicity_mapping.json</code> (your mapping) + <code>synchronicity_overrides.json</code> (11/22/33).<br>
+      11→2 (Libra), 22→4 (Scorpio/Aries), 33→6 (Capricorn/Gemini). Minors are the quartet of the base digit (e.g., 2 → Two of Wands/Cups/Swords/Pentacles).
     </section>
   </div>
 
@@ -67,17 +77,14 @@ const OV_URL  = 'synchronicity_overrides.json?v='+Date.now();
 const $ = id => document.getElementById(id);
 let DB = null, OV = null;
 
+// --- segmentation & math ---
 function splitPairsLeft(str){
-  // Remove non-digits, then group into two-digit chunks left→right
   const s = String(str).replace(/\D/g,'');
   if (!s) return [];
   const out = [];
-  for (let i=0; i<s.length; i+=2){
-    out.push(s.slice(i, i+2));
-  }
+  for (let i=0; i<s.length; i+=2) out.push(s.slice(i, i+2));
   return out;
 }
-
 function reduceDigit(n){
   n = String(n).replace(/\D/g,'');
   if (!n) return null;
@@ -85,39 +92,60 @@ function reduceDigit(n){
   while (sum>9){ let t=0; for (const ch of String(sum)) t += Number(ch); sum=t; }
   return sum;
 }
-
 function segmentBase(seg){
-  // Master overrides first
-  if (OV[seg]) return { base: OV[seg].base, master: seg };
-  return { base: reduceDigit(seg), master: null };
+  if (OV[seg]) return { base: OV[seg].base, master: seg, ov: OV[seg] };
+  return { base: reduceDigit(seg), master: null, ov: null };
 }
-
-function mapDigitToEntry(digit){
-  // DB uses 0-9 mapping — pick matching record or blank
-  const rec = (DB && DB[String(digit)]) || null;
-  return rec;
-}
-
 function unique(arr){ return Array.from(new Set(arr.filter(Boolean))); }
 
-function buildReading(bases, finalBase, signsSet){
-  const meaning = {
-    1: { theme: "initiative, independence, clean starts", action: "Choose one decisive step and lead with clarity." },
-    2: { theme: "cooperation, balance, soft power", action: "Pair up; listen first, align second, act third." },
-    3: { theme: "expression, creativity, social links", action: "Speak your idea and invite one ally to riff." },
-    4: { theme: "structure, discipline, foundations", action: "Block 30 minutes to systematize one repeating task." },
-    5: { theme: "change, movement, flexibility", action: "Simplify, then try a small safe experiment this week." },
-    6: { theme: "responsibility, care, harmonizing", action: "Tend to the relationship or space that needs balance." },
-    7: { theme: "inner work, analysis, spiritual focus", action: "Take a quiet hour; study one signal without distraction." },
-    8: { theme: "power, resources, sustained effort", action: "Commit to a steady 8‑day practice toward your goal." },
-    9: { theme: "completion, release, service", action: "Close a loop and offer help where it matters most." }
-  };
-  const pieces = bases.map(b => meaning[b] ? `• ${b} → ${meaning[b].theme}` : `• ${b}`).join("\n");
-  const finalLine = meaning[finalBase] ? `\nFocus: ${finalBase} — ${meaning[finalBase].theme}. ${meaning[finalBase].action}` : '';
-  const signLine = signsSet.length ? `\nAstro emphasis: ${signsSet.join(', ')}.` : '';
-  return `Segments:\n${pieces}${finalLine}${signLine}`;
+// --- mapping helpers ---
+function mapDigitToEntry(d){ return (DB && DB[String(d)]) || {}; }
+function minorsForBase(d){
+  const names = {1:'Ace',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine'};
+  if (!names[d]) return [];
+  const label = names[d];
+  return [`${label} of Wands`,`${label} of Cups`,`${label} of Swords`,`${label} of Pentacles`];
+}
+const THEMES = {
+  1:{theme:"initiative, independence, clean starts", do:"Choose one decisive step and lead with clarity.", watch:"Impatience; lone-wolfing."},
+  2:{theme:"cooperation, balance, soft power", do:"Pair up; listen first, align second, act third.", watch:"People-pleasing; wobbly boundaries."},
+  3:{theme:"expression, creativity, social links", do:"Speak your idea and invite one ally to riff.", watch:"Scattered focus; overpromising."},
+  4:{theme:"structure, discipline, foundations", do:"Block 30 minutes to systematize one repeating task.", watch:"Rigidity; perfectionism."},
+  5:{theme:"change, movement, flexibility", do:"Simplify, then test a small safe experiment.", watch:"Impulsiveness; shiny-object syndrome."},
+  6:{theme:"responsibility, care, harmonizing", do:"Tend to the relationship/space that needs balance.", watch:"Over-giving; martyr vibes."},
+  7:{theme:"inner work, analysis, spiritual focus", do:"Take a quiet hour; study one signal without distraction.", watch:"Overthinking; withdrawal."},
+  8:{theme:"power, resources, sustained effort", do:"Commit to an 8‑day streak toward the goal.", watch:"Control issues; burnout."},
+  9:{theme:"completion, release, service", do:"Close a loop and offer help where it matters.", watch:"Clinging to endings; fatigue."},
+};
+
+function buildNarrative(num, segs, basesInfo, finalBase){
+  const lines = [];
+  lines.push(`You’re noticing ${num}. That splits as ${segs.join(', ')}.`);
+
+  basesInfo.forEach(({base, master, ov}, idx) => {
+    const entry = mapDigitToEntry(base);
+    const majors = entry.majors || entry.Majors || [];
+    const signs  = unique([...(entry.signs||entry.Signs||[]), ...(ov && ov.signs || [])]);
+    const minors = minorsForBase(base);
+    const segLabel = master ? `${master} → ${base}` : String(base);
+    const parts = [];
+    if (majors.length) parts.push(`Majors: ${majors.join(', ')}`);
+    if (minors.length) parts.push(`Minors: ${minors.join(', ')}`);
+    if (signs.length)  parts.push(`Astro: ${signs.join(', ')}`);
+    lines.push(`Segment ${idx+1} (${segs[idx]} → ${segLabel}): ${parts.join(' • ')}`);
+  });
+
+  const core = THEMES[finalBase];
+  if (core){
+    lines.push("");
+    lines.push(`Together these add to **${finalBase}**, the day’s anchor: ${core.theme}.`);
+    lines.push(`Do: ${core.do}`);
+    lines.push(`Watch for: ${core.watch}`);
+  }
+  return lines.join("\n");
 }
 
+// --- UI actions ---
 function analyze(){
   const raw = $('num').value.trim();
   if (!raw){ alert('Enter a number.'); return; }
@@ -127,22 +155,19 @@ function analyze(){
   const bases = basesInfo.map(x => x.base);
   const finalBase = reduceDigit(bases.reduce((a,b)=>a+b,0));
 
-  // Tarot/Astro chips
+  // chips
   const chipHtml = [];
   const allSigns = [];
-  basesInfo.forEach(({base, master}, idx) => {
+  basesInfo.forEach(({base, master, ov}, idx) => {
     const entry = mapDigitToEntry(base) || {};
     const majors = entry.majors || entry.Majors || [];
-    const minors = entry.minors || entry.Minors || [];
-    const signs  = entry.signs  || entry.Signs  || [];
-    const ovSigns = master && OV[master] ? (OV[master].signs||[]) : [];
-    const sigs = unique([...(signs||[]), ...ovSigns]);
-    allSigns.push(...sigs);
-
-    chipHtml.push(`<div class="chip">Seg ${idx+1}: ${master? master+'→':''}${base} · ${sigs.join('/')} · Majors: ${majors.join(', ')} · Minors: ${minors.join(', ')}</div>`);
+    const signs  = unique([...(entry.signs||entry.Signs||[]), ...(ov && ov.signs || [])]);
+    const minors = minorsForBase(base);
+    allSigns.push(...signs);
+    chipHtml.push(`<div class="chip">Seg ${idx+1}: ${master? master+'→':''}${base} · ${signs.join('/')} · Majors: ${majors.join(', ')} · Minors: ${minors.join(', ')}</div>`);
   });
 
-  const reading = buildReading(bases, finalBase, unique(allSigns));
+  const reading = buildNarrative(raw, segs, basesInfo, finalBase);
 
   // Render
   $('resultCard').style.display = 'block';
@@ -171,11 +196,64 @@ function copyReading(){
   navigator.clipboard.writeText(text).then(()=> alert('Copied reading'));
 }
 
+// --- Narrator (Web Speech API) ---
+let voices = [];
+function getEnglishVoices(){
+  const onlyEn = $('forceEnglish').checked;
+  return voices.filter(v => !onlyEn || /^en[-_]/i.test(v.lang));
+}
+function populateVoices(){
+  const list = window.speechSynthesis.getVoices();
+  if (!list || !list.length){ setTimeout(populateVoices, 300); return; }
+  voices = list.slice().sort((a,b)=> (a.lang||'').localeCompare(b.lang||''));
+  const sel = $('voiceSelect');
+  sel.innerHTML = '';
+  const en = getEnglishVoices();
+  (en.length? en : voices).forEach((v,i) => {
+    const opt = document.createElement('option');
+    opt.value = v.name + '::' + v.lang;
+    opt.textContent = `${v.name} (${v.lang})`;
+    sel.appendChild(opt);
+  });
+  // Try to preselect a natural English option if available
+  const prefer = ["Google UK English Female","Google US English","Microsoft Sonia Online (Natural)","Microsoft Aria Online (Natural)"];
+  for (const p of prefer){
+    const idx = Array.from(sel.options).findIndex(o => o.textContent.includes(p));
+    if (idx >= 0){ sel.selectedIndex = idx; break; }
+  }
+}
+if ('speechSynthesis' in window){
+  window.speechSynthesis.onvoiceschanged = populateVoices;
+  populateVoices();
+}
+
+function currentVoice(){
+  const sel = $('voiceSelect');
+  if (!sel || sel.selectedIndex < 0) return null;
+  const [name, lang] = sel.value.split('::');
+  return voices.find(v => v.name === name && v.lang === lang) || null;
+}
+function speak(text){
+  if (!('speechSynthesis' in window)) { alert('Speech not supported in this browser.'); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance();
+  u.text = "This narration is reflective guidance, not medical or legal advice. " + text;
+  u.rate = 0.98; u.pitch = 1.0; u.volume = 1.0;
+  const v = currentVoice(); if (v) u.voice = v;
+  window.speechSynthesis.speak(u);
+}
+$('testVoiceBtn').onclick = ()=> speak('This is the narrator test. Hello from the Synchronicity Reader.');
+$('speakBtn').onclick = ()=> speak(($('reading').textContent||'').trim() || 'Please analyze a number first.');
+$('stopBtn').onclick  = ()=> window.speechSynthesis && window.speechSynthesis.cancel();
+$('forceEnglish').onchange = populateVoices;
+
+// --- boot ---
 Promise.all([fetch(MAP_URL).then(r=>r.json()).catch(()=>null),
              fetch(OV_URL).then(r=>r.json()).catch(()=>({}))])
   .then(([map, ov]) => {
     // Normalize DB for digits 0-9; support either { "2": {...} } or { numbers: { "2": {...} } }
-    DB = (map && (map.numbers || map)) || {};
+    const db = (map && (map.numbers || map)) || {};
+    DB = db;
     OV = ov || {};
     $('status').textContent = 'Ready';
   });

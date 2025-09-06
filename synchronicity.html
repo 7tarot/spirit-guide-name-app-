@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Synchronicity Reader — Mystical Pro v4.3.3 ULTRA MAX</title>
+<title>Synchronicity Reader — Mystical Pro v4.3.5 ULTRA MAX</title>
 <style>
   :root{ --bg:#05090a; --card:#081215; --edge:#102227; --text:#d1f7ff; --mint:#7efcff; --muted:#9bc7d1; --ok:#a7ffd8; --err:#ff9b9b }
   *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
@@ -33,8 +33,8 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>🔢 Synchronicity Reader — Mystical Pro <span class="badge">v4.3.3 ULTRA MAX</span></h1>
-    <p class="sub">Zero‑fetch build with diagnostics. Ultra‑long segments + 400‑word categories. Robust Speak. Google voices only.</p>
+    <h1>🔢 Synchronicity Reader — Mystical Pro <span class="badge">v4.3.5 ULTRA MAX</span></h1>
+    <p class="sub">Single‑file build (no external files). Dedupe identical segments. Robust Speak. 400‑word categories. Diagnostics on.</p>
 
     <section class="card">
       <div class="row">
@@ -82,12 +82,12 @@
     </section>
 
     <section class="card tiny muted">
-      This build reads entirely offline (no extra files). Only <strong>Google</strong> voices are listed. If Speak stalls, click Stop then Speak again.
+      Single file: just upload <code>synchronicity.html</code> next to your existing index.html. Voices: Google only. If Speak stalls, press Stop then Speak again.
     </section>
   </div>
 
 <script>
-const VERSION = 'v4.3.3-ultra-max';
+const VERSION = 'v4.3.5-ultra-max';
 const $ = id => document.getElementById(id);
 
 // ===== embedded mapping (no network) =====
@@ -174,33 +174,40 @@ function catLong(base, topic){
 }
 
 // ===== chips =====
-function buildChips(basesInfo, segs){
+function buildChipsGrouped(order, counts, infoMap){
   const chipHtml = [];
-  basesInfo.forEach(({base, master, ov}, idx) => {
-    const entry = mapDigitToEntry(base);
+  order.forEach((seg, idx) => {
+    const info = infoMap[seg];
+    const entry = mapDigitToEntry(info.base);
     const majors = entry.majors || entry.Majors || [];
-    const signs  = unique([...(entry.signs||entry.Signs||[]), ...(ov && ov.signs || [])]);
-    const minors = minorsForBase(base);
-    chipHtml.push(`<div class="chip">Seg ${idx+1}: ${segs[idx]} → ${master? master+'→':''}${base} · ${signs.join('/')} · Majors: ${(majors.length?majors.join(', '):'—')} · Minors: ${minors.join(', ')}</div>`);
+    const signs  = unique([...(entry.signs||entry.Signs||[]), ...(info.ov && info.ov.signs || [])]);
+    const minors = minorsForBase(info.base);
+    const x = counts[seg] > 1 ? ` ×${counts[seg]}` : '';
+    chipHtml.push(`<div class="chip">Seg ${idx+1}: ${seg} → ${info.master? info.master+'→':''}${info.base}${x} · ${signs.join('/')} · Majors: ${(majors.length?majors.join(', '):'—')} · Minors: ${minors.join(', ')}</div>`);
   });
   return chipHtml.join('');
 }
 
-// ===== full reading builder =====
-function buildReadingHTML(num, segs, basesInfo, finalBase){
+// ===== full reading builder (dedupe) =====
+function buildReadingHTML(num, segs, order, counts, infoMap, finalBase){
   const parts = [];
   const anchorTitle = {1:"Clean Beginnings",2:"Living Balance",3:"True Expression",4:"Good Structure",5:"Gentle Change",6:"Caring Harmony",7:"Quiet Insight",8:"Calm Strength",9:"Clean Completion"}[finalBase] || "Anchor";
 
   parts.push(`<h2>${num} — ${anchorTitle} <span class="badge">${VERSION}</span></h2>`);
   parts.push(`<p>We split ${num} into ${segs.join(', ')}. Adding the bases resolves to ${finalBase}.</p>`);
 
-  basesInfo.forEach((info, i)=>{
+  order.forEach((seg, i)=>{
+    const info = infoMap[seg];
     const entry = mapDigitToEntry(info.base);
     const majors = entry.majors || entry.Majors || [];
     const signs  = unique([...(entry.signs||entry.Signs||[]), ...(info.ov && info.ov.signs || [])]);
     const minors = minorsForBase(info.base);
-    parts.push(`<h3>Segment ${i+1} — ${info.master? 'Master '+info.master+' → ':''}${info.base}</h3>`);
-    parts.push(ultraSegmentHTML(i+1, segs[i], info.base, majors, minors, signs, info.master));
+    const countNote = counts[seg] > 1 ? ` <span class="badge">appears ${counts[seg]}× today</span>` : '';
+    parts.push(`<h3>Segment ${i+1} — ${info.master? 'Master '+info.master+' → ':''}${info.base}${countNote}</h3>`);
+    parts.push(ultraSegmentHTML(i+1, seg, info.base, majors, minors, signs, info.master));
+    if (counts[seg] > 1){
+      parts.push(`<p><em>Echo note:</em> This pattern repeats; treat it as an intensifier. Do the guidance once, with double steadiness and patience.</p>`);
+    }
   });
 
   parts.push(`<h3>If the question is Love</h3>${catLong(finalBase, 'love')}`);
@@ -219,17 +226,42 @@ function analyze(){
   if(!raw){ alert('Enter a number.'); return; }
 
   const segs = splitPairsLeft(raw);
-  const basesInfo = segs.map(s => segmentBase(s));
-  const bases = basesInfo.map(x => x.base);
-  const finalBase = reduceDigit(bases.reduce((a,b)=>a+b,0));
+  if (!segs.length){ alert('Need at least two digits.'); return; }
+
+  // Build grouped map (dedupe identical segments)
+  const order = [];
+  const counts = {};
+  const infoMap = {};
+
+  segs.forEach(seg => {
+    if (!counts[seg]){
+      counts[seg] = 1;
+      order.push(seg);
+      infoMap[seg] = segmentBase(seg);
+    } else {
+      counts[seg]++;
+    }
+  });
+
+  // compute final base from ALL segments (not deduped)
+  const basesAll = segs.map(s => segmentBase(s).base);
+  const finalBase = reduceDigit(basesAll.reduce((a,b)=>a+b,0));
 
   $('resultCard').style.display = 'block';
   $('segments').textContent = segs.join(', ');
-  $('bases').textContent = basesInfo.map(x => (x.master? x.master+'→':'') + x.base).join(', ');
-  $('finalBase').textContent = String(finalBase);
-  $('chips').innerHTML = buildChips(basesInfo, segs);
 
-  const html = buildReadingHTML(raw, segs, basesInfo, finalBase);
+  // Show grouped bases like "22→4 ×2, 33→6"
+  const basesGrouped = order.map(seg => {
+    const info = infoMap[seg];
+    const arrow = info.master ? info.master+'→' : '';
+    const times = counts[seg] > 1 ? ` ×${counts[seg]}` : '';
+    return `${seg} → ${arrow}${info.base}${times}`;
+  });
+  $('bases').textContent = basesGrouped.join(', ');
+  $('finalBase').textContent = String(finalBase);
+  $('chips').innerHTML = buildChipsGrouped(order, counts, infoMap);
+
+  const html = buildReadingHTML(raw, segs, order, counts, infoMap, finalBase);
   $('reading').innerHTML = html;
 
   $('status').textContent = 'Done';

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Synchronicity Reader — Voice Lock</title>
+<title>Synchronicity Reader — Google Voices</title>
 <style>
   :root{ --bg:#05090a; --card:#081215; --edge:#102227; --text:#d1f7ff; --mint:#7efcff; --muted:#9bc7d1; --ok:#a7ffd8; --err:#ff9b9b }
   *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
@@ -12,152 +12,137 @@
   .sub{margin:0 0 16px;color:var(--muted)}
   .card{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:16px;margin:14px 0}
   .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-  .long{white-space:pre-line;line-height:1.6}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .kpi{background:#0b1214;border:1px solid var(--edge);border-radius:10px;padding:12px}
+  .kpi h3{margin:0 0 6px;color:var(--mint);font-size:15px}
+  .kpi div{font-weight:700;font-size:20px;font-family:ui-monospace,Menlo,Consolas,monospace}
   label{font-weight:600;display:block;margin:.4rem 0 .2rem}
-  input,button,select{font:inherit;border-radius:10px;border:1px solid var(--edge);background:#0b1214;color:#d1f7ff;padding:.55rem .7rem}
+  input,button,select{font:inherit;border-radius:10px;border:1px solid var(--edge);background:#0b1214;color:var(--text);padding:.55rem .7rem}
   button{cursor:pointer}
-  .tiny{font-size:12px} .muted{color:var(--muted)} .ok{color:var(--ok)} .err{{color:var(--err)}}
+  .chip{display:inline-block;border:1px solid #1f3b41;border-radius:999px;padding:4px 8px;margin:4px 6px 0 0;color:#9bc7d1;font-size:12px}
+  .long{white-space:pre-line;line-height:1.6}
+  .tiny{font-size:12px} .muted{color:var(--muted)} .ok{color:var(--ok)} .err{color:var(--err)}
+  .tts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .disclaimer{font-size:12px;color:#9bc7d1;margin-top:6px}
 </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>🔢 Synchronicity Reader — Voice Lock</h1>
-    <p class="sub">Same narrator voice every time, across pages (saved as a site-wide preference).</p>
+    <h1>🔢 Synchronicity Reader — Google Voices Only</h1>
+    <p class="sub">Enter the number you keep seeing. Narration uses only <strong>Google</strong> voices for a natural sound.</p>
 
     <section class="card">
       <div class="row">
-        <label>Number <input id="num" placeholder="e.g., 2222" style="min-width:220px"></label>
+        <label>Synchronicity number
+          <input id="num" placeholder="e.g., 2011, 2222, 1234" style="min-width:220px">
+        </label>
         <button id="analyzeBtn">Analyze</button>
-        <button id="speakBtn">Speak</button>
-        <button id="stopBtn">Stop</button>
+        <button id="copyBtn">Copy reading</button>
         <span id="status" class="tiny muted" style="margin-left:auto"></span>
       </div>
-      <div class="row">
+      <div class="tts" style="margin-top:8px">
         <label>Voice <select id="voiceSelect"></select></label>
-        <label class="tiny"><input type="checkbox" id="forceEnglish"> Force English voices</label>
-        <label class="tiny">Rate <input type="range" id="rate" min="0.6" max="1.4" step="0.02" value="0.98"></label>
-        <label class="tiny">Pitch <input type="range" id="pitch" min="0.6" max="1.4" step="0.02" value="1.0"></label>
+        <label class="tiny"><input type="checkbox" id="forceEnglish" checked> English only</label>
         <button id="testVoiceBtn">Test voice</button>
+        <button id="speakBtn">Speak reading</button>
+        <button id="stopBtn">Stop</button>
       </div>
-      <div class="tiny muted">Your selection is saved as a site preference and reused automatically.</div>
+      <div class="disclaimer">Narration is reflective guidance only. Trust your own intuition and judgment.</div>
     </section>
 
-    <section class="card" id="out" style="display:none">
+    <section class="card" id="resultCard" style="display:none">
+      <div class="grid">
+        <div class="kpi"><h3>Segments (2‑digit)</h3><div id="segments">—</div></div>
+        <div class="kpi"><h3>Segment Bases</h3><div id="bases">—</div></div>
+        <div class="kpi"><h3>Final Base</h3><div id="finalBase">—</div></div>
+      </div>
+
+      <h3 style="margin-top:12px">Tarot & Astro Mapping</h3>
+      <div id="chips"></div>
+
+      <h3 style="margin-top:12px">Reading</h3>
       <div id="reading" class="long">—</div>
+    </section>
+
+    <section class="card tiny muted">
+      Google voices are filtered by name (contains “Google”). Toggle “English only” to hide non‑English Google voices.
     </section>
   </div>
 
 <script>
-const STORAGE = {
-  name:  'sg_voice_name',
-  lang:  'sg_voice_lang',
-  force: 'sg_voice_force_en',
-  rate:  'sg_voice_rate',
-  pitch: 'sg_voice_pitch'
-};
-
-const preferNames = [
-  // Natural, high-quality English voices commonly present
-  "Microsoft Sonia Online (Natural)", "Microsoft Aria Online (Natural)",
-  "Microsoft Ryan Online (Natural)", "Microsoft Guy Online (Natural)",
-  "Google UK English Female", "Google UK English Male",
-  "Google US English", "Google US English Female", "Google US English Male"
-];
-
+// ---- minimal reading scaffold (replace with your plus version if needed) ----
 const $ = id => document.getElementById(id);
-let voices = [];
-
-// --- dummy reader text (kept minimal; your full page supplies the narrative) ---
+function splitPairsLeft(str){ const s=String(str).replace(/\D/g,''); const out=[]; for(let i=0;i<s.length;i+=2) out.push(s.slice(i,i+2)); return out; }
+function reduceDigit(n){ n=String(n).replace(/\D/g,''); let sum=0; for(const ch of n) sum+=Number(ch); while(sum>9){ let t=0; for(const ch of String(sum)) t+=Number(ch); sum=t; } return sum; }
 function analyze(){
-  const raw = $('num').value.trim() || '2222';
-  $('out').style.display = 'block';
-  $('reading').textContent = "This is a placeholder reading for " + raw + ". The real page will generate ~400 words.";
+  const raw = $('num').value.trim(); if(!raw){ alert('Enter a number.'); return; }
+  const segs = splitPairsLeft(raw);
+  const bases = segs.map(s => (s==='11'?2 : s==='22'?4 : s==='33'?6 : reduceDigit(s)));
+  const finalBase = reduceDigit(bases.reduce((a,b)=>a+b,0));
+  $('resultCard').style.display='block';
+  $('segments').textContent = segs.join(', ');
+  $('bases').textContent = bases.join(', ');
+  $('finalBase').textContent = String(finalBase);
+  $('reading').textContent = `You’re noticing ${raw}. That splits as ${segs.join(', ')}. Together they anchor at ${finalBase}.`;
 }
+$('analyzeBtn').onclick = analyze;
+$('copyBtn').onclick = ()=> navigator.clipboard.writeText(($('reading').textContent||'') + '\n— Spirit Guide App').then(()=>alert('Copied reading'));
 
-function savePrefs(){
-  const sel = $('voiceSelect');
-  const opt = sel.options[sel.selectedIndex];
-  const [name, lang] = (opt && opt.value ? opt.value.split('::') : ['','']);
-  localStorage.setItem(STORAGE.name, name||'');
-  localStorage.setItem(STORAGE.lang, lang||'');
-  localStorage.setItem(STORAGE.force, $('forceEnglish').checked ? '1' : '0');
-  localStorage.setItem(STORAGE.rate, String($('rate').value));
-  localStorage.setItem(STORAGE.pitch, String($('pitch').value));
-}
-
-function loadPrefs(){
-  const force = localStorage.getItem(STORAGE.force);
-  $('forceEnglish').checked = force === '1';
-  const r = parseFloat(localStorage.getItem(STORAGE.rate)); if (!isNaN(r)) $('rate').value = r;
-  const p = parseFloat(localStorage.getItem(STORAGE.pitch)); if (!isNaN(p)) $('pitch').value = p;
-}
-
-function englishFiltered(list){
-  return list.filter(v => $('forceEnglish').checked ? /^en[-_]/i.test(v.lang) : true);
-}
-
+// ---- Narrator: GOOGLE VOICES ONLY ----
+const STORAGE = { name:'sg_voice_name', lang:'sg_voice_lang', force:'sg_voice_force_en' };
+const prefer = ["Google UK English Female","Google UK English Male","Google US English","Google US English Female","Google US English Male"];
+let voices = [];
+function isGoogle(v){ return /google/i.test(v.name||''); }
+function englishOnly(v){ return $('forceEnglish').checked ? /^en[-_]/i.test(v.lang||'') : true; }
+function availableGoogleVoices(){ return (window.speechSynthesis.getVoices()||[]).filter(v => isGoogle(v) && englishOnly(v)); }
 function populateVoices(){
-  const list = window.speechSynthesis.getVoices() || [];
-  if (!list.length){ setTimeout(populateVoices, 250); return; }
-  voices = list.slice().sort((a,b)=> (a.lang||'').localeCompare(b.lang||''));
-
-  const sel = $('voiceSelect');
-  sel.innerHTML = '';
-  const avail = englishFiltered(voices);
-
-  avail.forEach(v => {
-    const opt = document.createElement('option');
-    opt.value = v.name + '::' + v.lang;
-    opt.textContent = `${v.name} (${v.lang})`;
-    sel.appendChild(opt);
-  });
-
-  // 1) Try saved voice
-  const savedName = localStorage.getItem(STORAGE.name);
-  const savedLang = localStorage.getItem(STORAGE.lang);
-  if (savedName && savedLang){
-    const idx = Array.from(sel.options).findIndex(o => o.value === (savedName + '::' + savedLang));
-    if (idx >= 0){ sel.selectedIndex = idx; $('status').textContent = 'Using saved voice'; setTimeout(()=>$('status').textContent='', 2000); return; }
+  const list = window.speechSynthesis.getVoices()||[];
+  if(!list.length){ setTimeout(populateVoices, 250); return; }
+  voices = list.filter(isGoogle); // keep ONLY Google
+  const sel = $('voiceSelect'); sel.innerHTML='';
+  const avail = voices.filter(englishOnly);
+  if(!avail.length){
+    $('status').textContent = 'No Google voices available in this browser.';
+    return;
   }
-
-  // 2) Try preferred list
-  for (const p of preferNames){
-    const idx = Array.from(sel.options).findIndex(o => o.textContent.includes(p));
-    if (idx >= 0){ sel.selectedIndex = idx; $('status').textContent = 'Selected preferred voice'; setTimeout(()=>$('status').textContent='', 2000); return; }
+  avail.forEach(v=>{ const opt=document.createElement('option'); opt.value=v.name+'::'+v.lang; opt.textContent=`${v.name} (${v.lang})`; sel.appendChild(opt); });
+  // try saved
+  const savedName = localStorage.getItem(STORAGE.name), savedLang = localStorage.getItem(STORAGE.lang);
+  if(savedName && savedLang){
+    const idx = Array.from(sel.options).findIndex(o => o.value === (savedName+'::'+savedLang));
+    if(idx>=0){ sel.selectedIndex = idx; return; }
   }
-
-  // 3) Default to first
-  if (sel.options.length) sel.selectedIndex = 0;
+  // prefer list
+  for(const p of prefer){ const idx = Array.from(sel.options).findIndex(o => o.textContent.includes(p)); if(idx>=0){ sel.selectedIndex=idx; return; } }
+  // fallback
+  sel.selectedIndex = 0;
 }
-
 function currentVoice(){
-  const sel = $('voiceSelect');
-  if (!sel || sel.selectedIndex < 0) return null;
+  const sel = $('voiceSelect'); if(!sel || sel.selectedIndex<0) return null;
   const [name, lang] = sel.value.split('::');
-  return voices.find(v => v.name === name && v.lang === lang) || null;
+  return (window.speechSynthesis.getVoices()||[]).find(v => v.name===name && v.lang===lang) || null;
 }
-
+function savePrefs(){
+  const sel = $('voiceSelect'); const [name, lang] = (sel.value||'::').split('::');
+  localStorage.setItem(STORAGE.name, name||''); localStorage.setItem(STORAGE.lang, lang||''); localStorage.setItem(STORAGE.force, $('forceEnglish').checked ? '1':'0');
+}
+function loadPrefs(){ $('forceEnglish').checked = localStorage.getItem(STORAGE.force)==='1'; }
 function speak(text){
-  if (!('speechSynthesis' in window)) { alert('Speech not supported in this browser.'); return; }
+  if(!('speechSynthesis' in window)) return alert('Speech not supported here.');
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance();
-  u.text = "Reflective guidance only. " + (text || "Please analyze a number first.");
-  u.rate = parseFloat($('rate').value||'1'); u.pitch = parseFloat($('pitch').value||'1'); u.volume = 1.0;
-  const v = currentVoice(); if (v) u.voice = v;
+  u.text = "Reflective guidance only. " + (text||$('reading').textContent||'Please analyze a number first.');
+  u.rate = 0.98; u.pitch = 1.0; u.volume = 1.0;
+  const v = currentVoice(); if(v) u.voice = v;
   window.speechSynthesis.speak(u);
 }
-
-$('analyzeBtn').onclick = analyze;
-$('speakBtn').onclick  = ()=> speak(($('reading').textContent||'').trim());
-$('stopBtn').onclick   = ()=> window.speechSynthesis && window.speechSynthesis.cancel();
-$('testVoiceBtn').onclick = ()=> { savePrefs(); speak("This is your saved narrator voice. It will be reused next time."); };
-
+$('testVoiceBtn').onclick = ()=>{ savePrefs(); speak('This is your saved Google narrator voice.'); };
+$('speakBtn').onclick     = ()=> speak();
+$('stopBtn').onclick      = ()=> window.speechSynthesis && window.speechSynthesis.cancel();
 $('voiceSelect').onchange = savePrefs;
 $('forceEnglish').onchange = ()=>{ savePrefs(); populateVoices(); };
-$('rate').oninput = savePrefs;
-$('pitch').oninput = savePrefs;
 
-if ('speechSynthesis' in window){
+if('speechSynthesis' in window){
   loadPrefs();
   window.speechSynthesis.onvoiceschanged = populateVoices;
   populateVoices();

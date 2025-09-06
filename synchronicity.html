@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Synchronicity Reader — Mystical Pro v4.4.0 VARIATION</title>
+<title>Synchronicity Reader — Mystical Pro v4.5.0 VARIATION PACKS</title>
 <style>
   :root{ --bg:#05090a; --card:#081215; --edge:#102227; --text:#d1f7ff; --mint:#7efcff; --muted:#9bc7d1; --ok:#a7ffd8; --err:#ff9b9b }
   *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
@@ -35,8 +35,8 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>🔢 Synchronicity Reader — Mystical Pro <span class="badge">v4.4.0 VARIATION</span></h1>
-    <p class="sub">Deterministic story variation per exact number. Classic digit‑sum base. Pattern‑aware add‑ons. Single‑file, narrator on.</p>
+    <h1>🔢 Synchronicity Reader — Mystical Pro <span class="badge">v4.5.0 VARIATION PACKS</span></h1>
+    <p class="sub">Five style packs + seeded selection so different numbers produce different long‑form readings. Classic digit‑sum base. Pattern‑aware add‑ons. Narrator on.</p>
 
     <div id="errbar" class="errbar"></div>
 
@@ -86,27 +86,27 @@
         <div id="pattern" class="tiny muted" style="margin-top:6px"></div>
       </details>
 
-      <h3 style="margin-top:14px">Reading <span id="seedTag" class="pill2">seed: —</span></h3>
+      <h3 style="margin-top:14px">Reading <span id="seedTag" class="pill2">seed: —</span> <span id="packTag" class="pill2">pack: —</span></h3>
       <div id="reading" class="long">—</div>
     </section>
   </div>
 
 <script>
-const VERSION = 'v4.4.0-variation';
+const VERSION = 'v4.5.0-variation-packs';
 const $ = id => document.getElementById(id);
 
 // ===== mapping =====
 const OV = { "11":{base:2, signs:["Libra"]}, "22":{base:4, signs:["Scorpio","Aries"]}, "33":{base:6, signs:["Capricorn","Gemini"]} };
 const BASE_TONE = {
-  1:{verb:['begin','initiate','open'], gift:['clarity','focus'], caution:['impulse','impatience'], anchor:['first steps','simple starts'], image:['a key and a simple room','a blank page and steady hand']},
-  2:{verb:['balance','coordinate','pair'], gift:['cooperation','harmony'], caution:['people‑pleasing','hesitation'], anchor:['agreements','shared pace'], image:['two lanterns on a bridge','a duet that knows the pause']},
-  3:{verb:['express','articulate','show'], gift:['communication','creative flow'], caution:['scatter','over‑talking'], anchor:['one channel','clear messaging'], image:['three bright stalls','a chalk line and laughter']},
-  4:{verb:['structure','stabilize','ground'], gift:['stability','reliability'], caution:['rigidity','over‑control'], anchor:['frames and routines','clean lines'], image:['a bench and four patient stones','a well‑kept workshop at dawn']},
-  5:{verb:['change','adapt','experiment'], gift:['flexibility','curiosity'], caution:['restlessness','spinning'], anchor:['safe experiments','bounded play'], image:['a small steady sail','a backpack and an easy map']},
-  6:{verb:['care','tend','repair'], gift:['healing','belonging'], caution:['over‑responsibility','resentment'], anchor:['kind boundaries','repeatable care'], image:['a warm stove and a moved chair','a table set for one more']},
-  7:{verb:['reflect','study','discern'], gift:['insight','pattern‑sense'], caution:['over‑analysis','withdrawal'], anchor:['quiet focus','signal over noise'], image:['a desk and a single window','ink drying beside a lamp']},
-  8:{verb:['sustain','build','consolidate'], gift:['power','stewardship'], caution:['overcontrol','work‑as‑worth'], anchor:['steady practice','measured cadence'], image:['coals in a quiet forge','ledgers closed and lights dimmed']},
-  9:{verb:['complete','release','bless'], gift:['closure','compassion'], caution:['lingering','self‑erase'], anchor:['clean endings','graceful exits'], image:['a tide line and one kept shell','a porch light turned off kindly']}
+  1:{verb:['begin','initiate','open','start','plant','spark'], gift:['clarity','focus','fresh courage'], caution:['impulse','impatience','soloing'], anchor:['first steps','simple starts','clean slates'], image:['a key and a simple room','a blank page and steady hand','an east‑facing door at dawn']},
+  2:{verb:['balance','coordinate','pair','attune','weave'], gift:['cooperation','harmony','listening'], caution:['people‑pleasing','hesitation','over‑compromise'], anchor:['agreements','shared pace','quiet coordination'], image:['two lanterns on a bridge','a duet that knows the pause','two cups on one tray']},
+  3:{verb:['express','articulate','show','broadcast','compose'], gift:['communication','creative flow','bright social energy'], caution:['scatter','over‑talking','style over signal'], anchor:['one channel','clear messaging','edited expression'], image:['three bright stalls','a chalk line and laughter','a ribboned noticeboard']},
+  4:{verb:['structure','stabilize','ground','organize','systematize'], gift:['stability','reliability','craft'], caution:['rigidity','over‑control','perfectionism'], anchor:['frames and routines','clean lines','repeatable systems'], image:['a bench and four patient stones','a well‑kept workshop at dawn','labeled drawers and swept floors']},
+  5:{verb:['change','adapt','experiment','refresh','pivot'], gift:['flexibility','curiosity','range'], caution:['restlessness','spinning','novelty chasing'], anchor:['safe experiments','bounded play','small swaps'], image:['a small steady sail','a backpack and an easy map','open shutters and a breeze']},
+  6:{verb:['care','tend','repair','soothe','nurture'], gift:['healing','belonging','gentle leadership'], caution:['over‑responsibility','resentment','self‑erasure'], anchor:['kind boundaries','repeatable care','shared chores'], image:['a warm stove and a moved chair','a table set for one more','fresh linen folded twice']},
+  7:{verb:['reflect','study','discern','contemplate','decode'], gift:['insight','pattern‑sense','depth'], caution:['over‑analysis','withdrawal','spinning wheels'], anchor:['quiet focus','signal over noise','one clean question'], image:['a desk and a single window','ink drying beside a lamp','footnotes in a tidy margin']},
+  8:{verb:['sustain','build','consolidate','steward','fortify'], gift:['power','stewardship','durability'], caution:['overcontrol','work‑as‑worth','hardening'], anchor:['steady practice','measured cadence','resource honesty'], image:['coals in a quiet forge','ledgers closed and lights dimmed','a kept promise in a plain book']},
+  9:{verb:['complete','release','bless','harvest','resolve'], gift:['closure','compassion','integration'], caution:['lingering','self‑erase','dragging endings'], anchor:['clean endings','graceful exits','thank‑and‑let‑go'], image:['a tide line and one kept shell','a porch light turned off kindly','a suitcase finally zipped']}
 };
 
 // ===== helpers =====
@@ -115,6 +115,10 @@ function reduceDigit(n){ n=String(n).replace(/\\D/g,''); if(!n) return null; let
 function segmentBase(seg){ if(OV[seg]) return { base: OV[seg].base, master: seg, ov:OV[seg] }; return { base: reduceDigit(seg), master:null, ov:null }; }
 function unique(arr){ return Array.from(new Set(arr.filter(Boolean))); }
 function minorsForBase(d){ const names={1:'Ace',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine'}; const label=names[d]; if(!label) return []; return [`${label} of Wands`,`${label} of Cups`,`${label} of Swords`,`${label} of Pentacles`]; }
+function majorsForBase(d){
+  const map={1:['The Magician','The Sun'],2:['Justice','High Priestess'],3:['The Empress','The Lovers'],4:['The Emperor','Death (13)'],5:['The Hierophant','Temperance'],6:['The Lovers','The Devil'],7:['The Chariot','The Star'],8:['Strength','Judgement'],9:['The Hermit','The World']};
+  return map[d]||[];
+}
 
 // diagnostics chips helper
 function buildChipsGrouped(order, counts, infoMap){
@@ -159,108 +163,124 @@ function describePattern(f){
 }
 
 // ===== seeded RNG =====
-function xmur3(str){ // hash to seed
-  let h=1779033703^str.length; for(let i=0;i<str.length;i++){ h=Math.imul(h^str.charCodeAt(i),3432918353); h=h<<13|h>>>19; }
-  return function(){ h=Math.imul(h^h>>>16,2246822507); h=Math.imul(h^h>>>13,3266489909); return (h^h>>>16)>>>0; }
-}
-function mulberry32(a){ // seeded PRNG
-  return function(){ let t = a += 0x6D2B79F5; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }
-}
+function xmur3(str){ let h=1779033703^str.length; for(let i=0;i<str.length;i++){ h=Math.imul(h^str.charCodeAt(i),3432918353); h=h<<13|h>>>19; } return function(){ h=Math.imul(h^h>>>16,2246822507); h=Math.imul(h^h>>>13,3266489909); return (h^h>>>16)>>>0; } }
+function mulberry32(a){ return function(){ let t = a += 0x6D2B79F5; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; } }
 function seededPick(arr, rng){ if(!arr.length) return ''; return arr[Math.floor(rng()*arr.length)]; }
 function seededSample(arr, k, rng){
-  const a = arr.slice(); const out=[];
-  for(let i=a.length-1;i>0;i--){ const j=Math.floor(rng()*(i+1)); const tmp=a[i]; a[i]=a[j]; a[j]=tmp; }
-  for(let i=0;i<Math.min(k,a.length);i++) out.push(a[i]);
-  return out;
+  const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(rng()*(i+1)); const tmp=a[i]; a[i]=a[j]; a[j]=tmp; } return a.slice(0, Math.min(k,a.length));
 }
+
+// ===== style packs (affect paragraph counts + connective phrases) =====
+const PACKS = [
+  {name:'Mystic',    weights:{core:3, craft:2, imagery:2}, linkers:['Let this land.','Breathe here first.','The room knows this tone.']},
+  {name:'Coach',     weights:{core:2, craft:4, imagery:1}, linkers:['Make it keepable.','Ship the inch.','Small wins teach.']},
+  {name:'Poet',      weights:{core:3, craft:1, imagery:3}, linkers:['Listen for the seam.','Name the weather.','Let image lead.']},
+  {name:'Builder',   weights:{core:2, craft:3, imagery:2}, linkers:['Frames first.','Measure what matters.','Tidy, then move.']},
+  {name:'Stoic',     weights:{core:2, craft:3, imagery:1}, linkers:['Indifferent to noise.','Control the controllable.','Hold the line.']},
+];
 
 // ===== paragraph pools =====
 const POOLS = {
   love:{
     core:[
-      `When love sits under Base {b}, the invitation is to {verb} without losing the human temperature of the room. The gift here is {gift}; the caution is {caution}. Begin repair by regulating, not proving. Name a respectful pause of twenty to forty minutes and actually take it. Move your body, drink water, lower the physiological noise. Return with an “impact and care” frame: “When X happened, I felt Y, because I was trying to protect Z.”`,
-      `Base {b} asks couples to choose rhythm over drama. Switch from score‑keeping to sense‑making: what value was each person protecting? Keep to one topic. If old cases rise, park them on paper and look for the common thread—usually a need for safety, closeness, clarity, or respect.`,
-      `Set a micro‑ritual for seven days that you can keep even on a tired evening: tea with phones away, a ten‑minute walk, a two‑minute gratitude, or a one‑card pull for “what would help us today.” Praise the keeping of the ritual more than “perfect outcomes.”`
+      `When love sits under Base {b}, the invitation is to {verb} without losing the human temperature of the room. The gift here is {gift}; the caution is {caution}. Begin repair by regulating, not proving. Name a respectful pause and actually take it. Return with an “impact and care” frame: “When X happened, I felt Y, because I was trying to protect Z.”`,
+      `Base {b} asks couples to choose rhythm over drama. Switch from score‑keeping to sense‑making: what value was each person protecting? Keep to one topic. If old cases rise, park them on paper and look for the thread—usually safety, closeness, clarity, or respect.`,
+      `Under {b}, affection grows in rooms that feel orderly enough to relax. Make a seven‑day micro‑ritual: tea with phones away, a ten‑minute walk, a one‑card pull for “what would help us today.” Praise the keeping of the ritual more than the outcome.`,
+      `Let tone do work: lower volume, slow cadence, and ask one generous question. Curiosity spoken quietly lands better than evidence shouted.`
     ],
     craft:[
       `Use the three‑beat repair: reflect, ask, suggest. Reflect neutrally (“I heard you say you felt unseen when I looked away”). Ask one honest question (“What would care have looked like in that moment?”). Suggest one concrete next step you can keep today.`,
-      `Boundaries become bridges when they are small and enforceable. If time is the point, offer two real options that honor capacity: “I have fifteen minutes now or half an hour after dinner—what helps?”`,
-      `If voices heat, lower volume and slow cadence. Curiosity spoken quietly lands better than evidence shouted.`
+      `Boundaries become bridges when they are small and enforceable. If time is the point, offer two real options that honor capacity.`,
+      `Design for repeatability, not perfection. A relationship changes through the practices you can keep.`,
+      `If the argument is looping, write together for five minutes: “What am I protecting? What are you protecting?” Let answers guide the next move.`
     ],
     imagery:[
       `Hold the picture: {image}. Affection returns as the room becomes safer.`,
-      `Let the house learn a new sound: chairs moving gently, water poured before words, shoes left by the door because you chose to stay.`
-    ],
-    majors:[
-      `In your house system, Masters present shape the tone. If 11 appears, keep justice between you—equal airtime and clean agreements. If 22 appears, let big hope wear practical shoes. If 33 appears, share skill without martyrdom.`
+      `Picture two chairs angled slightly toward each other, not head‑on. Stance matters.`,
+      `Light a small candle for the living and the gone; invite the house to soften.`
     ]
   },
   work:{
     core:[
-      `Work under Base {b} wants you to {verb} where it matters and stop where it doesn’t. Trade heroics for {anchor}. Map the pipeline in four plain stages: capture, shape, deliver, review. For each, write a one‑sentence definition of “done” that a stranger could agree with.`,
-      `Block ninety protected minutes. Close extra tabs, silence pings, clear the surface. The smallest unit that moves the whole thing forward is the right unit today.`,
-      `Replace status meetings with a one‑page dashboard: task, owner, date, status, next visible step. Send a weekly note: shipped, next, risks.`
+      `Work under Base {b} wants you to {verb} where it matters and stop where it doesn’t. Trade heroics for {anchor}. Map the pipeline in four stages: capture, shape, deliver, review. Write a one‑sentence “done” for each that a stranger could agree with.`,
+      `Block ninety protected minutes. Close extra tabs, silence pings, clear the surface. Move the smallest unit that moves the whole.`,
+      `Replace status meetings with a one‑page dashboard: task, owner, date, status, next visible step. Send a weekly note: shipped, next, risks.`,
+      `Choose a metric that reflects reality over performance. Let it teach you where to cut friction.`
     ],
     craft:[
-      `If priorities compete, choose the action that buys the most learning or removes the biggest blocker. Template anything that repeats; prune steps that never help.`,
-      `When a request arrives without context, ask for the problem statement and success measure before you accept. You’re not being difficult—you’re building a runway that won’t collapse at takeoff.`,
-      `Lead by example: on time, kindly direct, specific about outcomes. Give feedback that pairs context with one concrete suggestion.`
+      `If priorities compete, choose the action that buys the most learning or removes the biggest blocker.`,
+      `Template anything that repeats; prune steps that never help. Archive the clever process no one keeps.`,
+      `Ask for the problem statement and success measure before accepting fuzzy requests.`,
+      `Lead by example: on time, kindly direct, specific about outcomes. Feedback = context + one concrete suggestion.`
     ],
     imagery:[
       `Hold the picture: {image}. The room becomes sane when pace is steady and kind.`,
-      `Think like a gardener: clear the bed, plant one row, water, return tomorrow. Momentum is a courtesy to future you.`
+      `Think like a gardener: clear the bed, plant one row, water, return tomorrow.`,
+      `Imagine a tidy bench: tools in reach, scrap swept aside, one project center stage.`
     ]
   },
   confusion:{
     core:[
       `Confusion under Base {b} is cured by {gift}. Shrink the question until it fits on one honest line a friend could understand. Close inputs—fewer tabs, fewer opinions, more quiet. Choose one channel today: written page, voice memo, or sketch.`,
       `If you pull cards, try a triad: what I control, the tone to keep, the obvious action. The goal isn’t a perfect map; it’s traction.`,
-      `Run a fifty‑minute focus touching only the leverage point. Draft the dumb version first; smart arrives once a shape exists.`
+      `Run a fifty‑minute focus touching only the leverage point. Draft the dumb version first; smart arrives once a shape exists.`,
+      `Ask which choice keeps you consistent and kind on a tired day six weeks from now; choose that.`
     ],
     craft:[
-      `Test futures with compassionate realism: which path keeps you consistent and kind six weeks from now, even on a tired day? Choose that.`,
-      `Finish with a body check: shoulders down, jaw soft, longer exhale. Let result, not feeling, guide the next move.`,
-      `Name the next visible step so small it cannot fail. Then take it while the kettle boils.`
+      `Name the next visible step so small it cannot fail. Then take it while the kettle boils.`,
+      `Label the noise: is this fear, ego, or genuine risk? Respond accordingly.`,
+      `Move one layer closer to the ground truth: talk to a user, test the page, ship a micro‑version.`,
+      `Finish by narrating one sentence: “Today I learned X; next I will try Y.”`
     ],
     imagery:[
-      `Hold the picture: {image}. Decisions like tidy rooms—everything easier once surfaces are clear.`
+      `Hold the picture: {image}. Decisions like tidy rooms—everything easier once surfaces are clear.`,
+      `See yourself at a small desk with a single lamp. Fewer inputs, stronger signal.`,
+      `Let the day become a narrow river; banks help the water move.`
     ]
   },
   family:{
     core:[
       `Family steadies under Base {b} when the frame is visible. Post the plan where everyone can see it: schedule, chores, budget, quiet hours. Keep it brief and kind.`,
-      `In a hot moment, ask for a pause: “I want to get this right; can we take ten and try again?” Return with the shared goal stated plainly—safety, fairness, a home that feels like a team.`,
+      `In a hot moment, ask for a pause and return with the shared goal stated plainly—safety, fairness, a home that feels like a team.`,
       `Translate instead of accuse: “What I heard is…” rather than “You always…”.`,
+      `Make the default easy: hooks near doors, snacks in reach, routines on the fridge.`
     ],
     craft:[
-      `Offer two sustainable options and let the group pick. Rituals do heavy lifting: weekly check‑ins where each person names one gratitude, one ask, and one small promise for the week.`,
+      `Offer two sustainable options and let the group pick. Rituals do heavy lifting: weekly check‑ins where each person names one gratitude, one ask, and one small promise.`,
       `When a line is crossed repeatedly, set a boundary you can keep without drama; boundaries protect possibility.`,
-      `Create tiny islands of connection for each relationship dyad—five minutes of undivided attention can change the day’s weather.`
+      `Create tiny islands of connection for each relationship dyad—five minutes of undivided attention can change the day’s weather.`,
+      `If you are the caretaker, state capacity before resentment speaks for you.`
     ],
     imagery:[
-      `Hold the picture: {image}. Over time, consistency communicates love louder than eloquence.`
+      `Hold the picture: {image}. Over time, consistency communicates love louder than eloquence.`,
+      `Imagine a dinner table with one extra plate—there is room for repair.`,
+      `Picture a hallway with shoes aligned; even small order lowers the temperature.`
     ]
   },
   frustration:{
     core:[
       `Frustration is bottled motion. Under Base {b}, {anchor} are medicine. Move first, then speak—walk briskly, shake your hands, breathe down into the belly.`,
       `Choose the smallest visible action that moves the situation by an inch: fix the hinge, send the paragraph, tidy the square foot, log the rep.`,
-      `Close the day by naming what did move. Your nervous system remembers completions; feed it evidence.`
+      `Close the day by naming what did move. Your nervous system remembers completions; feed it evidence.`,
+      `Measure what you can control; ignore theater metrics.`
     ],
     craft:[
       `If another person is the trigger, speak in impact and request: “When X happens, I feel Y; could we try Z?” If they can’t or won’t, adjust your boundary rather than your worth.`,
       `Shorten lists, tighten loops, set a timer. Credit yourself for keeping the box, not for dramatic outcomes.`,
-      `You are allowed to exit no‑win conversations with grace. Leave with your value intact.`
+      `Exit no‑win conversations with grace. Leave with your value intact.`,
+      `Write the smallest promise you can keep today and keep it before noon.`
     ],
     imagery:[
-      `Hold the picture: {image}. Over weeks, cadence changes more than force—and makes you kinder to live with, including to yourself.`
+      `Hold the picture: {image}. Over weeks, cadence changes more than force—and makes you kinder to live with, including to yourself.`,
+      `See a forge with coals banked; steady heat bends metal without burning it.`,
+      `A metronome, not a drum solo—regularity heals.`
     ]
   }
 };
 
-// pattern add‑ons (appended if present)
+// pattern add‑ons
 const ADDONS = {
-  M11:`Master 11 asks for justice inside relationship and work: equal airtime, honest terms, and the courage to say “I don’t know yet.” Treat decisions as drafts you refine together.`,
+  M11:`Master 11 asks for justice: equal airtime, honest terms, and the courage to say “I don’t know yet.” Treat decisions as drafts you refine together.`,
   M22:`Master 22 adds builder’s gravity. Keep promises small and measurable—shared list, time‑boxed repair, weekly standing date. Prune what steals focus so hope fits into a day.`,
   M33:`Master 33 tilts toward service and teaching. Offer skill without martyrdom. Explain shorter and kinder than usual; protect your energy while widening your circle of care.`,
   repeater:`Repeater pattern intensifies the lesson. Choose one round done well over three dramatic rounds. Cadence beats performance.`,
@@ -270,6 +290,62 @@ const ADDONS = {
   zeros:`Zeros mark sacred pauses. Insert a breath before replies, a buffer day before big changes, and whitespace so care isn’t crushed by urgency.`
 };
 
+// ===== overview =====
+function buildOverview(num, segs, f, finalBase){
+  const grouped = f.order.map(seg => {
+    const info = f.infoMap[seg];
+    const times = f.counts[seg]>1 ? `×${f.counts[seg]}` : '';
+    const arrow = info.master ? info.master+'→' : '';
+    return `${seg}${times} (${arrow}${info.base})`;
+  }).join(', ');
+  const title = {1:"Clean Beginnings",2:"Living Balance",3:"True Expression",4:"Good Structure",5:"Gentle Change",6:"Caring Harmony",7:"Quiet Insight",8:"Calm Strength",9:"Clean Completion"}[finalBase] || "Anchor";
+  const pattern = describePattern(f);
+  const masters = [f.has11?'11':null, f.has22?'22':null, f.has33?'33':null].filter(Boolean).join(', ') || '—';
+  return `We split ${num} into ${grouped}. Final base: <strong>${finalBase}</strong> — “${title}”. Pattern: <em>${pattern}</em>. Masters: <em>${masters}</em>.`;
+}
+
+// ===== reading builder with seeded variation and packs =====
+let RNG = mulberry32(1);
+function buildReadingHTML(finalBase, f, seed){
+  const tone = BASE_TONE[finalBase] || BASE_TONE[2];
+  const pack = PACKS[seed % PACKS.length];
+  $('packTag').textContent = 'pack: ' + pack.name;
+
+  function section(topic){
+    const P = POOLS[topic];
+    const core = seededSample(P.core, pack.weights.core, RNG);
+    const craft = seededSample(P.craft, pack.weights.craft, RNG);
+    const imagery = seededSample(P.imagery, pack.weights.imagery, RNG);
+    const blocks = core.concat(craft).concat(imagery).map(t => `<p>${fillTemplate(t, tone, finalBase)}</p>`);
+
+    // cards + majors minors line (base‑specific, always included, phrasing varies by pack)
+    const minors = minorsForBase(finalBase).join(', ');
+    const majors = majorsForBase(finalBase).join(', ');
+    const link = seededPick(pack.linkers, RNG);
+    blocks.unshift(`<p><em>${link}</em> Cards speaking here include <strong>${majors}</strong> and the ${minors}. Let them set tone, not dictate fate.</p>`);
+
+    // add‑ons based on features
+    const add = [];
+    if (f.has11) add.push(ADDONS.M11);
+    if (f.has22) add.push(ADDONS.M22);
+    if (f.has33) add.push(ADDONS.M33);
+    if (f.repeater) add.push(ADDONS.repeater);
+    if (f.palindrome) add.push(ADDONS.mirror);
+    if (f.asc) add.push(ADDONS.asc);
+    if (f.desc) add.push(ADDONS.desc);
+    if (f.hasZero) add.push(ADDONS.zeros);
+    if (add.length) blocks.push(`<p>${add.join(' ')}</p>`);
+
+    return `<h3>If the question is ${topic[0].toUpperCase()+topic.slice(1)}</h3>` + blocks.join('\\n');
+  }
+
+  const html = ['love','work','confusion','family','frustration'].map(section).join('\\n') + '\\n<p>— Spirit Guide App</p>';
+
+  // ensure 500+ words by padding with a gentle note if needed
+  const wc = html.replace(/<[^>]+>/g,' ').split(/\\s+/).filter(Boolean).length;
+  return wc < 500 ? (html + `<p>Keep your steps small and kind. Repeat what works until it teaches you something, then adjust. That is how the number becomes a lived rhythm.</p>`) : html;
+}
+
 function fillTemplate(t, tone, b){
   return t.replaceAll('{b}', b)
           .replaceAll('{verb}', seededPick(tone.verb, RNG))
@@ -277,6 +353,26 @@ function fillTemplate(t, tone, b){
           .replaceAll('{caution}', seededPick(tone.caution, RNG))
           .replaceAll('{anchor}', seededPick(tone.anchor, RNG))
           .replaceAll('{image}', seededPick(tone.image, RNG));
+}
+
+// ===== narration helpers (unchanged hotfix) =====
+function decodeEntities(html){ const txt=document.createElement('textarea'); txt.innerHTML=html; return txt.value; }
+function getSpeechText(html){
+  let text = decodeEntities(html);
+  const STRIP_SCRIPT = new RegExp('<'+'script[\\s\\S]*?<\\/'+'script>','gi');
+  const STRIP_STYLE  = new RegExp('<'+'style[\\s\\S]*?<\\/'+'style>','gi');
+  text = text.replace(STRIP_SCRIPT,' ').replace(STRIP_STYLE,' ').replace(/<[^>]+>/g,' ');
+  text = text.replace(/→/g,' to ').replace(/•/g,', ').replace(/[#*_`~^]/g,' ').replace(/\s{2,}/g,' ').trim();
+  return text;
+}
+function chunkText(text, maxLen=220){
+  const sentences = text.match(/[^.!?]+[.!?]*/g) || [text];
+  const chunks = []; let buf='';
+  sentences.forEach(s=>{ const piece=s.trim(); if(!piece) return;
+    if((buf+' '+piece).trim().length>maxLen){ if(buf) chunks.push(buf.trim()); if(piece.length>maxLen){ for(let i=0;i<piece.length;i+=maxLen) chunks.push(piece.slice(i,i+maxLen)); buf=''; } else { buf=piece; } }
+    else { buf=(buf?buf+' ':'')+piece; }
+  });
+  if(buf) chunks.push(buf.trim()); return chunks;
 }
 
 // ===== overview =====
@@ -293,46 +389,11 @@ function buildOverview(num, segs, f, finalBase){
   return `We split ${num} into ${grouped}. Final base: <strong>${finalBase}</strong> — “${title}”. Pattern: <em>${pattern}</em>. Masters: <em>${masters}</em>.`;
 }
 
-// ===== reading builder with seeded variation =====
-let RNG = mulberry32(1);
-function buildReadingHTML(finalBase, f, seedStr){
-  const tone = BASE_TONE[finalBase] || BASE_TONE[2];
-  const topics = ['love','work','confusion','family','frustration'];
-  const sections = [];
-
-  topics.forEach(topic => {
-    const P = POOLS[topic];
-    const core = seededSample(P.core, 2, RNG);
-    const craft = seededSample(P.craft, 2, RNG);
-    const imagery = seededSample(P.imagery, 1, RNG);
-    const body = core.concat(craft).concat(imagery).map(t => `<p>${fillTemplate(t, tone, finalBase)}</p>`).join('\\n');
-
-    // add-ons based on features
-    const add = [];
-    if (f.has11) add.push(ADDONS.M11);
-    if (f.has22) add.push(ADDONS.M22);
-    if (f.has33) add.push(ADDONS.M33);
-    if (f.repeater) add.push(ADDONS.repeater);
-    if (f.palindrome) add.push(ADDONS.mirror);
-    if (f.asc) add.push(ADDONS.asc);
-    if (f.desc) add.push(ADDONS.desc);
-    if (f.hasZero) add.push(ADDONS.zeros);
-
-    const addonHtml = add.length ? `<p>${add.join(' ')}</p>` : '';
-    sections.push(`<h3>If the question is ${topic[0].toUpperCase()+topic.slice(1)}</h3>${body}${addonHtml}`);
-  });
-
-  let html = sections.join('\\n') + '\\n<p>— Spirit Guide App</p>';
-
-  // ensure 450+ words by padding with a gentle note if needed
-  const wc = html.replace(/<[^>]+>/g,' ').split(/\\s+/).filter(Boolean).length;
-  if (wc < 450){
-    html += `<p>Keep your steps small and kind. Repeat what works until it teaches you something, then adjust. That is how the number becomes a lived rhythm.</p>`;
-  }
-  return html;
-}
-
 // ===== UI actions =====
+const STORAGE = { name:'sg_voice_name', lang:'sg_voice_lang', force:'sg_voice_force_en', rate:'sg_voice_rate', pitch:'sg_voice_pitch' };
+const prefer = ["Google UK English Female","Google UK English Male","Google US English","Google US English Female","Google US English Male"];
+let voices = []; let speakQueue=[]; let speaking=false; let RNGGLOBAL=null;
+
 function analyze(){
   const raw = $('num').value.trim();
   if(!raw){ alert('Enter a number.'); return; }
@@ -341,7 +402,7 @@ function analyze(){
   if(!digitsOnly){ alert('Enter at least one digit.'); return; }
 
   const segs = splitPairsLeft(digitsOnly);
-  if (!segs.length){ alert('Need at least two digits.'); return; }
+  if(!segs.length){ alert('Need at least two digits.'); return; }
 
   const f = computeFeatures(segs);
   const finalBase = reduceDigit(digitsOnly);
@@ -349,217 +410,51 @@ function analyze(){
   $('resultCard').style.display = 'block';
   $('overview').innerHTML = buildOverview(raw, segs, f, finalBase);
   $('segments').textContent = segs.join(', ');
-
-  const basesGrouped = f.order.map(seg => {
-    const info = f.infoMap[seg];
-    const arrow = info.master ? info.master+'→' : '';
-    const times = f.counts[seg] > 1 ? ` ×${f.counts[seg]}` : '';
-    return `${seg} → ${arrow}${info.base}${times}`;
-  });
+  const basesGrouped = f.order.map(seg => { const info=f.infoMap[seg]; const arrow=info.master?info.master+'→':''; const times = f.counts[seg]>1 ? ` ×${f.counts[seg]}` : ''; return `${seg} → ${arrow}${info.base}${times}`; });
   $('bases').textContent = basesGrouped.join(', ');
   $('finalBase').textContent = String(finalBase);
   $('chips').innerHTML = buildChipsGrouped(f.order, f.counts, f.infoMap);
   $('pattern').textContent = 'Pattern tags: ' + describePattern(f);
 
-  // seeded variation: seed = hash(raw)
-  const seedMaker = xmur3(raw);
-  const seed = seedMaker();
-  RNG = mulberry32(seed);
+  // seed + pack
+  const seedMaker = xmur3(raw); const seed = seedMaker(); RNGGLOBAL = mulberry32(seed);
   $('seedTag').textContent = 'seed: ' + seed.toString(16);
 
-  const html = buildReadingHTML(finalBase, f, String(seed));
+  // use seeded RNG for building
+  RNG = mulberry32(seed);
+  const html = buildReadingHTML(finalBase, f, seed % 0xFFFFFFFF);
   $('reading').innerHTML = html;
 
-  $('status').textContent = 'Done';
-  diag('Done');
-  setTimeout(()=> $('status').textContent='', 2000);
+  $('status').textContent = 'Done'; diag('Done'); setTimeout(()=> $('status').textContent='', 2000);
 }
 
-function copyReading(){ 
-  const txt = getSpeechText(($('reading').innerHTML||'').trim());
-  navigator.clipboard.writeText(txt + '\\n— Spirit Guide App').then(()=> alert('Copied reading (speech‑friendly)'));
-}
-function copyReadingHtml(){
-  const html = $('reading').innerHTML;
-  const blob = new Blob([html], {type:'text/html'});
-  const reader = new FileReader();
-  reader.onload = function(){ navigator.clipboard.writeText(reader.result).then(()=> alert('Copied HTML')); };
-  reader.readAsText(blob);
-}
-$('analyzeBtn').onclick = analyze;
-$('copyBtn').onclick = copyReading;
-$('copyHtmlBtn').onclick = copyReadingHtml;
+function copyReading(){ const txt=getSpeechText(($('reading').innerHTML||'').trim()); navigator.clipboard.writeText(txt+'\\n— Spirit Guide App').then(()=> alert('Copied reading (speech‑friendly)')); }
+function copyReadingHtml(){ const html=$('reading').innerHTML; const blob=new Blob([html],{type:'text/html'}); const reader=new FileReader(); reader.onload=function(){ navigator.clipboard.writeText(reader.result).then(()=> alert('Copied HTML')); }; reader.readAsText(blob); }
+$('analyzeBtn').onclick=analyze; $('copyBtn').onclick=copyReading; $('copyHtmlBtn').onclick=copyReadingHtml;
 
-// ===== Narrator =====
-const STORAGE = { name:'sg_voice_name', lang:'sg_voice_lang', force:'sg_voice_force_en', rate:'sg_voice_rate', pitch:'sg_voice_pitch' };
-const prefer = ["Google UK English Female","Google UK English Male","Google US English","Google US English Female","Google US English Male"];
-let voices = [];
-let speakQueue = [];
-let speaking = false;
-
+// ===== speech setup =====
 function isGoogle(v){ return /google/i.test(v.name||''); }
 function englishOnly(v){ return $('forceEnglish').checked ? /^en[-_]/i.test(v.lang||'') : true; }
+function getCandidateVoices(all){ let list=all.filter(v=>isGoogle(v)&&englishOnly(v)); if(!list.length) list=all.filter(v=>englishOnly(v)); if(!list.length) list=all.slice(); return list; }
+function waitForVoices(){ return new Promise(resolve=>{ const ready=()=>resolve(window.speechSynthesis.getVoices()||[]); const list=window.speechSynthesis.getVoices(); if(list&&list.length){ resolve(list); return; } window.speechSynthesis.onvoiceschanged=ready; setTimeout(ready,800); }); }
+async function populateVoices(){ if(!('speechSynthesis' in window)){ diag('Speech API not supported'); return; } const all=await waitForVoices(); voices=getCandidateVoices(all); const sel=$('voiceSelect'); sel.innerHTML=''; voices.forEach(v=>{ const opt=document.createElement('option'); opt.value=v.name+'::'+v.lang; opt.textContent=`${v.name} (${v.lang})`; sel.appendChild(opt); }); const savedName=localStorage.getItem(STORAGE.name), savedLang=localStorage.getItem(STORAGE.lang); if(savedName&&savedLang){ const idx=Array.from(sel.options).findIndex(o=>o.value===(savedName+'::'+savedLang)); if(idx>=0){ sel.selectedIndex=idx; } } if(sel.selectedIndex<0&&sel.options.length){ let picked=false; for(const p of prefer){ const idx=Array.from(sel.options).findIndex(o=>o.textContent.includes(p)); if(idx>=0){ sel.selectedIndex=idx; picked=true; break; } } if(!picked) sel.selectedIndex=0; } if(!sel.options.length){ showErr('No speech voices available. Click the page, then press Test Voice.'); } diag(`Voices ready: ${voices.length}`); }
+function currentVoice(){ const sel=$('voiceSelect'); if(!sel||sel.selectedIndex<0) return null; const [name,lang]=sel.value.split('::'); return (window.speechSynthesis.getVoices()||[]).find(v=>v.name===name&&v.lang===lang)||null; }
+function savePrefs(){ const sel=$('voiceSelect'); const [name,lang]=(sel.value||'::').split('::'); localStorage.setItem(STORAGE.name,name||''); localStorage.setItem(STORAGE.lang,lang||''); localStorage.setItem(STORAGE.force,$('forceEnglish').checked?'1':'0'); localStorage.setItem(STORAGE.rate,String($('rate').value)); localStorage.setItem(STORAGE.pitch,String($('pitch').value)); }
+function loadPrefs(){ $('forceEnglish').checked=localStorage.getItem(STORAGE.force)==='1'; const r=parseFloat(localStorage.getItem(STORAGE.rate)); if(!isNaN(r)) $('rate').value=r; const p=parseFloat(localStorage.getItem(STORAGE.pitch)); if(!isNaN(p)) $('pitch').value=p; }
+$('voiceSelect').onchange=savePrefs; $('forceEnglish').onchange=()=>{ savePrefs(); populateVoices(); }; $('rate').oninput=savePrefs; $('pitch').oninput=savePrefs;
 
-function getCandidateVoices(all){
-  // Try Google EN first, then any EN, then any
-  let list = all.filter(v => isGoogle(v) && englishOnly(v));
-  if (!list.length) list = all.filter(v => englishOnly(v));
-  if (!list.length) list = all.slice();
-  return list;
-}
-
-function waitForVoices(){
-  return new Promise(resolve => {
-    const ready = () => resolve(window.speechSynthesis.getVoices()||[]);
-    const list = window.speechSynthesis.getVoices();
-    if (list && list.length){ resolve(list); return; }
-    window.speechSynthesis.onvoiceschanged = ready;
-    setTimeout(ready, 800);
-  });
-}
-
-async function populateVoices(){
-  if (!('speechSynthesis' in window)) { diag('Speech API not supported'); return; }
-  const all = await waitForVoices();
-  voices = getCandidateVoices(all);
-  const sel = $('voiceSelect'); sel.innerHTML='';
-  voices.forEach(v=>{ const opt=document.createElement('option'); opt.value=v.name+'::'+v.lang; opt.textContent=`${v.name} (${v.lang})`; sel.appendChild(opt); });
-
-  const savedName = localStorage.getItem(STORAGE.name), savedLang = localStorage.getItem(STORAGE.lang);
-  if(savedName && savedLang){
-    const idx = Array.from(sel.options).findIndex(o => o.value === (savedName+'::'+savedLang));
-    if(idx>=0){ sel.selectedIndex=idx; }
-  }
-  if (sel.selectedIndex<0 && sel.options.length){
-    let picked=false;
-    for(const p of prefer){
-      const idx = Array.from(sel.options).findIndex(o => o.textContent.includes(p));
-      if(idx>=0){ sel.selectedIndex=idx; picked=true; break; }
-    }
-    if(!picked) sel.selectedIndex=0;
-  }
-
-  if (!sel.options.length){
-    showErr('No speech voices available. Click the page once (user gesture), then press Test Voice.');
-  }
-  diag(`Voices ready: ${voices.length}`);
-}
-
-function currentVoice(){
-  const sel = $('voiceSelect'); if(!sel || sel.selectedIndex<0) return null;
-  const [name, lang] = sel.value.split('::');
-  return (window.speechSynthesis.getVoices()||[]).find(v => v.name===name && v.lang===lang) || null;
-}
-function savePrefs(){
-  const sel = $('voiceSelect'); const [name, lang] = (sel.value||'::').split('::');
-  localStorage.setItem(STORAGE.name, name||''); localStorage.setItem(STORAGE.lang, lang||'');
-  localStorage.setItem(STORAGE.force, $('forceEnglish').checked ? '1':'0');
-  localStorage.setItem(STORAGE.rate, String($('rate').value)); localStorage.setItem(STORAGE.pitch, String($('pitch').value));
-}
-function loadPrefs(){
-  $('forceEnglish').checked = localStorage.getItem(STORAGE.force) === '1';
-  const r = parseFloat(localStorage.getItem(STORAGE.rate)); if(!isNaN(r)) $('rate').value = r;
-  const p = parseFloat(localStorage.getItem(STORAGE.pitch)); if(!isNaN(p)) $('pitch').value = p;
-}
-function decodeEntities(html){
-  const txt = document.createElement('textarea'); txt.innerHTML = html; return txt.value;
-}
-function getSpeechText(html){
-  let text = decodeEntities(html);
-  const STRIP_SCRIPT = new RegExp('<'+'script[\\s\\S]*?<\\/'+'script>','gi');
-  const STRIP_STYLE  = new RegExp('<'+'style[\\s\\S]*?<\\/'+'style>','gi');
-  text = text.replace(STRIP_SCRIPT,' ').replace(STRIP_STYLE,' ').replace(/<[^>]+>/g,' ');
-  text = text.replace(/→/g,' to ').replace(/•/g,', ').replace(/[#*_`~^]/g,' ').replace(/\s{2,}/g,' ').trim();
-  return text;
-}
-function chunkText(text, maxLen=220){
-  const sentences = text.match(/[^.!?]+[.!?]*/g) || [text];
-  const chunks = [];
-  let buf = '';
-  sentences.forEach(s=>{
-    const piece = s.trim();
-    if (!piece) return;
-    if ((buf + ' ' + piece).trim().length > maxLen){
-      if (buf) chunks.push(buf.trim());
-      if (piece.length > maxLen){
-        for (let i=0;i<piece.length;i+=maxLen){ chunks.push(piece.slice(i,i+maxLen)); }
-        buf = '';
-      } else {
-        buf = piece;
-      }
-    } else {
-      buf = (buf? buf+' ' : '') + piece;
-    }
-  });
-  if (buf) chunks.push(buf.trim());
-  return chunks;
-}
-async function speakQueueStart(text){
-  if(!('speechSynthesis' in window)) return alert('Speech not supported here.');
-  window.speechSynthesis.cancel();
-  speakQueue = []; speaking = false;
-  const cleaned = getSpeechText(text||$('reading').innerHTML||'');
-  if(!cleaned){ alert('Nothing to read yet. Tap Analyze first.'); return; }
-  speakQueue = chunkText("Reflective guidance only. " + cleaned, 220);
-
-  const v = currentVoice();
-  const rate = parseFloat($('rate').value||'1'); const pitch = parseFloat($('pitch').value||'1');
-
-  await new Promise(r => setTimeout(r, 160));
-  function next(){
-    if (!speakQueue.length){
-      speaking=false; $('status').textContent='Narration finished'; diag('Narration finished');
-      setTimeout(()=> $('status').textContent='',1500);
-      return;
-    }
-    const u = new SpeechSynthesisUtterance(speakQueue.shift());
-    if (v) u.voice = v; u.rate = rate; u.pitch = pitch; u.volume = 1.0;
-    u.onstart = ()=> { $('status').textContent='Speaking…'; diag('Speaking'); };
-    u.onend = ()=> next();
-    u.onerror = (e)=> { console.warn('TTS error', e); next(); };
-    speaking = true;
-    try { window.speechSynthesis.speak(u); }
-    catch(e){ setTimeout(()=> window.speechSynthesis.speak(u), 120); }
-  }
-  next();
-}
-function stopSpeaking(){ window.speechSynthesis && window.speechSynthesis.cancel(); speakQueue=[]; speaking=false; $('status').textContent='Stopped'; diag('Stopped'); setTimeout(()=>$('status').textContent='',1200); }
-
-$('testVoiceBtn').onclick = async ()=>{
-  savePrefs(); if(!('speechSynthesis' in window)) return alert('Speech not supported.');
-  window.speechSynthesis.cancel();
-  await new Promise(r=>setTimeout(r,120));
-  const u=new SpeechSynthesisUtterance('This is your saved narrator voice. Each number now generates a unique, seeded reading.');
-  const v=currentVoice(); if(v) u.voice=v; u.rate=parseFloat($('rate').value||'1'); u.pitch=parseFloat($('pitch').value||'1');
-  try { window.speechSynthesis.speak(u); } catch(e){ showErr('Unable to speak. Click the page once, then try again.'); }
-  diag('Test voice played');
-};
-$('speakBtn').onclick     = ()=> speakQueueStart();
-$('stopBtn').onclick      = ()=> stopSpeaking();
-$('voiceSelect').onchange = savePrefs;
-$('forceEnglish').onchange= ()=>{ savePrefs(); populateVoices(); };
-$('rate').oninput = savePrefs; $('pitch').oninput = savePrefs;
+function speakQueueStart(text){ if(!('speechSynthesis' in window)) return alert('Speech not supported here.'); window.speechSynthesis.cancel(); speakQueue=[]; speaking=false; const cleaned=getSpeechText(text||$('reading').innerHTML||''); if(!cleaned){ alert('Nothing to read yet. Tap Analyze first.'); return; } speakQueue=chunkText("Reflective guidance only. "+cleaned,220); const v=currentVoice(); const rate=parseFloat($('rate').value||'1'); const pitch=parseFloat($('pitch').value||'1'); setTimeout(function next(){ if(!speakQueue.length){ speaking=false; $('status').textContent='Narration finished'; diag('Narration finished'); setTimeout(()=> $('status').textContent='',1500); return; } const u=new SpeechSynthesisUtterance(speakQueue.shift()); if(v) u.voice=v; u.rate=rate; u.pitch=pitch; u.volume=1.0; u.onstart=()=>{ $('status').textContent='Speaking…'; diag('Speaking'); }; u.onend=next; u.onerror=next; speaking=true; try{ window.speechSynthesis.speak(u); }catch(e){ setTimeout(()=> window.speechSynthesis.speak(u),120);} },160); }
+function stopSpeaking(){ window.speechSynthesis && window.speechSynthesis.cancel(); speakQueue=[]; speaking=false; $('status').textContent='Stopped'; diag('Stopped'); setTimeout(()=> $('status').textContent='',1200); }
+$('testVoiceBtn').onclick=async()=>{ savePrefs(); if(!('speechSynthesis' in window)) return alert('Speech not supported.'); window.speechSynthesis.cancel(); await new Promise(r=>setTimeout(r,120)); const u=new SpeechSynthesisUtterance('This is your saved narrator voice. Variation packs are enabled.'); const v=currentVoice(); if(v) u.voice=v; u.rate=parseFloat($('rate').value||'1'); u.pitch=parseFloat($('pitch').value||'1'); try{ window.speechSynthesis.speak(u);}catch(e){ showErr('Unable to speak. Click the page once, then try again.'); } diag('Test voice played'); };
+$('speakBtn').onclick=()=>speakQueueStart(); $('stopBtn').onclick=()=>stopSpeaking();
 
 // diagnostics + error bar
-function diag(msg){
-  const nav = navigator.userAgent||'';
-  const vv = (window.speechSynthesis && window.speechSynthesis.getVoices && window.speechSynthesis.getVoices().length) || 0;
-  $('diag').innerHTML = `Diagnostics: <b>${msg}</b> · Voices: ${vv} · Browser: ${nav.split(')')[0]+')'}`;
-}
-function showErr(msg){
-  const bar = $('errbar'); bar.textContent = '⚠ ' + msg; bar.style.display='block';
-}
-window.onerror = function(message, source, lineno, colno, error){
-  showErr(String(message||'Script error') + ' @ ' + lineno + ':' + colno);
-};
+function diag(msg){ const nav=navigator.userAgent||''; const vv=(window.speechSynthesis && window.speechSynthesis.getVoices && window.speechSynthesis.getVoices().length) || 0; $('diag').innerHTML=`Diagnostics: <b>${msg}</b> · Voices: ${vv} · Browser: ${nav.split(')')[0]+')'}`; }
+function showErr(msg){ const bar=$('errbar'); bar.textContent='⚠ '+msg; bar.style.display='block'; }
+window.onerror=function(message, source, lineno, colno, error){ showErr(String(message||'Script error')+' @ '+lineno+':'+colno); };
 
 // init
-if('speechSynthesis' in window){
-  populateVoices().then(()=>{ loadPrefs(); diag('Ready ('+VERSION+')'); });
-} else {
-  $('status').textContent = 'Speech not supported in this browser';
-  diag('Speech API not supported');
-}
+if('speechSynthesis' in window){ populateVoices().then(()=>{ loadPrefs(); diag('Ready ('+VERSION+')'); }); } else { $('status').textContent='Speech not supported in this browser'; diag('Speech API not supported'); }
 </script>
 </body>
 </html>

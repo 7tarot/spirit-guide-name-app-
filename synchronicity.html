@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Synchronicity Reader — Mystical Pro v4.3.2 ULTRA MAX</title>
+<title>Synchronicity Reader — Mystical Pro v4.3.3 ULTRA MAX</title>
 <style>
   :root{ --bg:#05090a; --card:#081215; --edge:#102227; --text:#d1f7ff; --mint:#7efcff; --muted:#9bc7d1; --ok:#a7ffd8; --err:#ff9b9b }
   *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
@@ -27,12 +27,14 @@
   .pill{display:inline-block;padding:4px 10px;border:1px solid #1f3940;border-radius:999px;margin-right:8px;color:#8fd7e3;font-size:12px}
   h2,h3{margin:10px 0 6px}
   .badge{display:inline-block;margin-left:8px;padding:2px 8px;border:1px dashed #204b54;border-radius:999px;color:#8fd7e3;font-size:12px}
+  .diag{margin-top:8px;font-size:12px;color:#9bc7d1}
+  .diag b{color:#a7ffd8}
 </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>🔢 Synchronicity Reader — Mystical Pro <span class="badge">v4.3.2 ULTRA MAX</span></h1>
-    <p class="sub">Fix for “plain text page” (script-safe). Ultra‑long segments + 400‑word categories. Robust Speak. Google voices only.</p>
+    <h1>🔢 Synchronicity Reader — Mystical Pro <span class="badge">v4.3.3 ULTRA MAX</span></h1>
+    <p class="sub">Zero‑fetch build with diagnostics. Ultra‑long segments + 400‑word categories. Robust Speak. Google voices only.</p>
 
     <section class="card">
       <div class="row">
@@ -62,6 +64,7 @@
         <button id="stopBtn">Stop</button>
       </div>
       <div class="disclaimer">Narration uses a cleaned, chunked version so long readings don’t fail. Reflective guidance only.</div>
+      <div id="diag" class="diag">Diagnostics: <b>loading…</b></div>
     </section>
 
     <section class="card" id="resultCard" style="display:none">
@@ -79,17 +82,17 @@
     </section>
 
     <section class="card tiny muted">
-      Data: <code>synchronicity_mapping.json</code> + <code>synchronicity_overrides.json</code>. Only <strong>Google</strong> voices are listed. Speech removes symbols/HTML. If Speak stalls, click Stop then Speak again.
+      This build reads entirely offline (no extra files). Only <strong>Google</strong> voices are listed. If Speak stalls, click Stop then Speak again.
     </section>
   </div>
 
 <script>
-const VERSION = 'v4.3.2-ultra-max';
-const MAP_URL = 'synchronicity_mapping.json?v='+VERSION;
-const OV_URL  = 'synchronicity_overrides.json?v='+VERSION;
-
+const VERSION = 'v4.3.3-ultra-max';
 const $ = id => document.getElementById(id);
-let DB = null, OV = null;
+
+// ===== embedded mapping (no network) =====
+const DB = {}; // can be extended later
+const OV = { "11":{base:2, signs:["Libra"]}, "22":{base:4, signs:["Scorpio","Aries"]}, "33":{base:6, signs:["Capricorn","Gemini"]} };
 
 // ===== helpers =====
 function splitPairsLeft(str){ const s=String(str).replace(/\\D/g,''); if(!s) return []; const out=[]; for(let i=0;i<s.length;i+=2) out.push(s.slice(i,i+2)); return out; }
@@ -99,8 +102,8 @@ function unique(arr){ return Array.from(new Set(arr.filter(Boolean))); }
 function mapDigitToEntry(d){ const db=(DB && (DB.numbers||DB))||{}; return db[String(d)] || {}; }
 function minorsForBase(d){ const names={1:'Ace',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine'}; const label=names[d]; if(!label) return []; return [`${label} of Wands`,`${label} of Cups`,`${label} of Swords`,`${label} of Pentacles`]; }
 
-// ===== ultra-long segment generator (shortened here; same as v4.3) =====
-function ultraSegmentHTML(idx, rawSeg, base, majors, minors, signs, master, tone){
+// ===== ultra-long segment generator =====
+function ultraSegmentHTML(idx, rawSeg, base, majors, minors, signs, master){
   const baseNames={1:'Ace',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine'};
   const baseName = baseNames[base]||String(base);
   const quartet = minors.length? minors.join(', ') : `${baseName} of Wands, ${baseName} of Cups, ${baseName} of Swords, ${baseName} of Pentacles`;
@@ -116,13 +119,13 @@ function ultraSegmentHTML(idx, rawSeg, base, majors, minors, signs, master, tone
   const masterPara = master ? `Master ${master} resolves into ${base}. The echo is the guide itself—tide choosing a narrow channel so it can carve stone.` : '';
 
   const paras = [open, doTxt, feel, examples, minorsExplain, masterPara, `Picture ${base===4?'a bench by a window and four patient stones':'coals in a quiet forge, a rhythm your hands remember'}. By doing less, more on purpose, you watch the day decide to resemble you.`];
-  let joined = paras.map(t=>`<p>${t}</p>`).join('\n');
-  const wc = joined.replace(/<[^>]+>/g,' ').split(/\s+/).filter(Boolean).length;
+  let joined = paras.map(t=>`<p>${t}</p>`).join('\\n');
+  const wc = joined.replace(/<[^>]+>/g,' ').split(/\\s+/).filter(Boolean).length;
   if (wc < 400){ joined += `<p>Let patience do the heavy lifting. Align with one ally, measure what matters, and return to the simplest next act you can keep. The day rewards cadence over drama.</p>`; }
   return joined;
 }
 
-// ===== 400+ word category generator (same content style as 4.3, ensured length) =====
+// ===== 400+ word category generator =====
 function catLong(base, topic){
   const tone = {
     1:{verb:'begin', gift:'clarity', caution:'impulse', anchor:'first steps', image:'a key and a simple room'},
@@ -167,15 +170,7 @@ function catLong(base, topic){
   ].join(' '); }
 
   const blobs = {love: blobLove(), work: blobWork(), confusion: blobConfusion(), family: blobFamily(), frustration: blobFrustration()};
-  let out = blobs[topic] || '';
-  // Ensure >= 400 words
-  const wc = out.split(/\s+/).filter(Boolean).length;
-  if (wc < 400){
-    const pad = " Keep it simple and repeatable. Small honest acts, returned to daily, resolve more than intensity ever can.";
-    out += pad.repeat( (400 - wc) // average ~12 words per sentence -> approximate
-                      );
-  }
-  return `<p>${out}</p>`;
+  return `<p>${blobs[topic]||''}</p>`;
 }
 
 // ===== chips =====
@@ -205,7 +200,7 @@ function buildReadingHTML(num, segs, basesInfo, finalBase){
     const signs  = unique([...(entry.signs||entry.Signs||[]), ...(info.ov && info.ov.signs || [])]);
     const minors = minorsForBase(info.base);
     parts.push(`<h3>Segment ${i+1} — ${info.master? 'Master '+info.master+' → ':''}${info.base}</h3>`);
-    parts.push(ultraSegmentHTML(i+1, segs[i], info.base, majors, minors, signs, info.master, 'rich'));
+    parts.push(ultraSegmentHTML(i+1, segs[i], info.base, majors, minors, signs, info.master));
   });
 
   parts.push(`<h3>If the question is Love</h3>${catLong(finalBase, 'love')}`);
@@ -215,7 +210,7 @@ function buildReadingHTML(num, segs, basesInfo, finalBase){
   parts.push(`<h3>If the question is Frustration</h3>${catLong(finalBase, 'frustration')}`);
 
   parts.push(`<p>— Spirit Guide App</p>`);
-  return parts.join('\n');
+  return parts.join('\\n');
 }
 
 // ===== UI actions =====
@@ -238,12 +233,13 @@ function analyze(){
   $('reading').innerHTML = html;
 
   $('status').textContent = 'Done';
+  diag('Done');
   setTimeout(()=> $('status').textContent='', 2000);
 }
 
 function copyReading(){ 
   const txt = getSpeechText(($('reading').innerHTML||'').trim());
-  navigator.clipboard.writeText(txt + '\n— Spirit Guide App').then(()=> alert('Copied reading (speech‑friendly)'));
+  navigator.clipboard.writeText(txt + '\\n— Spirit Guide App').then(()=> alert('Copied reading (speech‑friendly)'));
 }
 function copyReadingHtml(){
   const html = $('reading').innerHTML;
@@ -293,6 +289,7 @@ async function populateVoices(){
     }
     if(!picked && sel.options.length) sel.selectedIndex=0;
   }
+  diag(`Voices ready: ${voices.length}`);
 }
 
 function currentVoice(){
@@ -316,11 +313,9 @@ function decodeEntities(html){
 }
 function getSpeechText(html){
   let text = decodeEntities(html);
-  // Build regex via constructor to avoid literal </script> in source
   const STRIP_SCRIPT = new RegExp('<'+'script[\\s\\S]*?<\\/'+'script>','gi');
   const STRIP_STYLE  = new RegExp('<'+'style[\\s\\S]*?<\\/'+'style>','gi');
-  text = text.replace(STRIP_SCRIPT,' ').replace(STRIP_STYLE,' ');
-  text = text.replace(/<[^>]+>/g,' ');
+  text = text.replace(STRIP_SCRIPT,' ').replace(STRIP_STYLE,' ').replace(/<[^>]+>/g,' ');
   text = text.replace(/→/g,' to ').replace(/•/g,', ').replace(/[#*_`~^]/g,' ').replace(/\s{2,}/g,' ').trim();
   return text;
 }
@@ -358,13 +353,13 @@ async function speakQueueStart(text){
   await new Promise(r => setTimeout(r, 160));
   function next(){
     if (!speakQueue.length){
-      speaking=false; $('status').textContent='Narration finished';
+      speaking=false; $('status').textContent='Narration finished'; diag('Narration finished');
       setTimeout(()=> $('status').textContent='',1500);
       return;
     }
     const u = new SpeechSynthesisUtterance(speakQueue.shift());
     if (v) u.voice = v; u.rate = rate; u.pitch = pitch; u.volume = 1.0;
-    u.onstart = ()=> { $('status').textContent='Speaking…'; };
+    u.onstart = ()=> { $('status').textContent='Speaking…'; diag('Speaking'); };
     u.onend = ()=> next();
     u.onerror = ()=> next();
     speaking = true;
@@ -373,14 +368,14 @@ async function speakQueueStart(text){
   }
   next();
 }
-function stopSpeaking(){ window.speechSynthesis && window.speechSynthesis.cancel(); speakQueue=[]; speaking=false; $('status').textContent='Stopped'; setTimeout(()=>$('status').textContent='',1200); }
+function stopSpeaking(){ window.speechSynthesis && window.speechSynthesis.cancel(); speakQueue=[]; speaking=false; $('status').textContent='Stopped'; diag('Stopped'); setTimeout(()=>$('status').textContent='',1200); }
 
 $('testVoiceBtn').onclick = async ()=>{
   savePrefs(); window.speechSynthesis.cancel();
   await new Promise(r=>setTimeout(r,120));
   const u=new SpeechSynthesisUtterance('This is your saved Google narrator voice.');
   const v=currentVoice(); if(v) u.voice=v; u.rate=parseFloat($('rate').value||'1'); u.pitch=parseFloat($('pitch').value||'1');
-  window.speechSynthesis.speak(u);
+  window.speechSynthesis.speak(u); diag('Test voice played');
 };
 $('speakBtn').onclick     = ()=> speakQueueStart();
 $('stopBtn').onclick      = ()=> stopSpeaking();
@@ -388,21 +383,21 @@ $('voiceSelect').onchange = savePrefs;
 $('forceEnglish').onchange= ()=>{ savePrefs(); populateVoices(); };
 $('rate').oninput = savePrefs; $('pitch').oninput = savePrefs;
 
+// diagnostics
+function diag(msg){
+  const nav = navigator.userAgent||'';
+  const vv = (window.speechSynthesis && window.speechSynthesis.getVoices && window.speechSynthesis.getVoices().length) || 0;
+  $('diag').innerHTML = `Diagnostics: <b>${msg}</b> · Voices: ${vv} · Browser: ${nav.split(')')[0]+')'}`;
+}
+
 if('speechSynthesis' in window){
   loadPrefs();
   populateVoices();
+  diag('Ready ('+VERSION+')');
 } else {
   $('status').textContent = 'Speech not supported in this browser';
+  diag('Speech API not supported');
 }
-
-// Ready
-Promise.all([fetch(MAP_URL).then(r=>r.json()).catch(()=>null),
-             fetch(OV_URL).then(r=>r.json()).catch(()=>({}))])
-  .then(([map, ov]) => {
-    DB = map || {}; OV = ov || {};
-    $('status').textContent = 'Ready ('+VERSION+')';
-    setTimeout(()=> $('status').textContent='', 1500);
-  });
 </script>
 </body>
 </html>

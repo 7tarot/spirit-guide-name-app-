@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Synchronicity Reader — Mystical Pro</title>
+<title>Synchronicity Reader — Mystical Pro v2</title>
 <style>
   :root{ --bg:#05090a; --card:#081215; --edge:#102227; --text:#d1f7ff; --mint:#7efcff; --muted:#9bc7d1; --ok:#a7ffd8; --err:#ff9b9b }
   *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
@@ -25,18 +25,25 @@
   .tts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
   .disclaimer{font-size:12px;color:#9bc7d1;margin-top:6px}
   .pill{display:inline-block;padding:4px 10px;border:1px solid #1f3940;border-radius:999px;margin-right:8px;color:#8fd7e3;font-size:12px}
-  .section{margin-top:12px}
+  h2,h3{margin:10px 0 6px}
 </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>🔢 Synchronicity Reader — Mystical Pro</h1>
-    <p class="sub">Enter the number you keep seeing. This page generates a flowing, mystical reading with all Majors & Minor quartets.</p>
+    <h1>🔢 Synchronicity Reader — Mystical Pro v2</h1>
+    <p class="sub">Clean narration, clearer stories. Enter the number you keep seeing.</p>
 
     <section class="card">
       <div class="row">
         <label>Synchronicity number
           <input id="num" placeholder="e.g., 2011, 2222, 1234" style="min-width:220px">
+        </label>
+        <label>Tone
+          <select id="tone">
+            <option value="plain">Plain‑English</option>
+            <option value="light" selected>Mystical — Light</option>
+            <option value="rich">Mystical — Rich</option>
+          </select>
         </label>
         <button id="analyzeBtn">Analyze</button>
         <button id="copyBtn">Copy reading</button>
@@ -53,7 +60,7 @@
         <button id="speakBtn">Speak</button>
         <button id="stopBtn">Stop</button>
       </div>
-      <div class="disclaimer">Reflective guidance only. Trust your own intuition and judgment.</div>
+      <div class="disclaimer">Reflective guidance only. Narration uses a cleaned version of the text (no symbols or hashes).</div>
     </section>
 
     <section class="card" id="resultCard" style="display:none">
@@ -63,19 +70,15 @@
         <div class="kpi"><h3>Final Base</h3><div id="finalBase">—</div></div>
       </div>
 
-      <div class="section">
-        <h3>Tarot & Astro Mapping</h3>
-        <div id="chips"></div>
-      </div>
+      <h3>Tarot & Astro Mapping</h3>
+      <div id="chips"></div>
 
-      <div class="section">
-        <h3>Reading</h3>
-        <div id="reading" class="long">—</div>
-      </div>
+      <h3>Reading</h3>
+      <div id="reading" class="long">—</div>
     </section>
 
     <section class="card tiny muted">
-      Data: <code>synchronicity_mapping.json</code> (your mapping) + <code>synchronicity_overrides.json</code> (11/22/33). Only <strong>Google</strong> voices are shown.
+      Data: <code>synchronicity_mapping.json</code> + <code>synchronicity_overrides.json</code>. Only <strong>Google</strong> voices are shown. Speech removes symbols like asterisks, hashes, and arrows.
     </section>
   </div>
 
@@ -86,7 +89,7 @@ const OV_URL  = 'synchronicity_overrides.json?v='+Date.now();
 const $ = id => document.getElementById(id);
 let DB = null, OV = null;
 
-// ---- math + helpers ----
+// ========= helpers ==========
 function splitPairsLeft(str){ const s=String(str).replace(/\\D/g,''); if(!s) return []; const out=[]; for(let i=0;i<s.length;i+=2) out.push(s.slice(i,i+2)); return out; }
 function reduceDigit(n){ n=String(n).replace(/\\D/g,''); if(!n) return null; let sum=0; for(const ch of n) sum+=Number(ch); while(sum>9){ let t=0; for(const ch of String(sum)) t+=Number(ch); sum=t; } return sum; }
 function segmentBase(seg){ if(OV[seg]) return { base: OV[seg].base, master: seg, ov:OV[seg] }; return { base: reduceDigit(seg), master:null, ov:null }; }
@@ -94,134 +97,125 @@ function unique(arr){ return Array.from(new Set(arr.filter(Boolean))); }
 function mapDigitToEntry(d){ const db=(DB && (DB.numbers||DB))||{}; return db[String(d)] || {}; }
 function minorsForBase(d){ const names={1:'Ace',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine'}; const label=names[d]; if(!label) return []; return [`${label} of Wands`,`${label} of Cups`,`${label} of Swords`,`${label} of Pentacles`]; }
 
-// ---- anchor templates (1..9). Each has theme + story ----
+// ========= content templates (simpler, speech-friendly) ==========
 const ANCHOR = {
-1:{title:"The Ember and the Door",
-theme:"initiative, independence, clean starts",
-story:`Night holds its breath as you find a low red ember in a clay bowl. You cup your hands and it becomes a small, steady flame. Ahead is a wooden door with a brass key that has always fit your palm. You don’t need to know what lives in the next room; you need only to turn the key and carry your own light inside. The room is simple—blank table, blank page, a single chair—and the quiet is a dare. One act spoken aloud becomes a hinge: a sentence written, a message sent, a first draft allowed to be a first draft. You are not auditioning for permission; you are declaring a beginning. The world adjusts around decisive presence. When fear asks for a prophecy, answer with a step. When doubt hisses that the door is heavy, smile and move your shoulder. The hinge will never be lighter than now. The ember loves oxygen; your courage is the draft that feeds it. Cross the threshold. Let the small light be enough to find the next switch.`},
-2:{title:"The Bridge of Two Streams",
-theme:"cooperation, balance, soft power",
-story:`Mist gathers where two clear streams meet. You place one foot on a rope bridge and feel the give of woven fibers—someone made this with patient hands. Halfway across, the water below braids itself into silver helixes, and you understand: the crossing is not a test; it is a teaching. Balance is not frozen stillness—it is a living conversation between supports. Across the river, a second figure appears carrying a lantern that mirrors yours. You nod without words and step in rhythm until you arrive together. On the far bank, the path is narrow but kind. You tie your lantern to theirs; twin lights make a softer shadow. You choose agreements over assumptions, boundaries over bravado, listening over noise. The bridge remains, ready for return, but today you have crossed. Cooperation is not the absence of power; it is its gentlest and most persuasive form.`},
-3:{title:"The Market of Echoes",
-theme:"expression, creativity, social links",
-story:`Morning bells ring and the market unfurls its bright ribbons. Stalls arrive like ideas—too many at once, each calling your name. You breathe and choose three: the spice seller with jars of heat, the paper merchant with sheets that hold ink like skin, the musician tuning a string that matches your ribs. As you speak to one, the others lean closer; your voice gathers what it needs as it travels. A child repeats your last sentence and you hear its edge—sharp; you sand it with a smile and try again. By noon you have traded for a small satchel of color and a promise to return with a song. Expression is not a performance; it is the clean exchange of breath for meaning. Say it simpler. Say it kinder. Say it true. The echo you tend will be the one that answers you at dusk.`},
-4:{title:"The Workshop of Stones",
-theme:"structure, discipline, foundations",
-story:`A low door opens to a workshop lit by high windows. Benches wear the polish of years; tools rest where a careful hand last placed them. On the floor, four stones wait at the compass points. You lift one and feel its honest weight—a promise disguised as a burden. A chalk line divides the room into the part you will use and the part you will bless. The first cut is measured, not heroic. The second is cleaner. By the third, the blade sings quiet. You keep a ledger of what repeats and a basket for what does not. When a cracked brick wobbles, you do not curse the wall; you shave the edge until it fits its neighbors. Structure is a kindness to future you. Discipline is devotion dressed in work clothes. Before you leave, you hang the plan on a nail where morning light can find it. The stones sleep in their square, already a room in embryo.`},
-5:{title:"The Caravan and the Wind",
-theme:"change, movement, flexibility",
-story:`Sand hums under a wide sky as a caravan leans into the day. The wind is a clever teacher—it shifts without apology and expects you to do the same. You travel by signs: a line of darker dunes, a bird that circles a hidden spring, a story told by a stranger that fixes your compass. At the resting place, tents rise in minutes; by moonrise they are gone without a scar. Your pack grows lighter as you trade ornament for water, certainty for curiosity. Sometimes the quickest way is a soft diagonal. Sometimes you let the wind have its say and then answer with your route. Movement is not chaos when the heart carries its north. Adjust your scarf, check your laces, and take the next ten steps. The horizon honors the traveler who honors the weather.`},
-6:{title:"The Hearth and the Garden",
-theme:"responsibility, care, harmonizing",
-story:`A house breathes when someone listens to it. You light the stove and the room exhales cinnamon. Outside, the garden asks for the kind of attention that counts as prayer: dead leaves lifted, soil loosened, water poured where roots can drink without drowning. Inside, a chair is moved two inches and suddenly the doorway feels honest. Care is a geometry of kindness—angles that make passage easy, circles that make gathering safe. You mend what will hold and release what will not. A list appears but you keep it merciful. At dusk, a few lamps turn the walls to honey. The garden sleeps with a wet smile. You understand: your gift is not martyrdom; it is stewardship. Love is heavier than praise and lighter than fear. Tonight, rest where your hands have made space for peace.`},
-7:{title:"The Hermitage Lantern",
-theme:"inner work, analysis, spiritual focus",
-story:`Fog wraps the ridge as you climb toward a small hermitage. Inside, the air smells of cedar and ink. A narrow desk faces a single pane of glass; beyond it, the valley writes its patient letters in river script. You open a book and feel a click, as if a key turned in the soft part of your skull. The lantern on the table is hooded; you lift the hood and the room admits its dimensions. Solitude is not exile when the silence is populated with symbols. You study one pattern until it reveals its second face, then its third. The mind that hounds you becomes the dog that guards the door. When you descend, pockets hold three sentences you trust and one question worth keeping. You will speak less and mean more.`},
-8:{title:"The Forge of Quiet Strength",
-theme:"power, resources, sustained effort",
-story:`The forge is awake before dawn. Coals glow like a low constellation; the hammer sleeps exactly where you left it. You heat the iron and it blushes toward orange, willing as a heartbeat. The first strike is not the loudest; it is the truest. You lift and place, lift and place, and soon the rhythm outlives the thought that doubted it. At the cooling trough, steam writes a shy scripture you do not chase. Strength here is nothing to do with swagger; it is the courtesy of repetition. You measure progress in things that last—hinges that do not squeal, gates that swing without complaint, promises that arrive on time. When you leave, you do not feel heroic. You feel clean. The anvil keeps its counsel. Tomorrow it will be ready for you again.`},
-9:{title:"The Shore of Letting Go",
-theme:"completion, release, service",
-story:`The tide pulls long threads of light across the sand and hands them back to the sea. You carry a small box that once felt necessary and now feels like a story told in the wrong season. At the waterline you open it, bless what was true, and let the rest go out where salt remakes everything. Grief and relief are siblings—they argue, then share a coat. You walk the length of the shore until your footprints decide to keep their secrets. In your pocket, you keep one shell, not for proof but for music. Far down the beach a lantern swings: someone else finding their own release. You wave without needing to be seen. Service begins where ownership ends. The ocean writes your name and erases it tenderly. You are not diminished. You are made spacious.`},
+1:{title:"Clean Beginnings", theme:"initiative and clean starts",
+plain:"Today favours first steps you can explain in one sentence. Keep the move small, visible, and kind to your nerves. Choose one message to send, one task to begin, and one place to start again without apology.",
+light:"A door you know well opens without creak. Carry your own small light and cross the threshold. One clear sentence and one honest action begin a chapter that can hold your name.",
+rich:"The ember becomes a steady flame in your hands. A key fits the door you have circled. Enter with a single true sentence and let the room shape itself around that tone."
+},
+2:{title:"Living Balance", theme:"cooperation and soft power",
+plain:"Work with another rhythm, not against it. Share plans in simple language, agree how you will decide together, and keep your edges kind and clear.",
+light:"Two currents meet and make a calmer river. Walk the middle board with a friend. The answer is a conversation that repeats until it becomes trust.",
+rich:"Mist gathers where the streams braid. A lantern meets your lantern on the bridge. Balance is dialogue made visible; step in time and arrive together."
+},
+3:{title:"True Expression", theme:"expression and creative links",
+plain:"Say the useful thing and keep it brief. Share a small example, ask for one response, and move on. Your words work when they serve.",
+light:"The market is bright, but you choose three stalls only. Speak, listen, adjust. Your voice finds its shape when someone hears it.",
+rich:"Bells open the day; you select colour, page, and tune. A child repeats your line and you polish it. Expression becomes a path others can walk."
+},
+4:{title:"Good Structure", theme:"structure and foundations",
+plain:"Make one system that reduces effort tomorrow. Write a checklist, prune a step, and protect a ninety‑minute focus block.",
+light:"A simple workshop waits: four stones, a clean bench. You choose a rule you can keep and let it hold the day steady.",
+rich:"A room with high windows, tools in their homes, four stones at the compass points. You draw a line between what serves and what delays. The frame becomes a kindness."
+},
+5:{title:"Gentle Change", theme:"movement and flexibility",
+plain:"Try one safe experiment. Keep stakes low, keep notes, and decide after you catch your breath.",
+light:"A short wind shifts and you adjust your sail. Travel by honest signs and let curiosity lead you to water.",
+rich:"The caravan moves on light feet. Tents appear and vanish without scar. Trade certainty for a good question and let it guide you."
+},
+6:{title:"Caring Harmony", theme:"responsibility and healing",
+plain:"Offer help that does not exhaust you. Define one standard of care and keep it. Make home more home today.",
+light:"The hearth warms, the garden listens. Small repairs change the air. Choose the action that quiets the room.",
+rich:"Cinnamon rises; soil loosens. A chair slides and the doorway tells the truth. Care is geometry that lets everyone pass."
+},
+7:{title:"Quiet Insight", theme:"study and spiritual focus",
+plain:"Reduce noise. Give one hour to a single question and stop when the answer is good enough to act on.",
+light:"Fog thins around a small window. You study one pattern until it reveals the simple next move.",
+rich:"Cedar and ink; a hooded lamp. Symbols populate the silence and one of them raises its hand. You follow it one yard only."
+},
+8:{title:"Calm Strength", theme:"resources and sustained effort",
+plain:"Choose one routine you can keep for eight days. Track results, not moods. Power grows when it is gentle and regular.",
+light:"The forge hums at a low heat. Repetition becomes a prayer your hands understand.",
+rich:"Coals as a small constellation, steam writing shy scripture. Strength is the courtesy of repetition; mastery arrives without announcement."
+},
+9:{title:"Clean Completion", theme:"release and service",
+plain:"Finish one thing. Bless what was useful, archive what is done, and free your energy for what returns.",
+light:"Tide pulls light into itself and gives it back. You keep one shell for music and let the rest go.",
+rich:"A box once heavy becomes light by the waterline. Grief and relief share a coat. You keep a single note that still sings and return the others to the tide."
+}
 };
 
-// ---- category paragraphs per base (love, work, confusion, family, frustration) ----
 const CAT = {
-1:{love:"Set the first ritual: a weekly tea, a walk, a single honest question. Name a desire warmly; invite a clear yes/no. Let the Ace energy be a doorway, not a demand. If single, make the first move that feels like you.", 
-   work:"Draft a one-page charter. Define the first milestone in terms a stranger would understand. Ship a tiny version today.", 
-   confusion:"Reduce inputs to one true question. Pull three cards: Magician (what I can wield), Fool (where to trust), Sun (what wants to be obvious). Act on their overlap.", 
-   family:"Begin the conversation others circle. Be kind and concrete. A new tradition can start with a humble first step.", 
-   frustration:"Transmute it into motion. Write the shortest email that moves the block one notch. If you can’t move it, move yourself one notch around it."},
-2:{love:"Treat love like a duet. Create shared cadence: check‑ins, soft boundaries, a place for truth to land. Choose harmony over heat today.", 
-   work:"Write agreements. Who does what by when, and how will you decide when unsure? Collaboration becomes effortless when choices have rails.", 
-   confusion:"Balance the scale. List pros/cons, then ask one trusted mirror what they heard underneath your words.", 
-   family:"Mediate with gentleness. Translate instead of taking sides. A small shared plan calms the room.", 
-   frustration:"Pause, breathe four counts in/out. Ask: what’s mine, what’s theirs, what belongs to time? Act only on the first."},
-3:{love:"Say the beautiful thing out loud. Appreciation is a spell; keep it specific. If conflict, write before you speak; then read it aloud and soften once.", 
-   work:"Show the demo. Invite feedback from one wise witness. Creativity multiplies when witnessed.", 
-   confusion:"Your ideas are noisy. Choose one channel for 24 hours—writing, voice note, or sketch—and let the others rest.", 
-   family:"Lighten the air. A shared game, a song, or a story can rethread frayed edges.", 
-   frustration:"Express, don’t explode. Move the energy through words, then choose the smallest next publishable act."},
-4:{love:"Build the hearth. Weekly date in the calendar, a budget that feels kind, a shared checklist for “we’re okay.”", 
-   work:"Systems over heroics. Template the task you repeat; prune a step. Let consistency earn you trust.", 
-   confusion:"Frame it. What decision is this *really* about? Give yourself one clear criterion and move.", 
-   family:"Stability heals. Create a simple routine everyone can keep. Praise the keeping, not the perfection.", 
-   frustration:"Tighten one bolt you control. Then rest. Repeat tomorrow. Boring is holy right now."},
-5:{love:"Invite a micro‑adventure that’s safe for the nervous system. New route, new recipe, new question. Laugh often; promise little.", 
-   work:"Pilot the change. One test, one metric, one week. Curiosity is your project manager.", 
-   confusion:"Too much wind. Reduce sails: fewer voices, fewer tabs, more breath. Then make a tiny move.", 
-   family:"Shift the pattern kindly. Suggest a different sequence to the usual dance; reward any ease that follows.", 
-   frustration:"Move the body. Walk, shake, breathe. Decide after you’ve changed states."},
-6:{love:"Care without carrying. Ask what would help and believe the answer. Make home more home today.", 
-   work:"Tend quality. Define what “done well” means and teach it by example. Your steadiness is medicine.", 
-   confusion:"Over‑empathy fogs the map. Step back, center, then choose the helpful deed that doesn’t drain you.", 
-   family:"Repair softly. One apology, one boundary, one small celebration.", 
-   frustration:"Notice where you’re over‑responsible. Return one marble to the universe."},
-7:{love:"Share one page of your inner world and stop there. Mystery is magnetism when it’s not avoidance.", 
-   work:"Research one knot and untie just that. Depth beats breadth today.", 
-   confusion:"Quiet first. Pull Hermit, High Priestess, Star. Ask for the thin silver thread and follow it only a yard.", 
-   family:"Offer wisdom, not control. Ask a better question and let silence answer.", 
-   frustration:"Your mind made a maze. Find the one true fact that collapses it."},
-8:{love:"Lead with warm consistency. Keep one promise small and strong. Power is safety when it’s kind.", 
-   work:"Bench time. Track reps, not moods. Send one concise update with numbers.", 
-   confusion:"Pick the lever with the most return and pull gently and repeatedly.", 
-   family:"Provide structure without steamrolling. Generosity plus boundaries equals peace.", 
-   frustration:"Channel it through craft. Ten quiet minutes of focused making will change the weather."},
-9:{love:"Release the old story with respect. Serve where you can and let the rest drift. Closure is an act of love.", 
-   work:"Finish something. Archive, hand off, or ship. Then bless the space you made.", 
-   confusion:"You’re at an ending disguised as a choice. Choose the clean goodbye.", 
-   family:"Make a ritual of grace. Memory is honored; guilt is not required.", 
-   frustration:"Let the tide take what it’s already pulling. Save your strength for what returns."},
+1:{love:"Name a desire warmly and invite a simple yes or no. Start a weekly ritual that is easy to keep.", work:"Draft a one‑page charter and ship a tiny first version today.", confusion:"Reduce inputs to one clear question and act on the next fact.", family:"Open the conversation kindly and be concrete about what happens next.", frustration:"Turn the feeling into motion; send the shortest message that moves the block."},
+2:{love:"Treat love like a duet. Agree on a rhythm you both can keep.", work:"Write basic agreements: who does what by when, and how you decide.", confusion:"Balance the scale; ask one trusted mirror what they heard between your words.", family:"Translate gently instead of taking sides; set one shared plan.", frustration:"Breathe in fours, then act only on what is truly yours."},
+3:{love:"Offer a specific appreciation. If conflict, write before you speak, then soften once.", work:"Show a small example and ask for one piece of feedback.", confusion:"Choose one channel for a day—writing, voice note, or sketch.", family:"Add lightness: a song, a story, a game.", frustration:"Express, then choose the smallest publishable act."},
+4:{love:"Build the hearth: a weekly date, a kind budget, a shared checklist.", work:"Choose one template, prune a step, protect a focus block.", confusion:"Name what decision this is really about; use one clear criterion.", family:"Create a simple routine everyone can keep and praise the keeping.", frustration:"Tighten one bolt you control; repeat tomorrow."},
+5:{love:"Invite a micro‑adventure that feels safe to the body.", work:"Pilot one change with one metric for one week.", confusion:"Lower the wind: fewer voices, fewer tabs, more breath.", family:"Suggest a kinder sequence to the usual dance and thank any ease.", frustration:"Move the body; decide after the state has changed."},
+6:{love:"Ask what would help and believe the answer. Make home more home.", work:"Define what good looks like and model it.", confusion:"Step back from over‑empathy and choose a helpful deed that doesn’t drain you.", family:"Repair softly: one apology, one boundary, one celebration.", frustration:"Return one burden to where it belongs."},
+7:{love:"Share one page of your inner world and stop there.", work:"Research one knot and untie only that.", confusion:"Quiet first; take the thin silver thread one step.", family:"Offer a better question and give space for the answer.", frustration:"Find the one fact that collapses the maze."},
+8:{love:"Keep one promise small and strong; warmth beats drama.", work:"Track reps, not moods; send one concise update with numbers.", confusion:"Pick the lever with the most return; pull steadily.", family:"Add structure without steamrolling; boundaries plus care.", frustration:"Channel it through craft for ten quiet minutes."},
+9:{love:"Release the old story with respect and practice gentle compassion.", work:"Finish, archive, or hand off; bless the space you made.", confusion:"Treat this as an ending and choose the clean goodbye.", family:"Make a simple ritual of grace; memory is honored.", frustration:"Let the tide take what is already leaving; save your strength."}
 };
 
-function segmentNarrative(idx, rawSeg, base, majors, minors, signs, master){
-  const nameMap={1:'Ace',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine'};
-  const baseName = nameMap[base]||String(base);
-  const mtext = majors.length? `In the Majors, ${majors.join(', ')} set the tone` : `In the Majors, the archetype of ${base} hums quietly`;
-  const qtext = minors.length? `In the Minors, the ${baseName}s appear as ${minors.join(', ')}` : `In the Minors, the ${baseName}s hold the daily practice`;
-  const stext = signs.length? `Astrologically, ${signs.join(' & ')} colour this segment.` : '';
-  const masterNote = master? ` This arrives as Master ${master} stepping down to ${base}, a reminder that big energy prefers practical shoes.` : '';
-  const para1 = `Segment ${idx} (${rawSeg} → ${master? master+'→':''}${base}) is a pocket of guidance asking for embodiment. ${mtext}; ${qtext}. ${stext}${masterNote}`;
-  const para2 = `Practically, treat this as a small altar to ${baseName} energy: set one boundary that protects the work, choose one message worth sending, and let one old habit fall away. The goal isn’t drama; it’s devotion with a calm pulse. If you listen closely, this segment offers a repeating note—keep it steady and the whole song will tune itself around it.`;
-  return para1 + "\\n\\n" + para2;
+// ========= narrative builders (HTML, not markdown) =========
+function p(text){ return `<p>${text}</p>`; }
+function h2(text){ return `<h2>${text}</h2>`; }
+function h3(text){ return `<h3>${text}</h3>`; }
+
+function segmentHTML(idx, rawSeg, base, majors, minors, signs, master, tone){
+  const baseNames={1:'Ace',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine'};
+  const baseName = baseNames[base]||String(base);
+  const majorsTxt = majors.length? `Majors: ${majors.join(', ')}.` : '';
+  const minorsTxt = minors.length? `Minors: ${minors.join(', ')}.` : '';
+  const signsTxt  = signs.length? `Astro: ${signs.join(', ')}.` : '';
+  const masterTxt = master? ` Master ${master} steps down to ${base}.` : '';
+  const open = `Segment ${idx} (${rawSeg} → ${master? master+' to ':''}${base}) asks for embodiment. ${majorsTxt} ${minorsTxt} ${signsTxt}${masterTxt}`.trim();
+
+  let body;
+  if (tone==='plain'){
+    body = `Treat this as a small altar to ${baseName} energy. Protect a block of time, send one useful message, and drop one habit that wastes focus. Keep the rhythm simple and repeatable.`;
+  } else if (tone==='light'){
+    body = `Make a clear space for this current. Choose one boundary that protects the work, one signal that invites support, and one release so the plan can breathe.`;
+  } else {
+    body = `Let this current shape the day. Set a threshold that keeps noise out, invite one aligned witness, and allow an old pattern to fall away so the structure stands clean.`;
+  }
+  return p(open) + p(body);
 }
 
-function buildReading(num, segs, basesInfo, finalBase){
-  const lines = [];
-  const segText = segs.join(', ');
-  const anchorBlock = ANCHOR[finalBase] || {title:"Anchor", theme:"", story:""};
+function buildReadingHTML(num, segs, basesInfo, finalBase){
+  const tone = $('tone').value;
+  const anchor = ANCHOR[finalBase] || {title:'Anchor', theme:'', plain:'', light:'', rich:''};
+  const story = (tone==='plain'? anchor.plain : tone==='light'? anchor.light : anchor.rich);
 
-  // Opening
-  lines.push(`# ${num} — ${anchorBlock.title}`);
-  lines.push(`We split **${num}** into **${segText}**. Adding the bases resolves to **${finalBase}** — a day keyed to *${anchorBlock.theme}*.`);
+  const parts = [];
+  parts.push(h2(`${num} — ${anchor.title}`));
+  parts.push(p(`We split ${num} into ${segs.join(', ')}. Adding the bases resolves to ${finalBase}: ${anchor.theme}.`));
 
-  // per-segment deep (200–300 words each)
-  basesInfo.forEach((info, i) => {
+  // segments
+  basesInfo.forEach((info, i)=>{
     const entry = mapDigitToEntry(info.base);
     const majors = entry.majors || entry.Majors || [];
     const signs  = unique([...(entry.signs||entry.Signs||[]), ...(info.ov && info.ov.signs || [])]);
     const minors = minorsForBase(info.base);
-    lines.push(`\n## Segment ${i+1} — ${info.master? 'Master '+info.master+' → ':''}${info.base}`);
-    lines.push(segmentNarrative(i+1, segs[i], info.base, majors, minors, signs, info.master));
+    parts.push(h3(`Segment ${i+1} — ${info.master? 'Master '+info.master+' → ':''}${info.base}`));
+    parts.push(segmentHTML(i+1, segs[i], info.base, majors, minors, signs, info.master, tone));
   });
 
-  // Anchor core
-  lines.push(`\n## Anchor — ${finalBase}`);
-  lines.push(anchorBlock.story);
+  // anchor story
+  parts.push(h3(`Anchor — ${finalBase}`));
+  parts.push(p(story));
 
-  // Categories
+  // categories
   const cat = CAT[finalBase] || {};
-  lines.push(`\n## If the question is **Love**\n${cat.love||''}`);
-  lines.push(`\n## If the question is **Work/Vocation**\n${cat.work||''}`);
-  lines.push(`\n## If the question is **Confusion**\n${cat.confusion||''}`);
-  lines.push(`\n## If the question is **Family**\n${cat.family||''}`);
-  lines.push(`\n## If the question is **Frustration**\n${cat.frustration||''}`);
+  parts.push(h3(`If the question is Love`), p(cat.love||''));
+  parts.push(h3(`If the question is Work/Vocation`), p(cat.work||''));
+  parts.push(h3(`If the question is Confusion`), p(cat.confusion||''));
+  parts.push(h3(`If the question is Family`), p(cat.family||''));
+  parts.push(h3(`If the question is Frustration`), p(cat.frustration||''));
 
-  // Close
-  lines.push(`\n**Mantra:** “${anchorBlock.theme.charAt(0).toUpperCase()+anchorBlock.theme.slice(1)} becomes my path as I keep the next promise.”`);
-  lines.push(`\n— Spirit Guide App`);
-
-  return lines.join("\\n");
+  parts.push(p(`— Spirit Guide App`));
+  return parts.join('\n');
 }
 
 function buildChips(basesInfo, segs){
@@ -236,7 +230,7 @@ function buildChips(basesInfo, segs){
   return chipHtml.join('');
 }
 
-// ---- UI actions ----
+// ========= UI actions =========
 function analyze(){
   const raw = $('num').value.trim();
   if(!raw){ alert('Enter a number.'); return; }
@@ -246,28 +240,22 @@ function analyze(){
   const bases = basesInfo.map(x => x.base);
   const finalBase = reduceDigit(bases.reduce((a,b)=>a+b,0));
 
-  // Render summary and chips
   $('resultCard').style.display = 'block';
   $('segments').textContent = segs.join(', ');
   $('bases').textContent = basesInfo.map(x => (x.master? x.master+'→':'') + x.base).join(', ');
   $('finalBase').textContent = String(finalBase);
   $('chips').innerHTML = buildChips(basesInfo, segs);
 
-  // Build deep mystical reading and render as HTML
-  const md = buildReading(raw, segs, basesInfo, finalBase);
-  $('reading').innerHTML = md
-    .replace(/\\*\\*(.*?)\\*\\*/g,'<strong>$1</strong>')
-    .replace(/^# (.*)$/gm,'<h2>$1</h2>')
-    .replace(/^## (.*)$/gm,'<h3>$1</h3>')
-    .replace(/\\n/g,'<br>');
+  const html = buildReadingHTML(raw, segs, basesInfo, finalBase);
+  $('reading').innerHTML = html;
 
   $('status').textContent = 'Done';
   setTimeout(()=> $('status').textContent='', 2000);
 }
 
 function copyReading(){ 
-  const txt = ($('reading').innerText||'').trim();
-  navigator.clipboard.writeText(txt + '\\n— Spirit Guide App').then(()=> alert('Copied reading'));
+  const txt = getSpeechText(($('reading').innerHTML||'').trim());
+  navigator.clipboard.writeText(txt + '\n— Spirit Guide App').then(()=> alert('Copied reading (speech‑friendly)'));
 }
 function copyReadingHtml(){
   const html = $('reading').innerHTML;
@@ -281,7 +269,7 @@ $('analyzeBtn').onclick = analyze;
 $('copyBtn').onclick = copyReading;
 $('copyHtmlBtn').onclick = copyReadingHtml;
 
-// ---- Narrator: Google voices only + saved prefs ----
+// ========= Narrator (Google-only) + speech sanitizer =========
 const STORAGE = { name:'sg_voice_name', lang:'sg_voice_lang', force:'sg_voice_force_en', rate:'sg_voice_rate', pitch:'sg_voice_pitch' };
 const prefer = ["Google UK English Female","Google UK English Male","Google US English","Google US English Female","Google US English Male"];
 let voices = [];
@@ -323,16 +311,38 @@ function loadPrefs(){
   const r = parseFloat(localStorage.getItem(STORAGE.rate)); if(!isNaN(r)) $('rate').value = r;
   const p = parseFloat(localStorage.getItem(STORAGE.pitch)); if(!isNaN(p)) $('pitch').value = p;
 }
-function speak(text){
+
+function decodeEntities(html){
+  const txt = document.createElement('textarea');
+  txt.innerHTML = html;
+  return txt.value;
+}
+function getSpeechText(html){
+  let text = decodeEntities(html);
+  text = text.replace(/<script[\s\S]*?<\/script>/gi,' ')
+             .replace(/<style[\s\S]*?<\/style>/gi,' ')
+             .replace(/<[^>]+>/g,' ');
+  // Replace symbols that get read out oddly
+  text = text.replace(/→/g,' to ')
+             .replace(/•/g,', ')
+             .replace(/[#*_`~^]/g,' ')
+             .replace(/\s{2,}/g,' ')
+             .trim();
+  return text;
+}
+
+function speak(textHtml){
   if(!('speechSynthesis' in window)) return alert('Speech not supported here.');
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance();
-  u.text = "Reflective guidance only. " + (text || $('reading').innerText || 'Please analyze a number first.');
+  const cleaned = getSpeechText(textHtml || $('reading').innerHTML || '');
+  u.text = "Reflective guidance only. " + (cleaned || 'Please analyze a number first.');
   u.rate = parseFloat($('rate').value||'1'); u.pitch = parseFloat($('pitch').value||'1'); u.volume = 1.0;
   const v = currentVoice(); if(v) u.voice = v;
   window.speechSynthesis.speak(u);
 }
-$('testVoiceBtn').onclick = ()=>{ savePrefs(); speak("This is your saved Google narrator voice."); };
+
+$('testVoiceBtn').onclick = ()=>{ savePrefs(); speak('Hello'); };
 $('speakBtn').onclick     = ()=> speak();
 $('stopBtn').onclick      = ()=> window.speechSynthesis && window.speechSynthesis.cancel();
 $('voiceSelect').onchange = savePrefs;
@@ -347,7 +357,7 @@ if('speechSynthesis' in window){
   $('status').textContent = 'Speech not supported in this browser';
 }
 
-// Ready fetch
+// Ready
 Promise.all([fetch(MAP_URL).then(r=>r.json()).catch(()=>null),
              fetch(OV_URL).then(r=>r.json()).catch(()=>({}))])
   .then(([map, ov]) => {

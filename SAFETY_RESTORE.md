@@ -1,19 +1,20 @@
-# SAFETY_RESTORE — Numerology Longform + Render Fix
+# SAFETY_RESTORE
 
-This bundle replaces the placeholder `numerology_descriptions.json` with **deep content** and injects a **render fix** into your homepage so paragraph breaks display correctly and the narrator doesn’t read backslash‑n.
+This bundle restores your **Spirit Guide App** homepage and keeps **Synchronicity Reader** as a separate page.
 
 ## Files
-- `numerology_descriptions.json` — long‑form descriptions for 1–9, 11, 22, 33 (with clean paragraph breaks).
-- `index.html` — your original file **plus** a tiny script at the end that converts \n to real paragraphs after the app renders.
-- This note.
+- `index.html` — your main Spirit Guide App (restores the homepage).
+- `synchronicity.html` — Synchronicity Reader (v4.5.0 Variation Packs).
+- `health.txt` — quick deploy check (should show "OK 2025-09-07").
 
 ## Install (drag + drop)
 1) Open your repo in GitHub Desktop.
-2) Drag **both files** into the **root** of the repo (same level as your current `index.html`).
+2) Drag **all files** from this zip into the **root** of the repo (the top level, NOT inside any subfolder).
    - If prompted, click **Replace** for `index.html`.
 3) Commit → Push.
-4) Check: https://spirit-guide-name-app.netlify.app/?v=longform-2025-09-07
-   - Your numerology cards should show clean paragraphs (no “\n\n”).
+4) Verify:
+   - Main app: https://spirit-guide-name-app.netlify.app/?v=restore-2025-09-07
+   - Synchronicity: https://spirit-guide-name-app.netlify.app/synchronicity.html?v=var450-2025-09-07
+   - Health file: https://spirit-guide-name-app.netlify.app/health.txt?v=2025-09-07
 
-## Rollback
-If anything looks odd, revert the commit in GitHub Desktop and you’re back to your previous version.
+If the homepage still shows anything like "Index placeholder", your repo’s root probably doesn’t contain `index.html` (it might be inside a folder). Move `index.html` to the **top level** and redeploy.

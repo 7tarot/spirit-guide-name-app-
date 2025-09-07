@@ -1,16 +1,19 @@
-# SGA ADD‑ONS PACK (safe)
+# SGA — Synchronicity + Voice Fix
 
-This updates your homepage to add:
-1) Clean paragraphs for numerology cards (visual only).
-2) A "Synchronicity" floating button (opens in new tab).
-3) Default narrator voice preference (Google UK English Female → UK Male → US).
-4) A "Copy full reading" floating button.
-5) Email/Sheet health tick that goes green after a successful Apps Script POST.
+This bundle:
+- Adds a **sticky top bar** and big floating button so Synchronicity is easy to find.
+- Ensures `synchronicity.html` exists at the repo root.
+- Prefers **Google UK English Female/Male** as the default narrator if available.
+- Keeps your current UI intact.
 
 ## Install
 1) Open your repo in GitHub Desktop.
-2) Drag **index.html** into the **root** (same place as your current index).
+2) Drag **both files** into the **root** of the repo:
+   - `index.html` (replace existing)
+   - `synchronicity.html` (new)
 3) Commit → Push.
-4) Verify the button top‑right, try "Copy full reading", and submit once to see the green tick.
+4) Verify:
+   - Home: https://spirit-guide-name-app.netlify.app/?v=syncfix-2025-09-07
+   - Synchronicity: https://spirit-guide-name-app.netlify.app/synchronicity.html?v=clean-2025-09-07
 
-If anything looks odd, revert the commit in GitHub Desktop to return to your previous version.
+If the sticky bar feels too loud, tell me where you want the button and I’ll move it.

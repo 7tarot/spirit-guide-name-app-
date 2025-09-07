@@ -58,6 +58,21 @@
 }
 
 </style>
+
+<style id="sga-addons-css">
+
+/* === SGA Add‑ons (safe) === */
+.sga-fab {position: fixed; right: 16px; z-index: 9999; border-radius: 999px; padding: 10px 14px; font-weight: 600;
+  background: #0b1214; color: #d1f7ff; border: 1px solid #183a42; box-shadow: 0 6px 24px rgba(0,0,0,.35); cursor: pointer;}
+.sga-fab:hover {transform: translateY(-1px);}
+#sga-btn-sync {top: 16px;}
+#sga-btn-copy {top: 64px;}
+#sga-health {position: fixed; left: 12px; top: 16px; z-index: 9999; font-size: 12px; color: #9bc7d1;}
+#sga-health .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#666;margin-right:6px;vertical-align:middle}
+#sga-health.ok .dot{background:#42d392}
+.sga-paras p{margin:0 0 10px 0; line-height:1.75}
+
+</style>
 </head>
 <body>
   <div class="wrap">
@@ -368,5 +383,206 @@
     try{ const s = JSON.parse(saved); $('name').value=s.name||""; $('dob').value=s.dob||""; if(s.results){ renderResults(s.results); $('resultsCard').style.display=$('longCard').style.display=$('emailCard').style.display="block"; setupCountdown(s.firstCalcAt); } }catch(e){}
   })();
   </script>
+
+<script>
+(function(){
+  const HEADINGS = [
+    {label:'📖 Life Path', key:'life'},
+    {label:'🗣️ Expression', key:'expr'},
+    {label:'💗 Soul Urge', key:'soul'},
+    {label:'🪞 Personality', key:'pers'},
+    {label:'🎂 Birthday', key:'bday'},
+    {label:'🌱 Maturity', key:'matu'},
+    {label:'⚖️ Balance', key:'bal'}
+  ];
+
+  function elContainsText(el, s){
+    try { return (el && (el.textContent||'').indexOf(s) !== -1); } catch(e){ return false; }
+  }
+  function findAllCardBodies(){
+    const bodies = [];
+    const all = Array.from(document.querySelectorAll('section,article,div'));
+    all.forEach(node => {
+      HEADINGS.forEach(h => {
+        if(elContainsText(node, h.label)){
+          // Find a likely body: the next element sibling with non-trivial text
+          let body = node.nextElementSibling;
+          let hops = 0;
+          while(body && hops < 4 && (body.textContent||'').trim().length < 40){
+            body = body.nextElementSibling; hops++;
+          }
+          if(body && (body.textContent||'').trim().length >= 40){
+            bodies.push({heading:h.label, node: body});
+          }
+        }
+      });
+    });
+    return bodies;
+  }
+
+  function sentenceSplit(text){
+    // Split on sentence boundaries, preserve punctuation
+    const parts = (text||'').replace(/\s+/g,' ').trim().match(/[^.!?]+[.!?]*/g) || [];
+    return parts.map(s => s.trim()).filter(Boolean);
+  }
+
+  function makeParagraphs(text, maxSent=3){
+    const sents = sentenceSplit(text);
+    const blocks = [];
+    for(let i=0;i<sents.length;i+=maxSent){
+      const chunk = sents.slice(i, i+maxSent).join(' ').trim();
+      if(chunk) blocks.push('<p>'+chunk+'</p>');
+    }
+    return blocks.join('');
+  }
+
+  function formatCards(){
+    try{
+      const bodies = findAllCardBodies();
+      bodies.forEach(({node}) => {
+        if(node.dataset && node.dataset.sgaParas==='1') return;
+        const txt = (node.textContent||'').trim();
+        if(!txt) return;
+        // If the body already contains multiple <p>, leave it
+        if(node.querySelector && node.querySelector('p')){ node.dataset.sgaParas='1'; return; }
+        node.classList && node.classList.add('sga-paras');
+        node.innerHTML = makeParagraphs(txt, 3);
+        node.dataset.sgaParas='1';
+      });
+    }catch(e){ console.warn('[SGA] formatCards:', e); }
+  }
+
+  // Copy full reading (gathers all card bodies)
+  function copyFull(){
+    const bodies = findAllCardBodies();
+    const chunks = bodies.map(({heading, node}) => (heading + '\n' + (node.textContent||'').trim()));
+    const text = chunks.join('\n\n') + '\n— Spirit Guide App';
+    if(!navigator.clipboard){ alert('Copied:\n\n'+text.slice(0,500)+'...'); return; }
+    navigator.clipboard.writeText(text).then(()=>{
+      toast('Full reading copied');
+    }, ()=>{ alert('Copy failed.'); });
+  }
+
+  function toast(msg){
+    const t = document.createElement('div');
+    t.textContent = msg;
+    t.style.position='fixed'; t.style.right='16px'; t.style.bottom='16px'; t.style.background='#0b1214';
+    t.style.color='#d1f7ff'; t.style.border='1px solid #183a42'; t.style.padding='8px 12px'; t.style.borderRadius='10px';
+    t.style.zIndex='9999';
+    document.body.appendChild(t);
+    setTimeout(()=>{ t.remove(); }, 1400);
+  }
+
+  // Floating buttons
+  function ensureButtons(){
+    if(!document.getElementById('sga-btn-sync')){
+      const b = document.createElement('a');
+      b.id='sga-btn-sync'; b.className='sga-fab'; b.href='/synchronicity.html'; b.target='_blank';
+      b.textContent='Synchronicity';
+      document.body.appendChild(b);
+    }
+    if(!document.getElementById('sga-btn-copy')){
+      const b2 = document.createElement('button');
+      b2.id='sga-btn-copy'; b2.className='sga-fab'; b2.type='button';
+      b2.textContent='Copy full reading';
+      b2.addEventListener('click', copyFull);
+      document.body.appendChild(b2);
+    }
+    if(!document.getElementById('sga-health')){
+      const h = document.createElement('div');
+      h.id='sga-health'; h.innerHTML='<span class="dot"></span><span>Email/Sheet: waiting…</span>';
+      document.body.appendChild(h);
+    }
+  }
+
+  // Voice default shim (non-invasive)
+  function preferGoogleVoice(){
+    if(!('speechSynthesis' in window)) return;
+    const pick = (list)=>{
+      const pref = ['Google UK English Female','Google UK English Male','Google US English Female','Google US English Male','Google US English'];
+      for(const p of pref){
+        const v = list.find(v=> (v.name||'').indexOf(p)!==-1 && /^en/i.test(v.lang||''));
+        if(v) return v;
+      }
+      const any = list.find(v=> /^en/i.test(v.lang||'') );
+      return any || list[0] || null;
+    };
+    const setDefault = ()=>{
+      const all = window.speechSynthesis.getVoices() || [];
+      const chosen = pick(all);
+      if(!chosen) return;
+      const orig = window.speechSynthesis.speak.bind(window.speechSynthesis);
+      window.speechSynthesis.speak = function(u){
+        try{
+          if(u && !u.voice){ u.voice = chosen; }
+        }catch(e){}
+        return orig(u);
+      };
+      console.log('[SGA] default voice:', chosen.name, chosen.lang);
+    };
+    if(window.speechSynthesis.getVoices().length){ setDefault(); }
+    window.speechSynthesis.onvoiceschanged = setDefault;
+  }
+
+  // Health tick: flag green when Apps Script POST returns ok
+  function attachHealthWatcher(){
+    if(!('fetch' in window)) return;
+    const health = document.getElementById('sga-health');
+    const dot = ()=> (document.querySelector('#sga-health .dot'));
+    const span = ()=> (document.querySelector('#sga-health span:last-child'));
+    function setOK(){ health && health.classList.add('ok'); if(span()) span().textContent='Email/Sheet: ✓ ok'; }
+    function setWait(){ health && health.classList.remove('ok'); if(span()) span().textContent='Email/Sheet: waiting…'; }
+    setWait();
+    const origFetch = window.fetch.bind(window);
+    window.fetch = function(input, init){
+      try{
+        const url = (typeof input === 'string') ? input : (input && input.url) || '';
+        const isApps = /script\.google\.com\/macros\/s\//.test(url);
+        if(isApps && init && String(init.method||'').toUpperCase()==='POST'){
+          return origFetch(input, init).then(async (res)=>{
+            try{
+              const clone = res.clone();
+              let ok = false;
+              if(clone.headers && /json/i.test(clone.headers.get('content-type')||'')){
+                const data = await clone.json().catch(()=>null);
+                ok = data && (data.ok===true || data.ok==='true');
+              } else {
+                const txt = await clone.text().catch(()=>'');
+                ok = /"ok"\s*:\s*true/.test(txt);
+              }
+              if(ok) setOK();
+            }catch(e){}
+            return res;
+          });
+        }
+      }catch(e){}
+      return origFetch(input, init);
+    };
+  }
+
+  function init(){
+    ensureButtons();
+    preferGoogleVoice();
+    attachHealthWatcher();
+    // Format now and also after common actions
+    formatCards();
+    document.addEventListener('click', function(e){
+      const t = e.target && (e.target.closest('button') || e.target);
+      if(!t) return;
+      const name = (t.textContent||'').toLowerCase();
+      if(/calc|start|begin|numerolog|submit|go|analy/.test(name)){
+        setTimeout(formatCards, 150);
+        setTimeout(formatCards, 600);
+      }
+    }, true);
+  }
+
+  if(document.readyState === 'complete' || document.readyState === 'interactive'){
+    setTimeout(init, 30);
+  } else {
+    document.addEventListener('DOMContentLoaded', ()=> setTimeout(init, 30));
+  }
+})();
+</script>
 </body>
 </html>

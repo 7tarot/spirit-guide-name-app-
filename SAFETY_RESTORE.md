@@ -1,20 +1,16 @@
-# SAFETY_RESTORE
+# SGA ADD‑ONS PACK (safe)
 
-This bundle restores your **Spirit Guide App** homepage and keeps **Synchronicity Reader** as a separate page.
+This updates your homepage to add:
+1) Clean paragraphs for numerology cards (visual only).
+2) A "Synchronicity" floating button (opens in new tab).
+3) Default narrator voice preference (Google UK English Female → UK Male → US).
+4) A "Copy full reading" floating button.
+5) Email/Sheet health tick that goes green after a successful Apps Script POST.
 
-## Files
-- `index.html` — your main Spirit Guide App (restores the homepage).
-- `synchronicity.html` — Synchronicity Reader (v4.5.0 Variation Packs).
-- `health.txt` — quick deploy check (should show "OK 2025-09-07").
-
-## Install (drag + drop)
+## Install
 1) Open your repo in GitHub Desktop.
-2) Drag **all files** from this zip into the **root** of the repo (the top level, NOT inside any subfolder).
-   - If prompted, click **Replace** for `index.html`.
+2) Drag **index.html** into the **root** (same place as your current index).
 3) Commit → Push.
-4) Verify:
-   - Main app: https://spirit-guide-name-app.netlify.app/?v=restore-2025-09-07
-   - Synchronicity: https://spirit-guide-name-app.netlify.app/synchronicity.html?v=var450-2025-09-07
-   - Health file: https://spirit-guide-name-app.netlify.app/health.txt?v=2025-09-07
+4) Verify the button top‑right, try "Copy full reading", and submit once to see the green tick.
 
-If the homepage still shows anything like "Index placeholder", your repo’s root probably doesn’t contain `index.html` (it might be inside a folder). Move `index.html` to the **top level** and redeploy.
+If anything looks odd, revert the commit in GitHub Desktop to return to your previous version.

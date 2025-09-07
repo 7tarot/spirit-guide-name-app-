@@ -1,19 +1,19 @@
-# SGA — Synchronicity + Voice Fix
+# SGA — UK Voice Limit + Full Synchronicity
 
 This bundle:
-- Adds a **sticky top bar** and big floating button so Synchronicity is easy to find.
-- Ensures `synchronicity.html` exists at the repo root.
-- Prefers **Google UK English Female/Male** as the default narrator if available.
-- Keeps your current UI intact.
+- Restricts narrator voices on the **homepage** to only **Google UK English Female/Male** (with friendly fallback).
+- Replaces **synchronicity.html** with the full, working generator (v4.5.1 clean‑tts) using the same UK‑only filter.
+- Keeps an obvious sticky **Synchronicity** entry bar on the homepage.
 
 ## Install
 1) Open your repo in GitHub Desktop.
 2) Drag **both files** into the **root** of the repo:
    - `index.html` (replace existing)
-   - `synchronicity.html` (new)
+   - `synchronicity.html` (new or replace)
 3) Commit → Push.
-4) Verify:
-   - Home: https://spirit-guide-name-app.netlify.app/?v=syncfix-2025-09-07
-   - Synchronicity: https://spirit-guide-name-app.netlify.app/synchronicity.html?v=clean-2025-09-07
 
-If the sticky bar feels too loud, tell me where you want the button and I’ll move it.
+## Verify
+- Home: https://spirit-guide-name-app.netlify.app/?v=uk-voices-2025-09-07
+- Synchronicity: https://spirit-guide-name-app.netlify.app/synchronicity.html?v=full-2025-09-07
+
+If your device/browser doesn’t expose Google voices, you’ll see a small note; narration will fall back to the best English voice available.

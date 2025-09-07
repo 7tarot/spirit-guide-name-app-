@@ -59,21 +59,17 @@
 
 </style>
 
-<style id="sga-sync-voice-css">
+<style id="sga-voice-css">
 
-/* === SGA Sticky Synchronicity Bar + FAB (safe) === */
-#sga-sticky {position: sticky; top: 0; z-index: 9998; background: linear-gradient(90deg,#0b1214,#0e2a31);
-  border-bottom: 1px solid #183a42; padding: 10px 12px; display: flex; align-items: center; gap: 10px;}
-#sga-sticky .label {color: #9bd7e3; font-size: 14px;}
-#sga-sticky a.btn {display:inline-block; padding: 8px 12px; border-radius: 999px; font-weight: 700; text-decoration: none;
-  background: linear-gradient(90deg,#7efcff,#a7ffd8); color:#042025;}
-#sga-sticky button.x {margin-left:auto; background:transparent; border:0; color:#9bc7d1; font-size:16px; cursor:pointer;}
-.sga-fab {position: fixed; right: 16px; top: 16px; z-index: 9999; border-radius: 999px; padding: 12px 16px; font-weight: 700;
-  background: linear-gradient(90deg,#7efcff,#a7ffd8); color:#042025; border: 1px solid #183a42; box-shadow: 0 6px 24px rgba(0,0,0,.35); cursor: pointer;}
-.sga-fab:hover {transform: translateY(-1px);}
-#sga-health {position: fixed; left: 12px; top: 16px; z-index: 9999; font-size: 12px; color: #9bc7d1;}
-#sga-health .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#666;margin-right:6px;vertical-align:middle}
-#sga-health.ok .dot{background:#42d392}
+/* SGA: sticky synchronicity bar + voice note */
+#sga-sticky{position:sticky;top:0;z-index:9998;background:linear-gradient(90deg,#0b1214,#0e2a31);
+  border-bottom:1px solid #183a42;padding:10px 12px;display:flex;align-items:center;gap:10px}
+#sga-sticky .label{color:#9bd7e3;font-size:14px}
+#sga-sticky a.btn{display:inline-block;padding:8px 12px;border-radius:999px;font-weight:700;text-decoration:none;
+  background:linear-gradient(90deg,#7efcff,#a7ffd8);color:#042025}
+#sga-sticky button.x{margin-left:auto;background:transparent;border:0;color:#9bc7d1;font-size:16px;cursor:pointer}
+#sga-voice-note{position:fixed;left:12px;bottom:12px;font-size:12px;color:#9bc7d1;background:#0b1214;border:1px solid #183a42;
+  padding:6px 10px;border-radius:10px;z-index:9999}
 
 </style>
 </head>
@@ -389,101 +385,75 @@
 
 <script>
 (function(){
-  // Sticky Synchronicity bar
-  function makeSticky(){
-    if(localStorage.getItem('sgaSyncBarClosed')==='1') return;
-    if(document.getElementById('sga-sticky')) return;
-    const bar = document.createElement('div');
-    bar.id='sga-sticky';
-    bar.innerHTML = '<span class="label">Try the new <strong>Synchronicity Reader</strong> for number meanings & long readings.</span>' +
-                    '<a class="btn" href="/synchronicity.html" target="_blank">Open Synchronicity</a>' +
+  // Show prominent Synchronicity entry (sticky bar). Non-destructive, can be closed once per device.
+  function stickySynch(){ 
+    try{
+      if(localStorage.getItem('sgaSyncBarClosed')==='1') return;
+      if(document.getElementById('sga-sticky')) return;
+      const bar=document.createElement('div');
+      bar.id='sga-sticky';
+      bar.innerHTML='<span class="label">Try the new <strong>Synchronicity Reader</strong> for number meanings & long readings.</span>'+
+                    '<a class="btn" href="/synchronicity.html" target="_blank">Open Synchronicity</a>'+
                     '<button class="x" aria-label="close">×</button>';
-    const close = ()=>{ localStorage.setItem('sgaSyncBarClosed','1'); bar.remove(); };
-    bar.querySelector('button.x').addEventListener('click', close);
-    const host = document.body.firstElementChild || document.body;
-    host.parentNode.insertBefore(bar, host);
+      bar.querySelector('button.x').addEventListener('click',()=>{ localStorage.setItem('sgaSyncBarClosed','1'); bar.remove(); });
+      const host=document.body.firstElementChild||document.body; host.parentNode.insertBefore(bar,host);
+    }catch(e){}
   }
 
-  // Floating button fallback (very obvious)
-  function makeFab(){
-    if(document.getElementById('sga-fab-sync')) return;
-    const b = document.createElement('a');
-    b.id='sga-fab-sync'; b.className='sga-fab'; b.href='/synchronicity.html'; b.target='_blank';
-    b.textContent='Open Synchronicity';
-    document.body.appendChild(b);
+  // Restrict narrator voices to Google UK English Female/Male only (with friendly fallback).
+  const TARGETS = ['Google UK English Female','Google UK English Male'];
+  function waitForVoices(){ return new Promise(res=>{
+    const done=()=>res(window.speechSynthesis.getVoices()||[]);
+    const list=window.speechSynthesis.getVoices(); if(list&&list.length){ res(list); return; }
+    window.speechSynthesis.onvoiceschanged=done; setTimeout(done,900);
+  });}
+  function pickUK(list){
+    const fem=list.find(v=>v.name==='Google UK English Female'); 
+    const male=list.find(v=>v.name==='Google UK English Male');
+    return fem || male || null;
   }
-
-  // Health tick: green when Apps Script POST returns ok
-  function attachHealthWatcher(){
-    if(document.getElementById('sga-health')) return;
-    const h = document.createElement('div');
-    h.id='sga-health'; h.innerHTML='<span class="dot"></span><span>Email/Sheet: waiting…</span>';
-    document.body.appendChild(h);
-    const span = ()=> (document.querySelector('#sga-health span:last-child'));
-    function setOK(){ h && h.classList.add('ok'); if(span()) span().textContent='Email/Sheet: ✓ ok'; }
-    const origFetch = window.fetch ? window.fetch.bind(window) : null;
-    if(!origFetch) return;
-    window.fetch = function(input, init){
-      try{
-        const url = (typeof input === 'string') ? input : (input && input.url) || '';
-        const isApps = /script\.google\.com\/macros\/s\//.test(url);
-        if(isApps && init && String(init.method||'').toUpperCase()==='POST'){
-          return origFetch(input, init).then(async (res)=>{
-            try{
-              const c = res.clone();
-              let ok=false;
-              const ct = (c.headers && c.headers.get('content-type')) || '';
-              if(/json/i.test(ct)){ const d = await c.json().catch(()=>null); ok = d && (d.ok===true || d.ok==='true'); }
-              else { const t = await c.text().catch(()=> ''); ok = /"ok"\s*:\s*true/.test(t); }
-              if(ok) setOK();
-            }catch(e){}
-            return res;
-          });
-        }
-      }catch(e){}
-      return origFetch(input, init);
-    };
+  function filterVoices(list){
+    const hits=list.filter(v=>TARGETS.includes(v.name) && /^en/i.test(v.lang||''));
+    return hits;
   }
-
-  // Default narrator voice (Google UK -> Google US -> any English)
-  function preferGoogleVoice(){
+  function applyToSelect(list){
+    const sel=document.getElementById('voiceSelect');
+    if(!sel) return;
+    sel.innerHTML='';
+    if(list.length){
+      list.forEach(v=>{ const o=document.createElement('option'); o.value=v.name+'::'+v.lang; o.textContent=v.name+' ('+v.lang+')'; sel.appendChild(o); });
+      sel.selectedIndex=0;
+    }else{
+      const o=document.createElement('option'); o.value=''; o.textContent='Google voices not available here'; o.disabled=true; sel.appendChild(o);
+    }
+  }
+  function shimSpeak(defaultVoice){
+    try{
+      const synth=window.speechSynthesis;
+      const old=synth.speak.bind(synth);
+      synth.speak=function(u){ try{ if(u && !u.voice) u.voice=defaultVoice; }catch(e){} return old(u); };
+    }catch(e){}
+  }
+  async function limitVoices(){
     if(!('speechSynthesis' in window)) return;
-    function pick(list){
-      const prefs = ['Google UK English Female','Google UK English Male','Google US English Female','Google US English Male','Google US English'];
-      for(const p of prefs){
-        const v = list.find(v=> (v.name||'').indexOf(p)!==-1 && /^en/i.test(v.lang||''));
-        if(v) return v;
+    const all=await waitForVoices();
+    const ukOnly=filterVoices(all);
+    applyToSelect(ukOnly);
+    const pick=pickUK(all) || all.find(v=>/^en/i.test(v.lang||'')) || null;
+    if(pick) shimSpeak(pick); else {
+      if(!document.getElementById('sga-voice-note')){
+        const n=document.createElement('div'); n.id='sga-voice-note'; n.textContent='Google UK voices not available on this device; using best English voice.'; document.body.appendChild(n);
+        setTimeout(()=>{ try{ n.remove(); }catch(e){} }, 5000);
       }
-      return list.find(v=> /^en/i.test(v.lang||'')) || list[0] || null;
     }
-    function setDefault(){
-      const all = window.speechSynthesis.getVoices() || [];
-      if(!all.length) return;
-      const choice = pick(all);
-      if(!choice) return;
-      // 1) Shim speak() so any utterance without a voice gets our default
-      const origSpeak = window.speechSynthesis.speak.bind(window.speechSynthesis);
-      window.speechSynthesis.speak = function(u){ try{ if(u && !u.voice) u.voice = choice; }catch(e){} return origSpeak(u); };
-      // 2) If the page has a <select id="voiceSelect">, select the closest Google voice
-      const sel = document.getElementById('voiceSelect');
-      if(sel){
-        const idx = Array.from(sel.options).findIndex(o => o.textContent.indexOf(choice.name)!==-1);
-        if(idx>=0) sel.selectedIndex = idx;
-      }
-      console.log('[SGA] narrator default:', choice.name, choice.lang);
-    }
-    if(window.speechSynthesis.getVoices().length){ setDefault(); }
-    window.speechSynthesis.onvoiceschanged = setDefault;
   }
 
   function init(){
-    makeSticky();
-    makeFab();
-    attachHealthWatcher();
-    preferGoogleVoice();
+    stickySynch();
+    limitVoices();
   }
-  if(document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(init, 30);
-  else document.addEventListener('DOMContentLoaded', ()=> setTimeout(init, 30));
+  if(document.readyState==='complete' || document.readyState==='interactive'){ setTimeout(init,30); }
+  else document.addEventListener('DOMContentLoaded', ()=> setTimeout(init,30));
 })();
 </script>
 </body>

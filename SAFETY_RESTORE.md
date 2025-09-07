@@ -1,19 +1,20 @@
 # SAFETY_RESTORE
 
-This bundle restores your **Spirit Guide App** main page and keeps the **Synchronicity Reader** as a separate page.
+This bundle restores your **Spirit Guide App** homepage and keeps **Synchronicity Reader** as a separate page.
 
-## Files in this bundle
-- `index.html` — your Spirit Guide App (restored).
-- `synchronicity.html` — the Synchronicity Reader (v4.5.0 Variation Packs).
+## Files
+- `index.html` — your main Spirit Guide App (restores the homepage).
+- `synchronicity.html` — Synchronicity Reader (v4.5.0 Variation Packs).
+- `health.txt` — quick deploy check (should show "OK 2025-09-07").
 
-## How to install (drag + drop)
-1) Open your repo folder in GitHub Desktop.
-2) Drag BOTH files into the **root** of the repo (same place as before).
-   - If you get “replace?”, choose **Replace** for `index.html` to restore your main app.
-   - `synchronicity.html` is new and won’t overwrite the main app.
-3) Commit and Push.
-4) Visit:
-   - Main app: https://spirit-guide-name-app.netlify.app/
-   - Synchronicity: https://spirit-guide-name-app.netlify.app/synchronicity.html?v=var450
+## Install (drag + drop)
+1) Open your repo in GitHub Desktop.
+2) Drag **all files** from this zip into the **root** of the repo (the top level, NOT inside any subfolder).
+   - If prompted, click **Replace** for `index.html`.
+3) Commit → Push.
+4) Verify:
+   - Main app: https://spirit-guide-name-app.netlify.app/?v=restore-2025-09-07
+   - Synchronicity: https://spirit-guide-name-app.netlify.app/synchronicity.html?v=var450-2025-09-07
+   - Health file: https://spirit-guide-name-app.netlify.app/health.txt?v=2025-09-07
 
-Date: 2025-09-07
+If the homepage still shows anything like "Index placeholder", your repo’s root probably doesn’t contain `index.html` (it might be inside a folder). Move `index.html` to the **top level** and redeploy.

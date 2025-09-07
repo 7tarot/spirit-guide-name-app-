@@ -1,6 +1,372 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Spirit Guide — Pages</title></head>
-<body style="font-family:system-ui;padding:24px;background:#0a0f12;color:#e8f6ff">
-  <h1>Spirit Guide App — Extra Pages</h1>
-  <p><a href="synchronicity.html">Open Synchronicity Reader (v4.3.3 ULTRA MAX)</a></p>
-</body></html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Spirit Guide App — Classic (Read‑All Narrator)</title>
+<style>
+  :root{ --bg:#0c0f0c; --panel:#121712; --border:#1b291c; --text:#f1fff7; --muted:#b7d6c3; --accent:#7fffd4; --accent2:#57d9a9; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Arial,sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:28px}
+  h1{margin:0 0 6px;font-size:34px}
+  .sub{color:var(--muted);margin:0 0 18px;font-size:15px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;margin:16px 0;box-shadow:0 8px 30px rgba(0,0,0,.22)}
+  label{display:block;font-weight:600;margin:.5rem 0 .35rem}
+  input,select,button{font:inherit;border-radius:10px;border:1px solid var(--border);background:#0f130f;color:var(--text);padding:.6rem .75rem}
+  button{cursor:pointer}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .row > *{flex:1 1 240px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .kpi{background:#0f130f;border:1px solid var(--border);border-radius:10px;padding:12px}
+  .kpi h3{margin:0 0 6px;font-size:16px;color:var(--accent)}
+  .kpi div{font-weight:700;font-size:20px}
+  .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+  .long{white-space:pre-line;background:#0f130f;border:1px solid var(--border);padding:14px;border-radius:10px;font-size:15px;line-height:1.5}
+  .section-title{margin:18px 0 10px}
+  .narrator{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+  .banner{background:linear-gradient(90deg,#113d27,#10353a);border:1px solid var(--border);padding:14px;border-radius:12px}
+  .banner strong{color:var(--accent)}
+  .primary{background:var(--accent2);border-color:var(--accent2);color:#001e11;font-weight:700}
+  .primary:hover{filter:brightness(1.05)}
+  .muted{color:var(--muted)} .tiny{font-size:12px}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:#0f130f}
+
+.narrator {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 16px;
+  padding: 14px;
+  border: 2px solid var(--accent2);
+  border-radius: 12px;
+  background: rgba(127, 255, 212, 0.08);
+}
+.narrator strong {
+  font-size: 18px;
+  color: var(--accent2);
+}
+.narrator select {
+  min-width: 220px;
+  font-size: 16px;
+}
+.narrator button {
+  font-weight: 700;
+  background: var(--accent2);
+  color: #001e11;
+}
+
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>🔮 Spirit Guide App</h1>
+    <p class="sub">Classic layout • Single ambient track (your MP3) • Read‑all narrator • 24‑hour email follow‑up.</p>
+
+    <!-- Enable Sound (autoplay fix) -->
+    <p><button id="enableSound" class="pill"><span>🔊</span><strong>Enable sound</strong> (one click)</button>
+       <span class="tiny muted">Required once per visit so browsers allow audio.</span></p>
+
+    <!-- INPUTS -->
+    <section class="card">
+      <div class="row">
+        <div>
+          <label for="name">Your Name</label>
+          <input id="name" placeholder="e.g., Steven Abbott"/>
+        </div>
+        <div>
+          <label for="dob">Date of Birth</label>
+          <input id="dob" type="date"/>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="ambient">Ambient sound</label>
+          <div class="row" style="align-items:center">
+            <select id="ambient">
+              <option value="">None</option>
+              <option value="ambient/binaural.mp3">Rhino Beat (binaural.mp3)</option>
+            </select>
+            <button id="stopAudio">Stop</button>
+            <label class="tiny" style="display:flex;align-items:center;gap:8px;margin-left:8px">
+              Ambient volume
+              <input type="range" id="ambientVol" min="0" max="1" step="0.05" value="0.35" style="width:160px">
+            </label>
+          </div>
+          <div class="tiny muted" style="margin-top:6px">Using your Ableton track at <code>ambient/binaural.mp3</code>.</div>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <div class="row">
+            <button id="demoBtn">Demo</button>
+            <button id="calcBtn">Calculate</button>
+            <button id="resetBtn">Reset</button>
+            <button id="copyBtn">Copy summary</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS SNAPSHOT -->
+    <section class="card" id="resultsCard" style="display:none">
+      <h2 id="guideName">Your Spirit Guide</h2>
+      <div class="grid">
+        <div class="kpi"><h3>Life Path</h3><div id="lifePath" class="mono">—</div></div>
+        <div class="kpi"><h3>Expression</h3><div id="expression" class="mono">—</div></div>
+        <div class="kpi"><h3>Soul Urge</h3><div id="soulUrge" class="mono">—</div></div>
+        <div class="kpi"><h3>Personality</h3><div id="personality" class="mono">—</div></div>
+        <div class="kpi"><h3>Birthday</h3><div id="birthday" class="mono">—</div></div>
+        <div class="kpi"><h3>Maturity</h3><div id="maturity" class="mono">—</div></div>
+        <div class="kpi"><h3>Karmic Debts</h3><div id="karmicDebts" class="mono">—</div></div>
+        <div class="kpi"><h3>Karmic Lessons</h3><div id="karmicLessons" class="mono">—</div></div>
+        <div class="kpi"><h3>Balance</h3><div id="balance" class="mono">—</div></div>
+      </div>
+      <div class="narrator">
+        <strong>🎙️ Narrator</strong>
+        <select id="voiceSelect" title="Choose a voice"></select>
+        <button id="speakBtn">Play</button>
+        <button id="stopSpeakBtn">Stop</button>
+      </div>
+    </section>
+
+    <!-- EMAIL + CONSENT -->
+    <section class="card" id="emailCard" style="display:none">
+      <div class="banner">
+        <strong>📩 We’ll email your full 400‑word backstory in <u>24 hours</u>.</strong>
+        <div class="muted tiny">Enter your email and tick consent so we can send it.</div>
+        <div class="row" style="margin-top:8px">
+          <input id="email" type="email" placeholder="you@example.com"/>
+          <label><input type="checkbox" id="consent"/> I agree to be contacted about my result.</label>
+          <button id="sendBtn" class="primary">Send my result</button>
+        </div>
+        <div id="sendStatus" class="muted tiny"></div>
+      </div>
+    </section>
+
+    <!-- LONG EXPLANATIONS -->
+    <section class="card" id="longCard" style="display:none">
+      <h3 class="section-title">📖 Life Path — Deep Meaning</h3>
+      <div id="lifePathLong" class="long">—</div>
+
+      <h3 class="section-title">🗣️ Expression — How You Operate</h3>
+      <div id="expressionLong" class="long">—</div>
+
+      <h3 class="section-title">💗 Soul Urge — What Your Heart Wants</h3>
+      <div id="soulUrgeLong" class="long">—</div>
+
+      <h3 class="section-title">🪞 Personality — How Others See You</h3>
+      <div id="personalityLong" class="long">—</div>
+
+      <h3 class="section-title">🎂 Birthday — Your Natural Gift</h3>
+      <div id="birthdayLong" class="long">—</div>
+
+      <h3 class="section-title">🌱 Maturity — Your Long Arc</h3>
+      <div id="maturityLong" class="long">—</div>
+
+      <h3 class="section-title">⚖️ Balance — How You Re‑centre</h3>
+      <div id="balanceLong" class="long">—</div>
+    </section>
+
+    <!-- COUNTDOWN -->
+    <section class="card" id="countdownCard" style="display:none">
+      <strong>🕒 Backstory unlocks in: <span id="countdown">—</span></strong>
+      <div class="muted tiny">(24 hours after first calculation on this device)</div>
+    </section>
+  </div>
+
+  <audio id="player" preload="none"></audio>
+
+  <script>
+  const SHEETS_URL = "https://script.google.com/macros/s/AKfycbxlNWaWtYEnn4rizDRYRhkxey6CfGczi2oYkmDgRKs7rUHvnyWs0FTaQr1XB8FzJmhi/exec";
+  const STORAGE_KEY = "spirit-guide-readall-v1";
+  const $ = (id)=>document.getElementById(id);
+  let longDB=null, countdownTimer=null;
+
+  // Enable sound
+  $('enableSound').onclick = ()=>{ $('player').muted=false; $('player').play().catch(()=>{}); $('player').pause(); $('player').volume = parseFloat(($('ambientVol')||{value:'0.35'}).value); };
+
+
+  // Volume slider
+  const VOL_KEY = 'spirit-guide-ambient-vol';
+  const volEl = $('ambientVol');
+  const savedVol = parseFloat(localStorage.getItem(VOL_KEY));
+  if(!isNaN(savedVol)) { volEl.value = savedVol.toFixed(2); }
+  const applyVolume = ()=>{ $('player').volume = parseFloat(volEl.value || '0.35'); localStorage.setItem(VOL_KEY, $('player').volume); };
+  volEl.oninput = applyVolume;
+  applyVolume();
+
+  // Ambient (only your MP3)
+  $('ambient').onchange = (e)=>{
+
+    const src = e.target.value, p=$('player');
+    if(!src){ p.pause(); return; }
+    p.src = src; p.loop = true; applyVolume();
+    p.play().catch(()=>alert("Click ‘Enable sound’ then choose again."));
+  };
+  $('stopAudio').onclick = ()=>{ const p=$('player'); p.pause(); p.currentTime=0; };
+
+  // Numerology helpers
+  function onlyLetters(str){ return (str||'').toUpperCase().replace(/[^A-Z]/g,''); }
+  function sumDigits(n){ n = String(n).replace(/[^0-9]/g,''); return n.split('').reduce((a,b)=>a+Number(b),0); }
+  function reduceNum(n){ n = Number(n); while (![11,22,33].includes(n) && n>9){ n = sumDigits(n); } return n; }
+  function nameNumber(name, type){
+    const map = {A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,S:1,T:2,U:3,V:4,W:5,X:6,Y:7,Z:8};
+    const vowels = new Set(['A','E','I','O','U','Y']);
+    let cleaned = onlyLetters(name), val = 0;
+    for(const ch of cleaned){
+      const v = map[ch]||0;
+      if(type==='vowels' && vowels.has(ch)) val += v;
+      else if(type==='consonants' && !vowels.has(ch)) val += v;
+      else if(type==='all') val += v;
+    }
+    return reduceNum(val);
+  }
+  function dateToNumbers(dstr){
+    const d = new Date(dstr); if(isNaN(d)) return {lifePath:null,birthday:null};
+    const yyyy = d.getUTCFullYear(), mm = d.getUTCMonth()+1, dd = d.getUTCDate();
+    const lifePath = reduceNum(sumDigits(yyyy)+sumDigits(mm)+sumDigits(dd));
+    return {lifePath, birthday: reduceNum(dd)};
+  }
+  function deterministicGuide(name,dob){
+    const g=["Zoriel","Nymera","Elarion","Serapha","Kael","Aven","Lyra","Thalen","Mireth","Orin"];
+    const seed=(onlyLetters(name)+dob).split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+    return g[seed%g.length];
+  }
+  function formatKarmicDebts(totalStr){ const debts=[]; for(const k of [13,14,16,19]) if(totalStr.includes(String(k))) debts.push(k); return debts.length? debts.join(", "):"None"; }
+  function timeLeftString(ms){ if(ms<=0) return "0m"; const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60; return h+"h "+m+"m "+sc+"s"; }
+
+  function customiseTextForPlacement(info,label,n){
+    let text=[info.overview, info.strengths, info.challenges, info.relationships, info.watchouts, info.coaching].join("\\n\\n");
+    const re1=new RegExp("^\\s*Life\\s*Path\\s*"+n+"\\b","i"); text=text.replace(re1,label+" "+n);
+    const re2=new RegExp("^\\s*Master\\s*Number\\s*"+n+"\\b","i"); text=text.replace(re2,label+" "+n+" (Master Number)");
+    return text;
+  }
+
+  function renderResults(r){
+    $('guideName').textContent="Your Spirit Guide: "+r.guide;
+    $('lifePath').textContent=r.lifePath; $('expression').textContent=r.expression; $('soulUrge').textContent=r.soulUrge;
+    $('personality').textContent=r.personality; $('birthday').textContent=r.birthday; $('maturity').textContent=r.maturity;
+    $('karmicDebts').textContent=r.karmicDebts; $('karmicLessons').textContent=r.karmicLessons; $('balance').textContent=r.balance;
+    if(longDB&&longDB.numbers){
+      const fmt=(n,label)=>{ const info=longDB.numbers[String(n)]; return info?customiseTextForPlacement(info,label,n):(label+" "+n+": Detailed meaning coming soon."); };
+      $('lifePathLong').textContent=fmt(r.lifePath,"Life Path"); $('expressionLong').textContent=fmt(r.expression,"Expression");
+      $('soulUrgeLong').textContent=fmt(r.soulUrge,"Soul Urge"); $('personalityLong').textContent=fmt(r.personality,"Personality");
+      $('birthdayLong').textContent=fmt(r.birthday,"Birthday"); $('maturityLong').textContent=fmt(r.maturity,"Maturity"); $('balanceLong').textContent=fmt(r.balance,"Balance");
+    } else {
+      const msg="Loading meanings…"; ["lifePathLong","expressionLong","soulUrgeLong","personalityLong","birthdayLong","maturityLong","balanceLong"].forEach(id=>$(id).textContent=msg);
+    }
+  }
+
+  function setupCountdown(firstCalcAt){
+    const unlockAt=firstCalcAt+24*60*60*1000; $('countdownCard').style.display="block";
+    clearInterval(countdownTimer); countdownTimer=setInterval(()=>{ const left=unlockAt-Date.now(); $('countdown').textContent=timeLeftString(left); if(left<=0){ clearInterval(countdownTimer); $('countdown').textContent="0m"; } }, 1000);
+  }
+
+  // Narration builder (READ EVERYTHING with preamble)
+  function buildFullNarration(){
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+    const r = saved.results || {};
+    const hasLong = !!(longDB && longDB.numbers);
+    const lines = [];
+
+    // Preamble (as you requested)
+    lines.push("This is a general overview. Your name and date of birth are captured via our Google Sheet when you provide your email and consent, so we can send your full backstory. That email follow-up contains a more precise spirit name and tailored backstory.");
+
+    if(r.guide){ lines.push(`Your Spirit Guide is ${r.guide}.`); }
+
+    // Snapshot
+    const snap = [
+      ["Life Path", r.lifePath],
+      ["Expression", r.expression],
+      ["Soul Urge", r.soulUrge],
+      ["Personality", r.personality],
+      ["Birthday", r.birthday],
+      ["Maturity", r.maturity],
+      ["Karmic Debts", r.karmicDebts],
+      ["Karmic Lessons", r.karmicLessons],
+      ["Balance", r.balance],
+    ].filter(x=>x[1]!=null && x[1] !== undefined);
+    if(snap.length){
+      lines.push("Snapshot of your numbers:");
+      snap.forEach(([k,v])=> lines.push(`${k}: ${v}.`));
+    }
+
+    // Long sections (if available)
+    function longFor(n, label){
+      if(!hasLong) return null;
+      const info = longDB.numbers[String(n)];
+      if(!info) return null;
+      const text = [info.overview, info.strengths, info.challenges, info.relationships, info.watchouts, info.coaching]
+                   .filter(Boolean).join(" ");
+      return `${label} ${n}. ${text}`;
+    }
+    if(r.lifePath)    { const s = longFor(r.lifePath, "Life Path"); if(s) lines.push(s); }
+    if(r.expression)  { const s = longFor(r.expression, "Expression"); if(s) lines.push(s); }
+    if(r.soulUrge)    { const s = longFor(r.soulUrge, "Soul Urge"); if(s) lines.push(s); }
+    if(r.personality) { const s = longFor(r.personality, "Personality"); if(s) lines.push(s); }
+    if(r.birthday)    { const s = longFor(r.birthday, "Birthday"); if(s) lines.push(s); }
+    if(r.maturity)    { const s = longFor(r.maturity, "Maturity"); if(s) lines.push(s); }
+    if(r.balance)     { const s = longFor(r.balance, "Balance"); if(s) lines.push(s); }
+
+    return lines.join(" ");
+  }
+
+  function speakAll(){
+    try{
+      const text = buildFullNarration();
+      if(!text || !text.trim()){ alert("Please calculate your reading first."); return; }
+      if(speechSynthesis.speaking) speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      const voices = speechSynthesis.getVoices()||[];
+      const sel = $('voiceSelect'); if(sel && sel.value && voices[sel.value]) u.voice = voices[sel.value];
+      // Slightly slower and calmer
+      u.rate = 0.95; u.pitch = 1.0; u.volume = 1.0;
+      speechSynthesis.speak(u);
+    }catch(e){ console.warn(e); }
+  }
+
+  // Voices
+  function populateVoices(){
+    const sel = $('voiceSelect'); sel.innerHTML="";
+    const voices = speechSynthesis.getVoices()||[];
+    voices.forEach((v,i)=>{ const opt=document.createElement("option"); opt.value=i; opt.textContent=v.name+" ("+v.lang+")"; sel.appendChild(opt); });
+  }
+  populateVoices(); if('onvoiceschanged' in speechSynthesis) speechSynthesis.onvoiceschanged = populateVoices;
+  $('speakBtn').onclick = speakAll;
+  $('stopSpeakBtn').onclick = ()=>{ if(speechSynthesis.speaking) speechSynthesis.cancel(); };
+
+  // Main events
+  $('demoBtn').onclick = ()=>{ $('name').value="Alex Example"; $('dob').value="1990-07-14"; };
+  $('calcBtn').onclick = ()=>{
+    const nm=$('name').value.trim(), d=$('dob').value; if(!nm||!d){ alert("Please enter your name and date of birth."); return; }
+    const dn = dateToNumbers(d);
+    const res = { name:nm, dob:d, guide:deterministicGuide(nm,d), lifePath:dn.lifePath, expression:nameNumber(nm,'all'), soulUrge:nameNumber(nm,'vowels'), personality:nameNumber(nm,'consonants'), birthday:dn.birthday, maturity:reduceNum(dn.lifePath + nameNumber(nm,'all')), karmicDebts:formatKarmicDebts(d.replace(/-/g,'')), karmicLessons:"—", balance:reduceNum(nameNumber(nm[0]||'','all') + (new Date(d)).getUTCDate()) };
+    $('resultsCard').style.display=$('longCard').style.display=$('emailCard').style.display="block"; renderResults(res);
+    const firstCalcAt=Date.now(); localStorage.setItem(STORAGE_KEY, JSON.stringify({name:nm, dob:d, results:res, firstCalcAt})); setupCountdown(firstCalcAt);
+  };
+  $('resetBtn').onclick = ()=>{ localStorage.removeItem(STORAGE_KEY); location.reload(); };
+  $('copyBtn').onclick = ()=>{ const saved=localStorage.getItem(STORAGE_KEY); if(!saved) return alert("Nothing to copy yet."); navigator.clipboard.writeText(saved).then(()=>alert("Copied.")); };
+  $('sendBtn').onclick = async ()=>{
+    const email = $('email').value.trim(); const consent = $('consent').checked;
+    if(!email){ $('sendStatus').innerHTML='<span style="color:#ffb3b3">Enter an email.</span>'; return; }
+    if(!consent){ $('sendStatus').innerHTML='<span style="color:#ffb3b3">Please tick consent.</span>'; return; }
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}"); const payload = { email, consent:true, timestamp:new Date().toISOString(), result: saved.results || null };
+    $('sendStatus').textContent = "Sending…";
+    try{ await fetch(SHEETS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+      $('sendStatus').innerHTML='<span style="color:#a7ffd8">Saved. We will follow up by email in ~24 hours.</span>';
+    }catch(err){ $('sendStatus').innerHTML='<span style="color:#ffb3b3">Could not send. Try again later.</span>'; }
+  };
+
+  // Load numerology file if present (optional)
+  fetch('numerology_descriptions.json?v='+Date.now()).then(r=>r.ok?r.json():Promise.reject()).then(db=>{ longDB=db; }).catch(()=>{});
+
+  // Restore state
+  (function restore(){
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if(!saved) return;
+    try{ const s = JSON.parse(saved); $('name').value=s.name||""; $('dob').value=s.dob||""; if(s.results){ renderResults(s.results); $('resultsCard').style.display=$('longCard').style.display=$('emailCard').style.display="block"; setupCountdown(s.firstCalcAt); } }catch(e){}
+  })();
+  </script>
+</body>
+</html>

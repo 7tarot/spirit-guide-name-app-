@@ -61,7 +61,6 @@
 
 <style id="sga-voice-css">
 
-/* SGA: sticky synchronicity bar + voice note */
 #sga-sticky{position:sticky;top:0;z-index:9998;background:linear-gradient(90deg,#0b1214,#0e2a31);
   border-bottom:1px solid #183a42;padding:10px 12px;display:flex;align-items:center;gap:10px}
 #sga-sticky .label{color:#9bd7e3;font-size:14px}
@@ -385,14 +384,13 @@
 
 <script>
 (function(){
-  // Show prominent Synchronicity entry (sticky bar). Non-destructive, can be closed once per device.
-  function stickySynch(){ 
+  function stickySynch(){
     try{
       if(localStorage.getItem('sgaSyncBarClosed')==='1') return;
       if(document.getElementById('sga-sticky')) return;
       const bar=document.createElement('div');
       bar.id='sga-sticky';
-      bar.innerHTML='<span class="label">Try the new <strong>Synchronicity Reader</strong> for number meanings & long readings.</span>'+
+      bar.innerHTML='<span class="label">Try the new <strong>Synchronicity Reader</strong>.</span>'+
                     '<a class="btn" href="/synchronicity.html" target="_blank">Open Synchronicity</a>'+
                     '<button class="x" aria-label="close">×</button>';
       bar.querySelector('button.x').addEventListener('click',()=>{ localStorage.setItem('sgaSyncBarClosed','1'); bar.remove(); });
@@ -400,22 +398,14 @@
     }catch(e){}
   }
 
-  // Restrict narrator voices to Google UK English Female/Male only (with friendly fallback).
   const TARGETS = ['Google UK English Female','Google UK English Male'];
   function waitForVoices(){ return new Promise(res=>{
     const done=()=>res(window.speechSynthesis.getVoices()||[]);
     const list=window.speechSynthesis.getVoices(); if(list&&list.length){ res(list); return; }
     window.speechSynthesis.onvoiceschanged=done; setTimeout(done,900);
   });}
-  function pickUK(list){
-    const fem=list.find(v=>v.name==='Google UK English Female'); 
-    const male=list.find(v=>v.name==='Google UK English Male');
-    return fem || male || null;
-  }
-  function filterVoices(list){
-    const hits=list.filter(v=>TARGETS.includes(v.name) && /^en/i.test(v.lang||''));
-    return hits;
-  }
+  function filterUK(list){ return list.filter(v=> TARGETS.indexOf(v.name)!==-1 && /^en/i.test(v.lang||'')); }
+  function bestEnglish(list){ return list.find(v=> /^en/i.test(v.lang||'')) || list[0] || null; }
   function applyToSelect(list){
     const sel=document.getElementById('voiceSelect');
     if(!sel) return;
@@ -424,7 +414,7 @@
       list.forEach(v=>{ const o=document.createElement('option'); o.value=v.name+'::'+v.lang; o.textContent=v.name+' ('+v.lang+')'; sel.appendChild(o); });
       sel.selectedIndex=0;
     }else{
-      const o=document.createElement('option'); o.value=''; o.textContent='Google voices not available here'; o.disabled=true; sel.appendChild(o);
+      const o=document.createElement('option'); o.value=''; o.textContent='Google UK voices not available here'; o.disabled=true; sel.appendChild(o);
     }
   }
   function shimSpeak(defaultVoice){
@@ -437,21 +427,18 @@
   async function limitVoices(){
     if(!('speechSynthesis' in window)) return;
     const all=await waitForVoices();
-    const ukOnly=filterVoices(all);
-    applyToSelect(ukOnly);
-    const pick=pickUK(all) || all.find(v=>/^en/i.test(v.lang||'')) || null;
-    if(pick) shimSpeak(pick); else {
+    const uk=filterUK(all);
+    applyToSelect(uk);
+    const pick = uk[0] || bestEnglish(all);
+    if(pick){ shimSpeak(pick); } else {
       if(!document.getElementById('sga-voice-note')){
-        const n=document.createElement('div'); n.id='sga-voice-note'; n.textContent='Google UK voices not available on this device; using best English voice.'; document.body.appendChild(n);
-        setTimeout(()=>{ try{ n.remove(); }catch(e){} }, 5000);
+        const n=document.createElement('div'); n.id='sga-voice-note'; n.textContent='No English TTS voice exposed by this browser.';
+        document.body.appendChild(n); setTimeout(()=>{ try{ n.remove(); }catch(e){} }, 5000);
       }
     }
   }
 
-  function init(){
-    stickySynch();
-    limitVoices();
-  }
+  function init(){ stickySynch(); limitVoices(); }
   if(document.readyState==='complete' || document.readyState==='interactive'){ setTimeout(init,30); }
   else document.addEventListener('DOMContentLoaded', ()=> setTimeout(init,30));
 })();

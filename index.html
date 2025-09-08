@@ -1,226 +1,87 @@
+
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Spirit Guide App — Voices</title>
 <style>
+
 :root{
-  --bg:#0b0f10;
-  --panel:#12181b;
-  --mint:#64f0cf;
-  --text:#eef5f2;
-  --muted:#a9c5bc;
-  --chip:#1b2226;
-  --chipBorder:#263138;
-  --danger:#ff6b6b;
-  --ok:#72f5d1;
-  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --bg:#0b0f10; --panel:#12181b; --mint:#64f0cf; --text:#eef5f2; --muted:#a9c5bc;
+  --chip:#1b2226; --chipBorder:#263138; --shadow:0 10px 30px rgba(0,0,0,.35);
 }
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-  color:var(--text);
-  background: radial-gradient(1200px 800px at 60% -10%, rgba(100,240,207,.08), transparent 40%),
-             radial-gradient(900px 600px at -10% 20%, rgba(100,240,207,.06), transparent 40%),
-             var(--bg);
-}
+*{box-sizing:border-box} html,body{height:100%}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);
+background: radial-gradient(1200px 800px at 60% -10%, rgba(100,240,207,.08), transparent 40%),
+           radial-gradient(900px 600px at -10% 20%, rgba(100,240,207,.06), transparent 40%),
+           var(--bg);}
 .container{max-width:980px;margin:80px auto;padding:16px}
-header.sticky{
-  position:sticky; top:0; z-index:99;
-  background: linear-gradient(180deg, rgba(11,15,16,.9), rgba(11,15,16,.75));
-  border-bottom:1px solid rgba(100,240,207,.15);
-  backdrop-filter: blur(6px);
-}
+header.sticky{position:sticky;top:0;z-index:99;background:linear-gradient(180deg,rgba(11,15,16,.9),rgba(11,15,16,.75));
+border-bottom:1px solid rgba(100,240,207,.15);backdrop-filter:blur(6px)}
 .header-inner{display:flex;align-items:center;gap:12px;padding:12px 16px}
 .brand{font-weight:700;letter-spacing:.4px}
-.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--chip);border:1px solid var(--chipBorder);color:var(--muted);font-size:12px}
-a.btn, button.btn{
-  appearance:none;border:none;cursor:pointer;
-  padding:10px 14px;border-radius:12px;
-  background:linear-gradient(180deg, #1a2226, #131a1d);
-  border:1px solid var(--chipBorder);
-  color:var(--text); box-shadow: var(--shadow);
-  transition:transform .08s ease, box-shadow .2s ease, border-color .2s ease;
-}
-a.btn:hover, button.btn:hover{transform:translateY(-1px);border-color:rgba(100,240,207,.5)}
-a.btn.primary, button.btn.primary{
-  background:linear-gradient(180deg, rgba(100,240,207,.2), rgba(100,240,207,.08));
-  border-color:rgba(100,240,207,.6);
-}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--chip);
+border:1px solid var(--chipBorder);color:var(--muted);font-size:12px}
+a.btn,button.btn{appearance:none;border:none;cursor:pointer;padding:10px 14px;border-radius:12px;
+background:linear-gradient(180deg,#1a2226,#131a1d);border:1px solid var(--chipBorder);color:var(--text);
+box-shadow:var(--shadow);transition:transform .08s ease,border-color .2s ease}
+a.btn:hover,button.btn:hover{transform:translateY(-1px);border-color:rgba(100,240,207,.5)}
+a.btn.primary,button.btn.primary{background:linear-gradient(180deg,rgba(100,240,207,.2),rgba(100,240,207,.08));
+border-color:rgba(100,240,207,.6)}
 .row{display:flex;gap:16px;flex-wrap:wrap}
-.card{
-  background:linear-gradient(180deg, #0f1417, #0c1012);
-  border:1px solid var(--chipBorder);
-  border-radius:16px;padding:16px;box-shadow:var(--shadow);
-}
+.card{background:linear-gradient(180deg,#0f1417,#0c1012);border:1px solid var(--chipBorder);
+border-radius:16px;padding:16px;box-shadow:var(--shadow)}
 .card h2{margin:.2rem 0 8px 0}
-.select, select, input[type="text"]{
-  width:100%;
-  background:#0d1316;color:var(--text);
-  border:1px solid var(--chipBorder);
-  border-radius:12px;padding:12px 14px;
-}
+.select,select,input[type="text"]{width:100%;background:#0d1316;color:var(--text);border:1px solid var(--chipBorder);
+border-radius:12px;padding:12px 14px}
 label{font-size:.9rem;color:var(--muted);display:block;margin-bottom:6px}
 .small{font-size:.82rem;color:var(--muted)}
 footer{opacity:.7;margin:24px 0 80px 0;text-align:center}
 .chips{display:flex;gap:8px;flex-wrap:wrap}
-.chip{
-  background:var(--chip);border:1px solid var(--chipBorder);
-  color:var(--muted);padding:6px 10px;border-radius:999px;font-size:.85rem
-}
-.kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-  background:#0c1316;border:1px solid var(--chipBorder);padding:2px 6px;border-radius:6px;color:var(--muted);font-size:.85rem}
-#note{color:var(--muted);font-size:.86rem;margin-top:6px}
+.chip{background:var(--chip);border:1px solid var(--chipBorder);color:var(--muted);padding:6px 10px;
+border-radius:999px;font-size:.85rem}
+.kbd{font-family:ui-monospace,Menlo,Consolas,monospace;background:#0c1316;border:1px solid var(--chipBorder);
+padding:2px 6px;border-radius:6px;color:var(--muted);font-size:.85rem}
 hr.sep{border:0;border-top:1px solid var(--chipBorder);margin:16px 0}
 .output{white-space:pre-wrap;line-height:1.65;word-break:break-word}
-.section h3{margin:16px 0 8px 0}
+.section h3{margin:0 0 8px 0}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .mini{font-size:.8rem}
-</style>
-</head>
+.pattern{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+
+</style></head>
 <body>
-
-<header class="sticky">
-  <div class="header-inner">
-    <div class="badge">🔮 Spirit Guide App</div>
-    <div class="brand">Voices</div>
-    <div style="flex:1"></div>
-    <a class="btn primary" href="/synchronicity.html" target="_blank" rel="noopener">🧩 Synchronicity</a>
-  </div>
-</header>
-
+<header class="sticky"><div class="header-inner">
+  <div class="badge">🔮 Spirit Guide App</div><div class="brand">Voices</div><div style="flex:1"></div>
+  <a class="btn primary" href="/synchronicity.html" target="_blank" rel="noopener">🧩 Synchronicity</a>
+</div></header>
 <div class="container">
   <div class="card">
     <h2>Voice Narrator</h2>
-    <p class="small">Only Google UK voices will be shown if available. Otherwise you'll see a fallback note and we'll auto‑pick the best English voice.</p>
-
+    <p class="small">Only Google UK voices are shown if available. Otherwise we auto-pick the best English voice and show a small note.</p>
     <div class="grid-2">
-      <div>
-        <label for="voiceSelect">Voice</label>
-        <select id="voiceSelect" class="select" aria-label="Voice"></select>
-        <div id="note"></div>
-      </div>
-      <div>
-        <label for="testPhrase">Test phrase</label>
-        <input id="testPhrase" type="text" value="Voice ready. Synchronicity unlocked." />
-      </div>
+      <div><label for="voiceSelect">Voice</label><select id="voiceSelect" class="select"></select><div id="note"></div></div>
+      <div><label for="testPhrase">Test phrase</label><input id="testPhrase" type="text" value="Voice ready. Synchronicity unlocked."></div>
     </div>
-
-    <div class="row" style="margin-top:12px">
-      <button class="btn" id="btnTest">Test Voice</button>
-      <button class="btn" id="btnStop">Stop</button>
-    </div>
-
-    <hr class="sep" />
-    <div class="chips">
-      <div id="diag" class="chip">Starting…</div>
-      <div class="chip mini">Pro tip: click <span class="kbd">Test Voice</span> once to unlock audio.</div>
-    </div>
+    <div class="row" style="margin-top:12px"><button class="btn" id="btnTest">Test Voice</button><button class="btn" id="btnStop">Stop</button></div>
+    <hr class="sep" /><div class="chips"><div id="diag" class="chip">Starting…</div><div class="chip mini">Pro tip: click <span class="kbd">Test Voice</span> once to unlock audio.</div></div>
   </div>
-
-  <div class="card">
-    <h2>Quick Links</h2>
-    <div class="chips">
-      <a class="btn" href="/" rel="noopener">🏠 Home</a>
-      <a class="btn" href="/synchronicity.html" target="_blank" rel="noopener">🧩 Open Synchronicity</a>
-    </div>
-  </div>
-
 </div>
-
-<footer class="small">© 7 Tarot — Voices module. Built for deterministic, cross‑device TTS.</footer>
-
 <script>
-(function(){
-  var voiceSelect = document.getElementById('voiceSelect');
-  var note = document.getElementById('note');
-  var diag = document.getElementById('diag');
-  var btnTest = document.getElementById('btnTest');
-  var btnStop = document.getElementById('btnStop');
-  var testPhrase = document.getElementById('testPhrase');
-  var desiredNames = [ 'Google UK English Female', 'Google UK English Male' ];
-  var voicesCache = [];
-  var unlocked = false;
-
-  function listVoices() {
-    voicesCache = window.speechSynthesis ? window.speechSynthesis.getVoices() || [] : [];
-    var googleUK = [];
-    for (var i=0;i<voicesCache.length;i++) {
-      var v = voicesCache[i];
-      if (desiredNames.indexOf(v.name) !== -1) googleUK.push(v);
-    }
-    voiceSelect.innerHTML = '';
-
-    if (googleUK.length) {
-      googleUK.sort(function(a,b){return desiredNames.indexOf(a.name) - desiredNames.indexOf(b.name)});
-      for (var j=0;j<googleUK.length;j++) {
-        var opt = document.createElement('option');
-        opt.value = googleUK[j].name;
-        opt.textContent = googleUK[j].name + ' (' + googleUK[j].lang + ')';
-        voiceSelect.appendChild(opt);
-      }
-      note.textContent = '';
-    } else {
-      // Fallback: best English voice we can find
-      var english = voicesCache.filter(function(v){ return /^en(-|$)/i.test(v.lang || '') });
-      english.sort(function(a,b){
-        function score(v){
-          var s = 0;
-          if ((v.name||'').toLowerCase().indexOf('google') !== -1) s += 2;
-          if ((v.name||'').toLowerCase().indexOf('uk') !== -1) s += 1;
-          if (v.localService) s += 0.5;
-          return -s;
-        }
-        return score(a)-score(b);
-      });
-      var chosen = english[0] || voicesCache[0] || null;
-      var opt2 = document.createElement('option');
-      opt2.value = chosen ? chosen.name : '';
-      opt2.textContent = chosen ? (chosen.name + ' (' + chosen.lang + ')') : 'Default System Voice';
-      voiceSelect.appendChild(opt2);
-      note.textContent = 'Google UK voices not available here — using best English voice.';
-    }
-
-    diag.textContent = 'Ready / Voices: ' + (voicesCache.length||0);
-  }
-
-  function pickVoiceByName(name){
-    for (var i=0;i<voicesCache.length;i++) if (voicesCache[i].name === name) return voicesCache[i];
-    return null;
-  }
-
-  function speak(text) {
-    if (!window.speechSynthesis) return;
-    var u = new SpeechSynthesisUtterance(text);
-    var sel = pickVoiceByName(voiceSelect.value);
-    if (sel) u.voice = sel;
-    u.rate = 1;
-    u.pitch = 1;
-    window.speechSynthesis.speak(u);
-  }
-
-  btnTest.addEventListener('click', function(){
-    var phrase = (testPhrase.value||'').replace(/\s+/g,' ').trim();
-    if (!phrase) phrase = 'Voice ready. Synchronicity unlocked.';
-    window.speechSynthesis.cancel();
-    speak(phrase);
-    unlocked = true;
-  });
-
-  btnStop.addEventListener('click', function(){
-    if (window.speechSynthesis) window.speechSynthesis.cancel();
-  });
-
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.onvoiceschanged = function(){ setTimeout(listVoices, 50); };
-    setTimeout(listVoices, 120);
-  } else {
-    diag.textContent = 'Speech synthesis not supported in this browser.';
-  }
+(function(){var voiceSelect=document.getElementById('voiceSelect');var note=document.getElementById('note');var diag=document.getElementById('diag');
+var btnTest=document.getElementById('btnTest');var btnStop=document.getElementById('btnStop');var testPhrase=document.getElementById('testPhrase');
+var desired=['Google UK English Female','Google UK English Male'];var voicesCache=[];
+function listVoices(){voicesCache=window.speechSynthesis?window.speechSynthesis.getVoices()||[]:[];var uk=[];
+for(var i=0;i<voicesCache.length;i++) if(desired.indexOf(voicesCache[i].name)!==-1) uk.push(voicesCache[i]);
+voiceSelect.innerHTML=''; if(uk.length){uk.sort(function(a,b){return desired.indexOf(a.name)-desired.indexOf(b.name)});
+for(var j=0;j<uk.length;j++){var o=document.createElement('option');o.value=uk[j].name;o.textContent=uk[j].name+' ('+uk[j].lang+')';voiceSelect.appendChild(o);} note.textContent='';} else {var english=voicesCache.filter(function(v){return /^en(-|$)/i.test(v.lang||'')});
+english.sort(function(a,b){function score(v){var s=0;if((v.name||'').toLowerCase().indexOf('google')!==-1)s+=2;if((v.name||'').toLowerCase().indexOf('uk')!==-1)s+=1;if(v.localService)s+=0.5;return -s;} return score(a)-score(b);});
+var chosen=english[0]||voicesCache[0]||null; var o2=document.createElement('option');o2.value=chosen?chosen.name:'';o2.textContent=chosen?(chosen.name+' ('+chosen.lang+')'):'Default System Voice';voiceSelect.appendChild(o2);
+note.textContent='Google UK voices not available here — using best English voice.';} diag.textContent='Ready / Voices: '+(voicesCache.length||0);}
+function byName(n){for(var i=0;i<voicesCache.length;i++) if(voicesCache[i].name===n) return voicesCache[i]; return null;}
+function speak(t){if(!window.speechSynthesis)return;var u=new SpeechSynthesisUtterance(t);var sel=byName(voiceSelect.value);if(sel)u.voice=sel; window.speechSynthesis.speak(u);}
+btnTest.addEventListener('click',function(){var p=(testPhrase.value||'').replace(/\s+/g,' ').trim()||'Voice ready. Synchronicity unlocked.';window.speechSynthesis.cancel();speak(p);});
+btnStop.addEventListener('click',function(){if(window.speechSynthesis) window.speechSynthesis.cancel();});
+if('speechSynthesis' in window){window.speechSynthesis.onvoiceschanged=function(){setTimeout(listVoices,50);}; setTimeout(listVoices,120);} else {diag.textContent='Speech synthesis not supported in this browser.';}
 })();
 </script>
-</body>
-</html>
+</body></html>

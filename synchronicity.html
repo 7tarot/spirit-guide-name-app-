@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -5,93 +6,53 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Synchronicity Reader — 7 Tarot</title>
 <style>
+
 :root{
-  --bg:#0b0f10;
-  --panel:#12181b;
-  --mint:#64f0cf;
-  --text:#eef5f2;
-  --muted:#a9c5bc;
-  --chip:#1b2226;
-  --chipBorder:#263138;
-  --danger:#ff6b6b;
-  --ok:#72f5d1;
-  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --bg:#0b0f10; --panel:#12181b; --mint:#64f0cf; --text:#eef5f2; --muted:#a9c5bc;
+  --chip:#1b2226; --chipBorder:#263138; --shadow:0 10px 30px rgba(0,0,0,.35);
 }
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-  color:var(--text);
-  background: radial-gradient(1200px 800px at 60% -10%, rgba(100,240,207,.08), transparent 40%),
-             radial-gradient(900px 600px at -10% 20%, rgba(100,240,207,.06), transparent 40%),
-             var(--bg);
-}
+*{box-sizing:border-box} html,body{height:100%}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);
+background: radial-gradient(1200px 800px at 60% -10%, rgba(100,240,207,.08), transparent 40%),
+           radial-gradient(900px 600px at -10% 20%, rgba(100,240,207,.06), transparent 40%),
+           var(--bg);}
 .container{max-width:980px;margin:80px auto;padding:16px}
-header.sticky{
-  position:sticky; top:0; z-index:99;
-  background: linear-gradient(180deg, rgba(11,15,16,.9), rgba(11,15,16,.75));
-  border-bottom:1px solid rgba(100,240,207,.15);
-  backdrop-filter: blur(6px);
-}
+header.sticky{position:sticky;top:0;z-index:99;background:linear-gradient(180deg,rgba(11,15,16,.9),rgba(11,15,16,.75));
+border-bottom:1px solid rgba(100,240,207,.15);backdrop-filter:blur(6px)}
 .header-inner{display:flex;align-items:center;gap:12px;padding:12px 16px}
 .brand{font-weight:700;letter-spacing:.4px}
-.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--chip);border:1px solid var(--chipBorder);color:var(--muted);font-size:12px}
-a.btn, button.btn{
-  appearance:none;border:none;cursor:pointer;
-  padding:10px 14px;border-radius:12px;
-  background:linear-gradient(180deg, #1a2226, #131a1d);
-  border:1px solid var(--chipBorder);
-  color:var(--text); box-shadow: var(--shadow);
-  transition:transform .08s ease, box-shadow .2s ease, border-color .2s ease;
-}
-a.btn:hover, button.btn:hover{transform:translateY(-1px);border-color:rgba(100,240,207,.5)}
-a.btn.primary, button.btn.primary{
-  background:linear-gradient(180deg, rgba(100,240,207,.2), rgba(100,240,207,.08));
-  border-color:rgba(100,240,207,.6);
-}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--chip);
+border:1px solid var(--chipBorder);color:var(--muted);font-size:12px}
+a.btn,button.btn{appearance:none;border:none;cursor:pointer;padding:10px 14px;border-radius:12px;
+background:linear-gradient(180deg,#1a2226,#131a1d);border:1px solid var(--chipBorder);color:var(--text);
+box-shadow:var(--shadow);transition:transform .08s ease,border-color .2s ease}
+a.btn:hover,button.btn:hover{transform:translateY(-1px);border-color:rgba(100,240,207,.5)}
+a.btn.primary,button.btn.primary{background:linear-gradient(180deg,rgba(100,240,207,.2),rgba(100,240,207,.08));
+border-color:rgba(100,240,207,.6)}
 .row{display:flex;gap:16px;flex-wrap:wrap}
-.card{
-  background:linear-gradient(180deg, #0f1417, #0c1012);
-  border:1px solid var(--chipBorder);
-  border-radius:16px;padding:16px;box-shadow:var(--shadow);
-}
+.card{background:linear-gradient(180deg,#0f1417,#0c1012);border:1px solid var(--chipBorder);
+border-radius:16px;padding:16px;box-shadow:var(--shadow)}
 .card h2{margin:.2rem 0 8px 0}
-.select, select, input[type="text"]{
-  width:100%;
-  background:#0d1316;color:var(--text);
-  border:1px solid var(--chipBorder);
-  border-radius:12px;padding:12px 14px;
-}
+.select,select,input[type="text"]{width:100%;background:#0d1316;color:var(--text);border:1px solid var(--chipBorder);
+border-radius:12px;padding:12px 14px}
 label{font-size:.9rem;color:var(--muted);display:block;margin-bottom:6px}
 .small{font-size:.82rem;color:var(--muted)}
 footer{opacity:.7;margin:24px 0 80px 0;text-align:center}
 .chips{display:flex;gap:8px;flex-wrap:wrap}
-.chip{
-  background:var(--chip);border:1px solid var(--chipBorder);
-  color:var(--muted);padding:6px 10px;border-radius:999px;font-size:.85rem
-}
-.kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-  background:#0c1316;border:1px solid var(--chipBorder);padding:2px 6px;border-radius:6px;color:var(--muted);font-size:.85rem}
-#note{color:var(--muted);font-size:.86rem;margin-top:6px}
+.chip{background:var(--chip);border:1px solid var(--chipBorder);color:var(--muted);padding:6px 10px;
+border-radius:999px;font-size:.85rem}
+.kbd{font-family:ui-monospace,Menlo,Consolas,monospace;background:#0c1316;border:1px solid var(--chipBorder);
+padding:2px 6px;border-radius:6px;color:var(--muted);font-size:.85rem}
 hr.sep{border:0;border-top:1px solid var(--chipBorder);margin:16px 0}
 .output{white-space:pre-wrap;line-height:1.65;word-break:break-word}
-.section h3{margin:16px 0 8px 0}
+.section h3{margin:0 0 8px 0}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .mini{font-size:.8rem}
-
-.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
-fieldset.inline{border:1px solid var(--chipBorder);border-radius:12px;padding:10px 12px}
-fieldset.inline legend{padding:0 6px;color:var(--muted)}
 .pattern{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.pattern .chip strong{color:var(--mint)}
-.output .section{margin:10px 0 20px 0}
-textarea.copybox{width:100%;min-height:140px;background:#0d1316;border:1px solid var(--chipBorder);border-radius:12px;color:var(--text);padding:12px 14px}
-.checkbox-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}
+
 </style>
 </head>
 <body>
-
 <header class="sticky">
   <div class="header-inner">
     <div class="badge">🧩 Synchronicity Reader</div>
@@ -104,12 +65,11 @@ textarea.copybox{width:100%;min-height:140px;background:#0d1316;border:1px solid
 <div class="container">
   <div class="card">
     <h2>Analyze a Number</h2>
-    <div class="toolbar">
+    <div class="row" style="align-items:flex-end">
       <div style="flex:1;min-width:240px">
         <label for="numInput">Number</label>
         <input id="numInput" type="text" placeholder="e.g., 2011, 2222, 1234" />
       </div>
-
       <div>
         <label for="tone">Tone</label>
         <select id="tone" class="select">
@@ -118,7 +78,6 @@ textarea.copybox{width:100%;min-height:140px;background:#0d1316;border:1px solid
           <option>Mystical-Rich</option>
         </select>
       </div>
-
       <div class="row">
         <button class="btn primary" id="btnAnalyze">Analyze</button>
         <button class="btn" id="btnCopy">Copy reading</button>
@@ -149,7 +108,7 @@ textarea.copybox{width:100%;min-height:140px;background:#0d1316;border:1px solid
             <input id="testPhrase" type="text" value="Voice ready. Synchronicity unlocked." />
           </div>
         </div>
-        <div class="checkbox-row small">
+        <div class="small" style="margin-top:6px">
           <label><input type="checkbox" class="speakChk" value="Love" checked> Love</label>
           <label><input type="checkbox" class="speakChk" value="Work/Vocation" checked> Work/Vocation</label>
           <label><input type="checkbox" class="speakChk" value="Confusion" checked> Confusion</label>
@@ -178,416 +137,71 @@ textarea.copybox{width:100%;min-height:140px;background:#0d1316;border:1px solid
 <footer class="small">© 7 Tarot — Synchronicity Reader. Deterministic readings seeded by your number.</footer>
 
 <script>
-(function(){
-  // --- Deterministic RNG: xmur3 + mulberry32 ---
-  function xmur3(str){
-    for (var i = 0, h = 1779033703 ^ str.length; i < str.length; i++) {
-      h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
-      h = (h << 13) | (h >>> 19);
-    }
-    return function(){ h = Math.imul(h ^ (h >>> 16), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909); return (h ^= h >>> 16) >>> 0; };
-  }
-  function mulberry32(a){ return function(){ var t = a += 0x6D2B79F5; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
-  function seededRand(seedStr){ var seed = xmur3(seedStr)(); return mulberry32(seed); }
-  function pick(rand, arr){ return arr[Math.floor(rand()*arr.length)] || arr[0]; }
+(function(){'use strict';
+  function xmur3(str){for(var i=0,h=1779033703^str.length;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=(h<<13)|(h>>>19)}return function(){h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return (h^=h>>>16)>>>0;}}
+  function mulberry32(a){return function(){var t=a+=0x6D2B79F5;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return ((t^(t>>>14))>>>0)/4294967296;}}
+  function seededRand(seedStr){var seed=xmur3(seedStr)();return mulberry32(seed);}
+  function pick(rand, arr){return arr[Math.floor(rand()*arr.length)]||arr[0];}
+  function shuffle(rand, arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(rand()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
 
-  // --- Numerology / Tarot Maps ---
-  var majors = {
-    1:['The Magician','The Sun'],
-    2:['Justice','The High Priestess'],
-    3:['The Empress','The Lovers'],
-    4:['The Emperor','Death (XIII)'],
-    5:['The Hierophant','Temperance'],
-    6:['The Lovers','The Devil'],
-    7:['The Chariot','The Star'],
-    8:['Strength','Judgement'],
-    9:['The Hermit','The World']
-  };
-  var masterMap = {
-    '11':{base:2, sign:'Libra'},
-    '22':{base:4, sign:'Scorpio & Aries'},
-    '33':{base:6, sign:'Capricorn & Gemini'}
-  };
+  var majors={1:['The Magician','The Sun'],2:['Justice','The High Priestess'],3:['The Empress','The Lovers'],4:['The Emperor','Death (XIII)'],5:['The Hierophant','Temperance'],6:['The Lovers','The Devil'],7:['The Chariot','The Star'],8:['Strength','Judgement'],9:['The Hermit','The World']};
+  var masterMap={'11':{base:2,sign:'Libra'},'22':{base:4,sign:'Scorpio & Aries'},'33':{base:6,sign:'Capricorn & Gemini'}};
+  var suits=['Wands','Cups','Swords','Pentacles'];
 
-  var suits = ['Wands','Cups','Swords','Pentacles'];
+  function digitalRoot(n){n=Math.abs(n|0);while(n>9){var s=0;while(n>0){s+=n%10;n=(n/10)|0}n=s}return n||0}
+  function pairSegments(str){var cleaned=(str+'').replace(/[^0-9]/g,'');var segs=[];for(var i=0;i<cleaned.length;i+=2)segs.push(cleaned.slice(i,i+2));return segs.filter(function(s){return s.length>0});}
+  function explainSegments(segs){var counts={};for(var i=0;i<segs.length;i++)counts[segs[i]]=(counts[segs[i]]||0)+1;var list=[];for(var k in counts){var base,label;if(masterMap[k]){base=masterMap[k].base;label=k+' → base '+base+' (master; '+masterMap[k].sign+')';}else{var dr=digitalRoot(parseInt(k,10));base=dr;label=k+' → base '+base;}list.push({seg:k,base:base,label:label,count:counts[k]})}
+    list.sort(function(a,b){return segs.indexOf(a.seg)-segs.indexOf(b.seg)});return list;}
+  function overallBase(str){var c=(str+'').replace(/[^0-9]/g,'');if(masterMap[c])return masterMap[c].base;var sum=0;for(var i=0;i<c.length;i++)sum+=parseInt(c[i],10);return digitalRoot(sum);}
+  function baseContext(base){return {base:base,majors:majors[base]||[],minorsNumber:base,minorsList:suits.map(function(s){return (base===1?'Ace':base)+' of '+s;})}}
+  function tonePhrases(tone){if(tone==='Mystical-Rich')return {bridge:['and','while','therefore','meanwhile','as a result','nonetheless'],verbs:['organises','clarifies','grounds','illuminates','strengthens','reconciles','steadies'],vibes:['threshold','mirror','altar of choice','liminal path','arc','cipher','tide'],adviceOpen:['Practically speaking,','In everyday terms,','Applied gently,','Tactically,','In real life,'],steer:['reduce friction by','name the pattern and then','choose one small promise and','clean up one loose end and','ask for one clear sign and']};
+    if(tone==='Mystical-Light')return {bridge:['and','so','meanwhile','in turn','as a result'],verbs:['supports','nudges','highlights','grounds','clarifies','opens'],vibes:['path','signal','mirror','choice point','pivot','arc'],adviceOpen:['In practice,','Day to day,','Keep it simple:','A helpful move:','Try this:'],steer:['lower the pressure by','name what’s true and','pick one useful action and','close one nagging task and','ask one honest question and']};
+    return {bridge:['and','so','meanwhile','in turn','therefore'],verbs:['supports','clarifies','builds','simplifies','organises','steadies'],vibes:['pattern','signal','checkpoint','decision','step','route'],adviceOpen:['Practically,','In plain English,','Next step:','Useful move:','Keep it simple:'],steer:['reduce friction by','state the facts and','pick one small action and','finish one loose end and','ask one clear question and']}; }
+  function uniqueFiller(rand){var base=['Keep your notes short and visible.','Use a two-minute timer to begin.','Close one tab; open the tool you need.','Name the outcome in one clear sentence.','Track wins in a simple list.','Ask for help early, not late.','Rest before you are exhausted.','Favour clarity over speed.','Limit inputs; protect your attention.','Put the next step in your calendar.','Tidy the workspace you actually use.','Tell someone your next deadline.','Prepare the tools before the task.','Make it easy to restart tomorrow.','Decide what you will not do today.']; return shuffle(rand, base);}
+  function composeSection(rand,tone,category,numStr,uniqueSegs,finalB){var tp=tonePhrases(tone);var bridges=tp.bridge,verbs=tp.verbs,vibes=tp.vibes;var fbCtx=baseContext(finalB);
+    var intro='Your number centres on base '+finalB+' ('+(fbCtx.majors.join(' & ')||'—')+').'; if(uniqueSegs.length){var u0=uniqueSegs[0];intro+=' Early segments emphasise '+u0.seg+' → '+u0.base+(u0.count>1?(' ×'+u0.count):'')+', setting a tone of '+pick(rand,vibes)+'.';}
+    var mid=' Expect a '+pick(rand,['steady','pivotal','clearing','integrative','forward','restorative'])+' phase where small choices '+pick(rand,verbs)+' momentum '+pick(rand,bridges)+' uncertainty narrows.';
+    var signals=' Signals & cards: base '+finalB+' points to '+(fbCtx.majors.join(' and ')||'your core values')+'. Minors emphasise the '+(finalB===1?'Ace':finalB)+' across '+suits.join(', ')+', a reminder to translate intuition into one clear move.';
+    var advice=pick(rand,tp.adviceOpen)+' '+pick(rand,tp.steer)+' take the next step within 24 hours.';
+    var p1=intro+mid; var p2=signals; var p3=advice+' Expect small confirmations as the environment responds to consistent action.';
+    var filler=uniqueFiller(rand);
+    function padToWords(s,target){var words=s.split(/\s+/).length;var i=0;while(words<target && i<filler.length){var add=' '+filler[i];i++;s+=add;words+=add.split(/\s+/).length;}return s;}
+    var text=p1+' '+p2+' '+p3; text=padToWords(text,380); return text;}
 
-  function digitalRoot(n){
-    n = Math.abs(n|0);
-    while(n>9){ var s=0; while(n>0){ s+=n%10; n=(n/10)|0; } n=s; }
-    return n || 0;
-  }
-
-  function pairSegments(str){
-    var cleaned = (str+'').replace(/[^0-9]/g,'');
-    var segs = [];
-    for (var i=0;i<cleaned.length;i+=2) {
-      segs.push(cleaned.slice(i,i+2));
-    }
-    return segs.filter(function(s){return s.length>0});
-  }
-
-  function explainSegments(segs){
-    var unique = {}, list=[], counts={};
-    for (var i=0;i<segs.length;i++){ counts[segs[i]] = (counts[segs[i]]||0)+1; }
-    for (var k in counts){ 
-      var count = counts[k];
-      var base, label;
-      if (masterMap[k]){ base = masterMap[k].base; label = k+' → base '+base+' (master; '+masterMap[k].sign+')'; }
-      else {
-        var dr = digitalRoot(parseInt(k,10));
-        base = dr; label = k+' → base '+base;
-      }
-      list.push({ seg:k, base:base, label:label, count:count });
-    }
-    // order by first appearance in segs
-    list.sort(function(a,b){ return segs.indexOf(a.seg) - segs.indexOf(b.seg); });
-    return list;
-  }
-
-  function overallBase(str){
-    var cleaned = (str+'').replace(/[^0-9]/g,'');
-    if (masterMap[cleaned]) return masterMap[cleaned].base;
-    var sum=0; for (var i=0;i<cleaned.length;i++) sum += parseInt(cleaned[i],10);
-    return digitalRoot(sum);
-  }
-
-  function baseContext(base){
-    var ctx = {
-      base:base,
-      majors: majors[base] || [],
-      minorsNumber: base,
-      minorsList: suits.map(function(s){ return (base===1?'Ace':base)+' of '+s; })
-    };
-    return ctx;
-  }
-
-  // --- Tone Packs ---
-  function tonePhrases(tone){
-    if (tone==='Mystical-Rich') return {
-      bridge:['and','while','therefore','meanwhile','as a result','nonetheless'],
-      verbs:['aligns','transmutes','gestures toward','coaxes','illuminates','grounds','unlocks','purifies','reconciles'],
-      vibes:['threshold','torchlight','mirror','altar of choice','liminal path','arc','cipher','tide','current'],
-      adviceOpen:['Practically speaking,','In everyday terms,','Applied gently,','Tactically,','In real life,'],
-      steer:['reduce friction by','name the pattern and then','choose one small promise and','clean up one loose end and','ask for one clear sign and'],
-    };
-    if (tone==='Mystical-Light') return {
-      bridge:['and','while','so','meanwhile','in turn','as a result'],
-      verbs:['supports','nudges','highlights','grounds','clarifies','opens'],
-      vibes:['path','signal','mirror','choice point','pivot','arc'],
-      adviceOpen:['In practice,','Day to day,','Keep it simple:','A helpful move:','Try this:'],
-      steer:['lower the pressure by','name what’s true and','pick one useful action and','close one nagging task and','ask one honest question and'],
-    };
-    return {
-      bridge:['and','so','meanwhile','in turn','therefore'],
-      verbs:['supports','clarifies','points to','helps','reduces','improves'],
-      vibes:['pattern','signal','checkpoint','decision','step','route'],
-      adviceOpen:['Practically,','In plain English,','Next step:','Useful move:','Keep it simple:'],
-      steer:['reduce friction by','state the facts and','pick one small action and','finish one loose end and','ask one clear question and'],
-    };
-  }
-
-  function randSentences(rand, count, stock){
-    var out=[]; for (var i=0;i<count;i++) out.push(pick(rand,stock));
-    return out;
-  }
-
-  function composeSection(rand, tone, category, numStr, uniqueSegs, finalB){
-    var tp = tonePhrases(tone);
-    var intro = [];
-    var bridges = tp.bridge;
-    var verbs = tp.verbs;
-    var vibes = tp.vibes;
-
-    var hints=[];
-    for (var i=0;i<uniqueSegs.length;i++) {
-      var u=uniqueSegs[i];
-      var ctx=baseContext(u.base);
-      hints.push(
-        (u.seg in masterMap ? (u.seg+' (master → '+u.base+')') : (u.seg+' → '+u.base)) +
-        ' → Majors: '+ctx.majors.join(', ') + '; Minors: '+ctx.minorsList.join(', ')
-      );
-    }
-
-    var fbCtx = baseContext(finalB);
-    var opening = 'For '+category.toLowerCase()+', your number anchors around base '+finalB+
-      ' ('+ (fbCtx.majors.join(' & ')||'—') +').';
-    intro.push(opening);
-
-    if (uniqueSegs.length) {
-      var u0 = uniqueSegs[0];
-      var extra = ' The early segments emphasise '+u0.seg+' → '+u0.base + (u0.count>1?(' ×'+u0.count):'') + ', setting a tone of '+pick(rand,vibes)+'.';
-      intro.push(extra);
-    }
-
-    var mid = ' Overall, expect a ' + pick(rand,['steady','pivotal','clearing','integrative','forward','restorative']) + ' phase';
-    mid += ' where small choices ' + pick(rand,verbs) + ' momentum ' + pick(rand,bridges) + ' narrows uncertainty.';
-    intro.push(mid);
-
-    // Advice chunk
-    var advice = tp.adviceOpen[ Math.floor(rand()*tp.adviceOpen.length) ] + ' ' + pick(rand,tp.steer) +
-      ' take the next step with one measurable action within 24 hours.';
-
-    // Build 3 paragraphs ~ 380-420 words total
-    function padToWords(s, target){
-      // grow with some stock lines to hit target range deterministically
-      var stock=[
-        ' Keep your notes short and visible.',
-        ' Use a two-minute timer to begin.',
-        ' Close one tab; open the tool you need.',
-        ' Name the outcome in one clear sentence.',
-        ' Track wins in a simple list.',
-        ' Ask for help early, not late.',
-        ' Rest before you are exhausted.',
-        ' Favour clarity over speed.'
-      ];
-      var words = s.split(/\s+/).length;
-      while(words < target) {
-        var add = pick(rand, stock);
-        s += add;
-        words += add.split(/\s+/).length;
-      }
-      return s;
-    }
-
-    var p1 = intro.join(' ');
-    var p2 = 'Signals & cards: base '+finalB+' invites you to work with '+fbCtx.majors.join(' and ')+' — practically this means honouring the '+pick(rand,['limit','structure','timing','truth','boundary','energy'])+
-      ', and checking progress at simple checkpoints. Minors emphasise the '+(finalB===1?'Ace':finalB)+' across '+suits.join(', ')+', a reminder to translate intuition into a single clear move.';
-    var p3 = advice + ' Expect the landscape to shift in small, testable ways that confirm you are on the right track.';
-
-    // Tailor lightly by category
-    var tailHints = {
-      'Love':' Keep the conversation concrete: what will happen by a specific date? Share needs in first-person language.',
-      'Work/Vocation':' Scope your next sprint to something you can finish this week; ship early, iterate later.',
-      'Confusion':' Reduce inputs. Fewer opinions create more signal.',
-      'Family':' Agree on one shared routine that lowers stress for everyone.',
-      'Frustration':' Swap rumination for motion: one tiny task that bites into the blockage.'
-    };
-
-    var baseStr = '\n\n<strong>'+category+'</strong>\n' + p1 + ' ' + p2 + ' ' + p3 + (tailHints[category]||'');
-    // target around 380-420 words
-    baseStr = padToWords(baseStr, 380);
-    return baseStr;
-  }
-
-  // --- UI Wiring ---
-  var numInput = document.getElementById('numInput');
-  var toneSel = document.getElementById('tone');
-  var btnAnalyze = document.getElementById('btnAnalyze');
-  var btnCopy = document.getElementById('btnCopy');
-  var btnCopyHtml = document.getElementById('btnCopyHtml');
-  var segmentsEl = document.getElementById('segments');
-  var basesEl = document.getElementById('bases');
-  var finalBaseEl = document.getElementById('finalBase');
-  var patternEl = document.getElementById('pattern');
-  var readingEl = document.getElementById('reading');
-
-  function renderChips(container, items){
-    container.innerHTML = '';
-    for (var i=0;i<items.length;i++) {
-      var d = document.createElement('div');
-      d.className = 'chip';
-      d.innerHTML = items[i];
-      container.appendChild(d);
-    }
-  }
-
-  function analyzeNow(){
-    var raw = (numInput.value||'').replace(/[^0-9]/g,'');
-    if (!raw) return;
-    var rand = seededRand(raw + '|' + (toneSel.value||''));
-
-    var segs = pairSegments(raw);
-    var explained = explainSegments(segs);
-
-    // segments chips with ×count when >1
-    renderChips(segmentsEl, explained.map(function(e){ return '<strong>'+e.seg+'</strong>' + (e.count>1?(' ×'+e.count):''); }));
-
-    // bases chips
-    renderChips(basesEl, explained.map(function(e){ return 'base <strong>'+e.base+'</strong>'; }));
-
-    // final base
-    var fb = overallBase(raw);
-    renderChips(finalBaseEl, ['Final base <strong>'+fb+'</strong>']);
-
-    // pattern chips (unique explanations without duplicates)
-    renderChips(patternEl, explained.map(function(e){ return e.label + (e.count>1?(' <strong>×'+e.count+'</strong>'):''); }));
-
-    // Build reading (five sections)
-    var cats = ['Love','Work/Vocation','Confusion','Family','Frustration'];
-    var html = [];
-    for (var i=0;i<cats.length;i++) {
-      var sec = composeSection(rand, toneSel.value||'Plain-English', cats[i], raw, explained, fb);
-      html.push('<div class="section" id="sec-'+cats[i].toLowerCase().replace(/[^a-z]+/g,'-')+'"><h3>'+cats[i]+'</h3><p>'+sec.replace(/\n/g,'</p><p>')+'</p></div>');
-    }
-    readingEl.innerHTML = html.join('');
-  }
-
+  var numInput=document.getElementById('numInput'); var toneSel=document.getElementById('tone'); var btnAnalyze=document.getElementById('btnAnalyze');
+  var btnCopy=document.getElementById('btnCopy'); var btnCopyHtml=document.getElementById('btnCopyHtml');
+  var segmentsEl=document.getElementById('segments'); var basesEl=document.getElementById('bases'); var finalBaseEl=document.getElementById('finalBase'); var patternEl=document.getElementById('pattern'); var readingEl=document.getElementById('reading');
+  function renderChips(container,items){container.innerHTML='';for(var i=0;i<items.length;i++){var d=document.createElement('div');d.className='chip';d.innerHTML=items[i];container.appendChild(d);}}
+  function getReadingTextPlain(){var tmp=readingEl.innerHTML;var text=tmp.replace(/<[^>]+>/g,'');text=text.replace(/[#*_`~<>]/g,'');text=text.replace(/\s+/g,' ').replace(/\s+\./g,'.');return text.trim();}
+  function getReadingHtml(){return readingEl.innerHTML;}
+  function analyzeNow(){var raw=(numInput.value||'').replace(/[^0-9]/g,''); if(!raw) return; var rand=seededRand(raw+'|'+(toneSel.value||'')); var segs=pairSegments(raw); var explained=explainSegments(segs);
+    renderChips(segmentsEl, explained.map(function(e){return '<strong>'+e.seg+'</strong>'+(e.count>1?(' ×'+e.count):'');}));
+    renderChips(basesEl, explained.map(function(e){return 'base <strong>'+e.base+'</strong>';}));
+    var fb=overallBase(raw); renderChips(finalBaseEl,['Final base <strong>'+fb+'</strong>']);
+    renderChips(patternEl, explained.map(function(e){return e.label+(e.count>1?(' <strong>×'+e.count+'</strong>'):'');}));
+    var cats=['Love','Work/Vocation','Confusion','Family','Frustration']; var html=[];
+    for(var i=0;i<cats.length;i++){var sec=composeSection(rand,toneSel.value||'Plain-English',cats[i],raw,explained,fb); html.push('<div class="section" id="sec-'+cats[i].toLowerCase().replace(/[^a-z]+/g,'-')+'"><h3>'+cats[i]+'</h3><p>'+sec.replace(/\n/g,'</p><p>')+'</p></div>');}
+    readingEl.innerHTML=html.join(''); }
   btnAnalyze.addEventListener('click', analyzeNow);
-  numInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') analyzeNow(); });
+  numInput.addEventListener('keydown', function(e){if(e.key==='Enter') analyzeNow();});
+  btnCopy.addEventListener('click', function(){var t=getReadingTextPlain(); if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t);} else {var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}});
+  btnCopyHtml.addEventListener('click', function(){var t=getReadingHtml(); if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t);} else {var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.execCommand('copy');document.body.removeChild(ta);}});
 
-  function getReadingTextPlain(){
-    // Strip HTML to text for "Copy reading"
-    var tmp = readingEl.innerHTML;
-    var text = tmp.replace(/<[^>]+>/g,''); // remove tags
-    text = text.replace(/[#*_`~<>]/g,''); // odd symbols
-    text = text.replace(/\s+/g,' ').replace(/\s+\./g,'.'); // whitespace
-    return text.trim();
-  }
-  function getReadingHtml(){
-    return readingEl.innerHTML;
-  }
-
-  btnCopy.addEventListener('click', function(){
-    var t = getReadingTextPlain();
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(t);
-    } else {
-      var ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-    }
-  });
-  btnCopyHtml.addEventListener('click', function(){
-    var t = getReadingHtml();
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(t);
-    } else {
-      var ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-    }
-  });
-
-  // --- TTS ---
-  var ttsVoice = document.getElementById('ttsVoice');
-  var ttsNote = document.getElementById('ttsNote');
-  var btnTest = document.getElementById('btnTest');
-  var btnSpeak = document.getElementById('btnSpeak');
-  var btnStop = document.getElementById('btnStop');
-  var diag = document.getElementById('diag');
-  var speakChks = [].slice.call(document.querySelectorAll('.speakChk'));
-  var desiredNames = ['Google UK English Female','Google UK English Male'];
-  var voicesCache = [];
-
-  function listVoices(){
-    voicesCache = window.speechSynthesis ? (window.speechSynthesis.getVoices()||[]) : [];
-    var googleUK = [];
-    for (var i=0;i<voicesCache.length;i++) if (desiredNames.indexOf(voicesCache[i].name)!==-1) googleUK.push(voicesCache[i]);
-
-    ttsVoice.innerHTML = '';
-    if (googleUK.length) {
-      googleUK.sort(function(a,b){return desiredNames.indexOf(a.name)-desiredNames.indexOf(b.name)});
-      for (var j=0;j<googleUK.length;j++) {
-        var opt = document.createElement('option');
-        opt.value = googleUK[j].name;
-        opt.textContent = googleUK[j].name + ' (' + googleUK[j].lang + ')';
-        ttsVoice.appendChild(opt);
-      }
-      ttsNote.textContent = '';
-    } else {
-      // Fallback: best English voice we can find
-      var english = voicesCache.filter(function(v){return /^en(-|$)/i.test(v.lang||'')});
-      english.sort(function(a,b){
-        function score(v){
-          var s = 0;
-          if ((v.name||'').toLowerCase().indexOf('google')!==-1) s += 2;
-          if ((v.name||'').toLowerCase().indexOf('uk')!==-1) s += 1;
-          if (v.localService) s += 0.5;
-          return -s;
-        }
-        return score(a)-score(b);
-      });
-      var chosen = english[0] || voicesCache[0] || null;
-      var opt2 = document.createElement('option');
-      opt2.value = chosen ? chosen.name : '';
-      opt2.textContent = chosen ? (chosen.name + ' (' + chosen.lang + ')') : 'Default System Voice';
-      ttsVoice.appendChild(opt2);
-      ttsNote.textContent = 'Google UK voices not available here — using best English voice.';
-    }
-    diag.textContent = 'Ready / Voices: ' + (voicesCache.length||0);
-  }
-
-  function pickVoiceByName(name){
-    for (var i=0;i<voicesCache.length;i++) if (voicesCache[i].name===name) return voicesCache[i];
-    return null;
-  }
-
-  function cleanForSpeech(html){
-    var text = (html||'').replace(/<[^>]+>/g,' ');
-    text = text.replace(/[#*_`~<>\[\]]/g,' ');
-    text = text.replace(/&nbsp;/g,' ');
-    text = text.replace(/\s+/g,' ').trim();
-    return text;
-  }
-
-  function chunkText(str, size){
-    var chunks = [];
-    var s = (str||'').split(/(?<=[\.!?])\s+/); // sentence-wise split if supported
-    if (!s || s.length===0) s = [str];
-    var buf='';
-    for (var i=0;i<s.length;i++) {
-      var next = (buf ? buf + ' ' : '') + s[i];
-      if (next.length > size && buf) { chunks.push(buf); buf = s[i]; }
-      else { buf = next; }
-    }
-    if (buf) chunks.push(buf);
-    // ensure no chunk exceeds hard cap; re-split long ones
-    var out = [];
-    for (var j=0;j<chunks.length;j++) {
-      var c = chunks[j];
-      while (c.length > size) {
-        var cut = c.lastIndexOf(' ', size);
-        if (cut < 120) cut = size; // fallback rough cut
-        out.push(c.slice(0, cut));
-        c = c.slice(cut+1);
-      }
-      if (c) out.push(c);
-    }
-    return out;
-  }
-
-  function speakText(text){
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    var sel = pickVoiceByName(ttsVoice.value);
-    var parts = chunkText(text, 220);
-    for (var i=0;i<parts.length;i++) {
-      var u = new SpeechSynthesisUtterance(parts[i]);
-      if (sel) u.voice = sel;
-      u.rate = 1; u.pitch = 1;
-      window.speechSynthesis.speak(u);
-    }
-  }
-
-  btnTest.addEventListener('click', function(){
-    var phrase = (document.getElementById('testPhrase').value||'').replace(/\s+/g,' ').trim();
-    if (!phrase) phrase = 'Voice ready. Synchronicity unlocked.';
-    if (window.speechSynthesis) { window.speechSynthesis.cancel(); }
-    var u = new SpeechSynthesisUtterance(phrase);
-    var sel = pickVoiceByName(ttsVoice.value);
-    if (sel) u.voice = sel;
-    if (window.speechSynthesis) window.speechSynthesis.speak(u);
-  });
-
-  btnSpeak.addEventListener('click', function(){
-    // gather selected sections
-    var ids = [];
-    for (var i=0;i<speakChks.length;i++) if (speakChks[i].checked) ids.push(speakChks[i].value);
-    var html='';
-    for (var j=0;j<ids.length;j++) {
-      var id='sec-'+ids[j].toLowerCase().replace(/[^a-z]+/g,'-');
-      var node = document.getElementById(id);
-      if (node) html += ' ' + node.innerHTML;
-    }
-    var text = cleanForSpeech(html);
-    speakText(text);
-  });
-  btnStop.addEventListener('click', function(){
-    if (window.speechSynthesis) window.speechSynthesis.cancel();
-  });
-
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.onvoiceschanged = function(){ setTimeout(listVoices, 50); };
-    setTimeout(listVoices, 120);
-  } else {
-    diag.textContent = 'Speech synthesis not supported in this browser.';
-  }
+  var ttsVoice=document.getElementById('ttsVoice'); var ttsNote=document.getElementById('ttsNote'); var btnTest=document.getElementById('btnTest'); var btnSpeak=document.getElementById('btnSpeak'); var btnStop=document.getElementById('btnStop'); var diag=document.getElementById('diag'); var speakChks=[].slice.call(document.querySelectorAll('.speakChk')); var desired=['Google UK English Female','Google UK English Male']; var voicesCache=[];
+  function listVoices(){voicesCache=window.speechSynthesis?(window.speechSynthesis.getVoices()||[]):[]; var uk=[]; for(var i=0;i<voicesCache.length;i++) if(desired.indexOf(voicesCache[i].name)!==-1) uk.push(voicesCache[i]);
+    ttsVoice.innerHTML=''; if(uk.length){uk.sort(function(a,b){return desired.indexOf(a.name)-desired.indexOf(b.name)}); for(var j=0;j<uk.length;j++){var opt=document.createElement('option');opt.value=uk[j].name;opt.textContent=uk[j].name+' ('+uk[j].lang+')'; ttsVoice.appendChild(opt);} ttsNote.textContent='';} else {var english=voicesCache.filter(function(v){return /^en(-|$)/i.test(v.lang||'')});
+      english.sort(function(a,b){function score(v){var s=0;if((v.name||'').toLowerCase().indexOf('google')!==-1)s+=2;if((v.name||'').toLowerCase().indexOf('uk')!==-1)s+=1;if(v.localService)s+=0.5;return -s;} return score(a)-score(b);}); var chosen=english[0]||voicesCache[0]||null;
+      var opt2=document.createElement('option'); opt2.value=chosen?chosen.name:''; opt2.textContent=chosen?(chosen.name+' ('+chosen.lang+')'):'Default System Voice'; ttsVoice.appendChild(opt2);
+      ttsNote.textContent='Google UK voices not available here — using best English voice.';}
+    diag.textContent='Ready / Voices: '+(voicesCache.length||0); }
+  function pickVoiceByName(n){for(var i=0;i<voicesCache.length;i++) if(voicesCache[i].name===n) return voicesCache[i]; return null;}
+  function cleanForSpeech(html){var text=(html||'').replace(/<[^>]+>/g,' '); text=text.replace(/[#*_`~<>\[\]]/g,' '); text=text.replace(/&nbsp;/g,' '); text=text.replace(/\s+/g,' ').trim(); return text;}
+  function chunkText(str,size){var s=(str||'').split(/(?<=[\.!?])\s+/); if(!s||s.length===0) s=[str]; var out=[],buf=''; for(var i=0;i<s.length;i++){var next=(buf?buf+' ':'')+s[i]; if(next.length>size&&buf){out.push(buf);buf=s[i];} else {buf=next;}} if(buf) out.push(buf); var final=[]; for(var j=0;j<out.length;j++){var c=out[j]; while(c.length>size){var cut=c.lastIndexOf(' ', size); if(cut<120) cut=size; final.push(c.slice(0,cut)); c=c.slice(cut+1);} if(c) final.push(c);} return final;}
+  function speakText(text){if(!window.speechSynthesis)return; window.speechSynthesis.cancel(); var sel=pickVoiceByName(ttsVoice.value); var parts=chunkText(text,220); for(var i=0;i<parts.length;i++){var u=new SpeechSynthesisUtterance(parts[i]); if(sel) u.voice=sel; u.rate=1;u.pitch=1; window.speechSynthesis.speak(u);}}
+  btnTest.addEventListener('click', function(){var phrase=(document.getElementById('testPhrase').value||'').replace(/\s+/g,' ').trim(); if(!phrase) phrase='Voice ready. Synchronicity unlocked.'; if(window.speechSynthesis) window.speechSynthesis.cancel(); var u=new SpeechSynthesisUtterance(phrase); var sel=pickVoiceByName(ttsVoice.value); if(sel) u.voice=sel; if(window.speechSynthesis) window.speechSynthesis.speak(u); });
+  btnSpeak.addEventListener('click', function(){var ids=[]; for(var i=0;i<speakChks.length;i++) if(speakChks[i].checked) ids.push(speakChks[i].value); var html=''; for(var j=0;j<ids.length;j++){var id='sec-'+ids[j].toLowerCase().replace(/[^a-z]+/g,'-'); var node=document.getElementById(id); if(node) html+=' '+node.innerHTML;} var text=cleanForSpeech(html); speakText(text); });
+  btnStop.addEventListener('click', function(){if(window.speechSynthesis) window.speechSynthesis.cancel();});
+  if('speechSynthesis' in window){window.speechSynthesis.onvoiceschanged=function(){setTimeout(listVoices,50);}; setTimeout(listVoices,120);} else {diag.textContent='Speech synthesis not supported in this browser.';}
 })();
 </script>
 </body>
